@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trip Map - TravelPlanner</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/map.css">
+</head>
+<body>
+
+  <header class="toolbar">
+    <a href="./" class="toolbar__logo">
+      <span class="toolbar__logo-icon">&#9992;</span>
+      <span>TravelPlanner</span>
+    </a>
+    <div class="toolbar__actions">
+      <button class="toolbar__btn" id="btnAddMode" title="Click map to add pin">&#128204; Add Pin</button>
+      <button class="toolbar__btn" id="btnToggleRoute" title="Toggle route line">&#128736; Route</button>
+      <button class="toolbar__btn toolbar__btn--primary" id="btnNewTrip">&#43; New Trip</button>
+    </div>
+  </header>
+
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header" id="sidebarHeader">
+        <div class="sidebar__title">My Trips</div>
+        <div class="sidebar__sub">Plan your adventure, pin by pin.</div>
+      </div>
+
+      <div class="trip-selector">
+        <select id="tripSelect"></select>
+        <button class="trip-selector__btn" id="btnDeleteTrip" title="Delete trip">&#128465;</button>
+      </div>
+
+      <div class="pin-list" id="pinList">
+        <div class="pin-list__empty" id="pinEmpty">
+          <span class="pin-list__empty-icon">&#128205;</span>
+          <div class="pin-list__empty-text">No pins yet</div>
+          <div class="pin-list__empty-hint">Click "Add Pin" then click the map</div>
+        </div>
+      </div>
+
+      <div class="sidebar__stats" id="sidebarStats">
+        <div class="sidebar__stat">&#128205; <strong id="statPins">0</strong> pins</div>
+        <div class="sidebar__stat">&#128207; <strong id="statDist">0</strong> km</div>
+        <div class="sidebar__stat">&#128197; <strong id="statDays">0</strong> days</div>
+      </div>
+    </aside>
+
+    <!-- Map -->
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="map-hint" id="mapHint">&#128070; Click anywhere on the map to add a pin</div>
+
+      <!-- Detail Panel -->
+      <div class="detail-panel" id="detailPanel">
+        <button class="detail-panel__close" id="detailClose">&times;</button>
+        <div class="detail-panel__header">
+          <div class="detail-panel__name" id="detailName">Pin Name</div>
+          <div class="detail-panel__coords" id="detailCoords">0.000, 0.000</div>
+        </div>
+        <div class="detail-panel__body">
+          <div class="detail-field">
+            <label>Name</label>
+            <input type="text" id="detailInputName" placeholder="e.g., Colosseum">
+          </div>
+          <div class="detail-field">
+            <label>Date</label>
+            <input type="date" id="detailInputDate">
+          </div>
+          <div class="detail-field">
+            <label>Category</label>
+            <select id="detailInputCat">
+              <option value="landmark">&#127983; Landmark</option>
+              <option value="food">&#127869; Food & Drink</option>
+              <option value="hotel">&#127976; Hotel</option>
+              <option value="nature">&#127795; Nature</option>
+              <option value="transport">&#128652; Transport</option>
+              <option value="activity">&#127946; Activity</option>
+              <option value="other">&#128204; Other</option>
+            </select>
+          </div>
+          <div class="detail-field">
+            <label>Notes</label>
+            <textarea id="detailInputNotes" placeholder="Travel notes, tips, memories..."></textarea>
+          </div>
+        </div>
+        <div class="detail-panel__actions">
+          <button class="toolbar__btn toolbar__btn--primary" id="detailSave">&#10003; Save</button>
+          <button class="toolbar__btn toolbar__btn--danger" id="detailDelete">&#128465; Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Trip Modal -->
+  <div class="modal-overlay" id="newTripModal">
+    <div class="modal">
+      <h2 class="modal__title">&#127758; New Trip</h2>
+      <div class="detail-field">
+        <label>Trip Name</label>
+        <input type="text" id="newTripName" placeholder="e.g., Europe Summer 2026">
+      </div>
+      <div class="detail-field">
+        <label>Start Date</label>
+        <input type="date" id="newTripStart">
+      </div>
+      <div class="detail-field">
+        <label>End Date</label>
+        <input type="date" id="newTripEnd">
+      </div>
+      <div class="modal__actions">
+        <button class="toolbar__btn toolbar__btn--primary" id="newTripCreate">Create Trip</button>
+        <button class="toolbar__btn" id="newTripCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    /* ============ Data Layer ============ */
+    var STORAGE_KEY = 'travelplanner_trips';
+    var STORAGE_VER = 1;
+
+    function loadData() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultData();
+        var data = JSON.parse(raw);
+        if (data.version !== STORAGE_VER) return defaultData();
+        return data;
+      } catch (e) { return defaultData(); }
+    }
+
+    function saveData(data) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+
+    function defaultData() {
+      var id = uid();
+      return {
+        version: STORAGE_VER,
+        activeTrip: id,
+        trips: [{
+          id: id,
+          name: 'My First Trip',
+          startDate: '',
+          endDate: '',
+          showRoute: true,
+          pins: [
+            { id: uid(), lat: 41.8902, lng: 12.4922, name: 'Colosseum', date: '', category: 'landmark', notes: 'Ancient amphitheater, book skip-the-line tickets.' },
+            { id: uid(), lat: 43.7696, lng: 11.2558, name: 'Florence Cathedral', date: '', category: 'landmark', notes: 'Climb the dome for amazing views.' },
+            { id: uid(), lat: 45.4408, lng: 12.3155, name: 'Venice', date: '', category: 'activity', notes: 'Gondola ride at sunset.' }
+          ]
+        }]
+      };
+    }
+
+    function uid() { return Math.random().toString(36).substring(2, 10); }
+
+    /* ============ State ============ */
+    var data = loadData();
+    var map, markers = [], routeLine = null;
+    var addMode = false;
+    var selectedPinId = null;
+
+    /* ============ Map Init ============ */
+    map = L.map('map', { zoomControl: true }).setView([45, 10], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19
+    }).addTo(map);
+
+    /* ============ Category Icons ============ */
+    var CAT_EMOJI = {
+      landmark: '\uD83C\uDFDB',
+      food: '\uD83C\uDF7D',
+      hotel: '\uD83C\uDFE8',
+      nature: '\uD83C\uDF33',
+      transport: '\uD83D\uDE8C',
+      activity: '\uD83C\uDFC2',
+      other: '\uD83D\uDCCC'
+    };
+
+    function pinIcon(category, index) {
+      return L.divIcon({
+        className: '',
+        html: '<div style="background:#3a9bd5;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid #fff;">' + (index + 1) + '</div>',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+    }
+
+    /* ============ Helpers ============ */
+    function getTrip() {
+      for (var i = 0; i < data.trips.length; i++) {
+        if (data.trips[i].id === data.activeTrip) return data.trips[i];
+      }
+      return data.trips[0] || null;
+    }
+
+    function haversine(lat1, lng1, lat2, lng2) {
+      var R = 6371;
+      var dLat = (lat2 - lat1) * Math.PI / 180;
+      var dLng = (lng2 - lng1) * Math.PI / 180;
+      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function totalDistance(pins) {
+      var d = 0;
+      for (var i = 1; i < pins.length; i++) {
+        d += haversine(pins[i - 1].lat, pins[i - 1].lng, pins[i].lat, pins[i].lng);
+      }
+      return Math.round(d);
+    }
+
+    function countDays(trip) {
+      if (!trip.startDate || !trip.endDate) return 0;
+      var s = new Date(trip.startDate);
+      var e = new Date(trip.endDate);
+      var diff = Math.ceil((e - s) / 86400000) + 1;
+      return diff > 0 ? diff : 0;
+    }
+
+    /* ============ Rendering ============ */
+    function render() {
+      renderTripSelect();
+      renderPins();
+      renderMap();
+      renderStats();
+      saveData(data);
+    }
+
+    function renderTripSelect() {
+      var sel = document.getElementById('tripSelect');
+      sel.innerHTML = '';
+      for (var i = 0; i < data.trips.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = data.trips[i].id;
+        opt.textContent = data.trips[i].name;
+        if (data.trips[i].id === data.activeTrip) opt.selected = true;
+        sel.appendChild(opt);
+      }
+    }
+
+    function renderPins() {
+      var trip = getTrip();
+      var list = document.getElementById('pinList');
+      var empty = document.getElementById('pinEmpty');
+
+      // Remove old cards
+      var cards = list.querySelectorAll('.pin-card');
+      for (var i = 0; i < cards.length; i++) cards[i].remove();
+
+      if (!trip || trip.pins.length === 0) {
+        empty.style.display = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      for (var j = 0; j < trip.pins.length; j++) {
+        var pin = trip.pins[j];
+        var card = document.createElement('div');
+        card.className = 'pin-card' + (pin.id === selectedPinId ? ' active' : '');
+        card.dataset.pinId = pin.id;
+
+        var emoji = CAT_EMOJI[pin.category] || CAT_EMOJI.other;
+        var dateTxt = pin.date ? new Date(pin.date + 'T00:00:00').toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '';
+
+        card.innerHTML =
+          '<div class="pin-card__number">' + (j + 1) + '</div>' +
+          '<div class="pin-card__body">' +
+            '<div class="pin-card__name">' + emoji + ' ' + escHtml(pin.name || 'Unnamed pin') + '</div>' +
+            '<div class="pin-card__meta">' + (dateTxt ? dateTxt + ' &bull; ' : '') + pin.lat.toFixed(4) + ', ' + pin.lng.toFixed(4) + '</div>' +
+          '</div>' +
+          '<button class="pin-card__remove" data-pin-id="' + pin.id + '" title="Remove pin">&times;</button>';
+
+        list.appendChild(card);
+      }
+    }
+
+    function renderMap() {
+      // Clear markers
+      for (var i = 0; i < markers.length; i++) map.removeLayer(markers[i]);
+      markers = [];
+      if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+
+      var trip = getTrip();
+      if (!trip) return;
+
+      var latlngs = [];
+      for (var j = 0; j < trip.pins.length; j++) {
+        var pin = trip.pins[j];
+        var marker = L.marker([pin.lat, pin.lng], { icon: pinIcon(pin.category, j), draggable: true });
+        marker._pinId = pin.id;
+
+        marker.on('click', function(e) {
+          selectPin(e.target._pinId);
+        });
+
+        marker.on('dragend', function(e) {
+          var pos = e.target.getLatLng();
+          var p = findPin(e.target._pinId);
+          if (p) {
+            p.lat = Math.round(pos.lat * 10000) / 10000;
+            p.lng = Math.round(pos.lng * 10000) / 10000;
+            render();
+            if (selectedPinId === e.target._pinId) openDetail(p);
+          }
+        });
+
+        marker.addTo(map);
+        markers.push(marker);
+        latlngs.push([pin.lat, pin.lng]);
+      }
+
+      // Route line
+      if (trip.showRoute && latlngs.length >= 2) {
+        routeLine = L.polyline(latlngs, {
+          color: '#f5a623',
+          weight: 3,
+          opacity: 0.8,
+          dashArray: '8, 6'
+        }).addTo(map);
+      }
+
+      // Fit bounds
+      if (latlngs.length > 0) {
+        map.fitBounds(L.latLngBounds(latlngs).pad(0.15));
+      }
+    }
+
+    function renderStats() {
+      var trip = getTrip();
+      if (!trip) return;
+      document.getElementById('statPins').textContent = trip.pins.length;
+      document.getElementById('statDist').textContent = totalDistance(trip.pins);
+      document.getElementById('statDays').textContent = countDays(trip);
+    }
+
+    function escHtml(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function findPin(id) {
+      var trip = getTrip();
+      if (!trip) return null;
+      for (var i = 0; i < trip.pins.length; i++) {
+        if (trip.pins[i].id === id) return trip.pins[i];
+      }
+      return null;
+    }
+
+    /* ============ Pin Selection & Detail ============ */
+    function selectPin(id) {
+      selectedPinId = id;
+      var pin = findPin(id);
+      if (pin) {
+        openDetail(pin);
+        map.panTo([pin.lat, pin.lng]);
+      }
+      renderPins();
+    }
+
+    function openDetail(pin) {
+      var panel = document.getElementById('detailPanel');
+      document.getElementById('detailName').textContent = pin.name || 'Unnamed pin';
+      document.getElementById('detailCoords').textContent = pin.lat.toFixed(4) + ', ' + pin.lng.toFixed(4);
+      document.getElementById('detailInputName').value = pin.name || '';
+      document.getElementById('detailInputDate').value = pin.date || '';
+      document.getElementById('detailInputCat').value = pin.category || 'other';
+      document.getElementById('detailInputNotes').value = pin.notes || '';
+      panel.classList.add('active');
+    }
+
+    function closeDetail() {
+      document.getElementById('detailPanel').classList.remove('active');
+      selectedPinId = null;
+      renderPins();
+    }
+
+    /* ============ Events ============ */
+
+    // Trip select
+    document.getElementById('tripSelect').addEventListener('change', function() {
+      data.activeTrip = this.value;
+      selectedPinId = null;
+      closeDetail();
+      render();
+    });
+
+    // Delete trip
+    document.getElementById('btnDeleteTrip').addEventListener('click', function() {
+      if (data.trips.length <= 1) return;
+      if (!confirm('Delete this trip and all its pins?')) return;
+      data.trips = data.trips.filter(function(t) { return t.id !== data.activeTrip; });
+      data.activeTrip = data.trips[0].id;
+      selectedPinId = null;
+      closeDetail();
+      render();
+    });
+
+    // New trip modal
+    document.getElementById('btnNewTrip').addEventListener('click', function() {
+      document.getElementById('newTripName').value = '';
+      document.getElementById('newTripStart').value = '';
+      document.getElementById('newTripEnd').value = '';
+      document.getElementById('newTripModal').classList.add('active');
+      document.getElementById('newTripName').focus();
+    });
+
+    document.getElementById('newTripCancel').addEventListener('click', function() {
+      document.getElementById('newTripModal').classList.remove('active');
+    });
+
+    document.getElementById('newTripModal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('active');
+    });
+
+    document.getElementById('newTripCreate').addEventListener('click', function() {
+      var name = document.getElementById('newTripName').value.trim();
+      if (!name) { document.getElementById('newTripName').focus(); return; }
+      var trip = {
+        id: uid(),
+        name: name,
+        startDate: document.getElementById('newTripStart').value,
+        endDate: document.getElementById('newTripEnd').value,
+        showRoute: true,
+        pins: []
+      };
+      data.trips.push(trip);
+      data.activeTrip = trip.id;
+      selectedPinId = null;
+      closeDetail();
+      document.getElementById('newTripModal').classList.remove('active');
+      render();
+    });
+
+    // Add pin mode
+    document.getElementById('btnAddMode').addEventListener('click', function() {
+      addMode = !addMode;
+      this.style.background = addMode ? '#3a9bd5' : '';
+      this.style.color = addMode ? '#fff' : '';
+      this.style.borderColor = addMode ? '#3a9bd5' : '';
+      document.getElementById('mapHint').classList.toggle('active', addMode);
+      document.getElementById('map').style.cursor = addMode ? 'crosshair' : '';
+    });
+
+    // Map click → add pin
+    map.on('click', function(e) {
+      if (!addMode) return;
+      var trip = getTrip();
+      if (!trip) return;
+
+      var pin = {
+        id: uid(),
+        lat: Math.round(e.latlng.lat * 10000) / 10000,
+        lng: Math.round(e.latlng.lng * 10000) / 10000,
+        name: '',
+        date: '',
+        category: 'landmark',
+        notes: ''
+      };
+      trip.pins.push(pin);
+      selectedPinId = pin.id;
+      render();
+      openDetail(pin);
+
+      // Exit add mode
+      addMode = false;
+      var btn = document.getElementById('btnAddMode');
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+      document.getElementById('mapHint').classList.remove('active');
+      document.getElementById('map').style.cursor = '';
+    });
+
+    // Toggle route
+    document.getElementById('btnToggleRoute').addEventListener('click', function() {
+      var trip = getTrip();
+      if (!trip) return;
+      trip.showRoute = !trip.showRoute;
+      this.style.background = trip.showRoute ? '#3a9bd5' : '';
+      this.style.color = trip.showRoute ? '#fff' : '';
+      this.style.borderColor = trip.showRoute ? '#3a9bd5' : '';
+      render();
+    });
+
+    // Pin list click (delegation)
+    document.getElementById('pinList').addEventListener('click', function(e) {
+      // Remove button
+      var removeBtn = e.target.closest('.pin-card__remove');
+      if (removeBtn) {
+        e.stopPropagation();
+        var pinId = removeBtn.dataset.pinId;
+        var trip = getTrip();
+        if (trip) {
+          trip.pins = trip.pins.filter(function(p) { return p.id !== pinId; });
+          if (selectedPinId === pinId) closeDetail();
+          render();
+        }
+        return;
+      }
+      // Card click
+      var card = e.target.closest('.pin-card');
+      if (card) selectPin(card.dataset.pinId);
+    });
+
+    // Detail panel
+    document.getElementById('detailClose').addEventListener('click', closeDetail);
+
+    document.getElementById('detailSave').addEventListener('click', function() {
+      var pin = findPin(selectedPinId);
+      if (!pin) return;
+      pin.name = document.getElementById('detailInputName').value.trim() || 'Unnamed pin';
+      pin.date = document.getElementById('detailInputDate').value;
+      pin.category = document.getElementById('detailInputCat').value;
+      pin.notes = document.getElementById('detailInputNotes').value;
+      render();
+      openDetail(pin);
+    });
+
+    document.getElementById('detailDelete').addEventListener('click', function() {
+      var trip = getTrip();
+      if (!trip) return;
+      trip.pins = trip.pins.filter(function(p) { return p.id !== selectedPinId; });
+      closeDetail();
+      render();
+    });
+
+    // Mobile sidebar toggle
+    document.getElementById('sidebarHeader').addEventListener('click', function() {
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.toggle('open');
+      }
+    });
+
+    // Init route button state
+    (function() {
+      var trip = getTrip();
+      if (trip && trip.showRoute) {
+        var btn = document.getElementById('btnToggleRoute');
+        btn.style.background = '#3a9bd5';
+        btn.style.color = '#fff';
+        btn.style.borderColor = '#3a9bd5';
+      }
+    })();
+
+    /* ============ Initial Render ============ */
+    render();
+
+  })();
+  </script>
+
+</body>
+</html>

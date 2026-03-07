@@ -18,6 +18,7 @@ TravelPlanner is an interactive travel companion that helps you discover destina
 ## Tech Stack
 
 - HTML5 + CSS3 (vanilla, no frameworks)
+- Leaflet.js (interactive map)
 - GitHub Pages (static hosting)
 - GitHub Actions CI/CD
 
@@ -26,9 +27,14 @@ TravelPlanner is an interactive travel companion that helps you discover destina
 ```
 travel-planner/
 ├── src/
-│   ├── index.html          # Landing page
+│   ├── index.html          # Landing page (EN)
+│   ├── map.html            # Interactive map (trip planner)
 │   ├── css/
-│   │   └── style.css       # Styles
+│   │   ├── style.css       # Landing page styles
+│   │   └── map.css         # Map page styles
+│   ├── de/index.html       # Landing page (DE)
+│   ├── fr/index.html       # Landing page (FR)
+│   ├── it/index.html       # Landing page (IT)
 │   └── robots.txt          # Search engine directives
 ├── .github/
 │   └── workflows/
@@ -76,10 +82,10 @@ open src/index.html
 
 ## Roadmap
 
-- [ ] i18n support (DE, FR, IT, EN)
+- [x] i18n support (DE, FR, IT, EN)
+- [x] Real map integration (Leaflet.js)
 - [ ] Backend API with AI integration
 - [ ] User authentication
-- [ ] Real map integration (Mapbox/Leaflet)
 - [ ] Photo upload and storage
 - [ ] Mobile app
 
