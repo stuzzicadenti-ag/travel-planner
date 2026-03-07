@@ -21,6 +21,9 @@
   <meta name="twitter:title" content="TravelPlanner - Plan. Explore. Remember.">
   <meta name="twitter:description" content="AI-powered travel diary and trip planner. Discover destinations, build itineraries, and share your stories.">
 
+  <meta name="theme-color" content="#2ecc71">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://cloud.umami.is; frame-ancestors 'none';">
+
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
@@ -56,6 +59,9 @@
   </script>
 
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Analytics (Umami Cloud - replace data-website-id when ready) -->
+  <!-- <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR_WEBSITE_ID"></script> -->
 </head>
 <body>
 
@@ -66,7 +72,7 @@
         <span class="logo-icon">&#9992;</span>
         <span class="logo-text">TravelPlanner</span>
       </a>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation menu">
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-links" id="navLinks">
