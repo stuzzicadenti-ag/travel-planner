@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelPlanner - Planen. Erkunden. Erinnern.</title>
+  <meta name="description" content="TravelPlanner ist ein KI-gestuetzter Reisebegleiter und Reiseplaner. Entdecke Reiseziele, erstelle Reiserouten, dokumentiere deine Reisen und teile deine Geschichten.">
+  <meta name="keywords" content="Reiseplaner, KI-Reise, Reisetagebuch, Reiserouten-Planer, Reise-Community">
+  <link rel="canonical" href="https://stuzzicadenti-ag.github.io/travel-planner/de/">
+
+  <!-- Hreflang -->
+  <link rel="alternate" hreflang="en" href="https://stuzzicadenti-ag.github.io/travel-planner/">
+  <link rel="alternate" hreflang="de" href="https://stuzzicadenti-ag.github.io/travel-planner/de/">
+  <link rel="alternate" hreflang="fr" href="https://stuzzicadenti-ag.github.io/travel-planner/fr/">
+  <link rel="alternate" hreflang="it" href="https://stuzzicadenti-ag.github.io/travel-planner/it/">
+  <link rel="alternate" hreflang="x-default" href="https://stuzzicadenti-ag.github.io/travel-planner/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TravelPlanner - Planen. Erkunden. Erinnern.">
+  <meta property="og:description" content="KI-gestuetzter Reisebegleiter und Reiseplaner. Entdecke Reiseziele, erstelle Reiserouten und teile deine Geschichten.">
+  <meta property="og:url" content="https://stuzzicadenti-ag.github.io/travel-planner/de/">
+  <meta property="og:image" content="https://stuzzicadenti-ag.github.io/travel-planner/og-image.png">
+  <meta property="og:site_name" content="TravelPlanner">
+  <meta property="og:locale" content="de_DE">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TravelPlanner - Planen. Erkunden. Erinnern.">
+  <meta name="twitter:description" content="KI-gestuetzter Reisebegleiter und Reiseplaner. Entdecke Reiseziele, erstelle Reiserouten und teile deine Geschichten.">
+  <meta name="twitter:image" content="https://stuzzicadenti-ag.github.io/travel-planner/og-image.png">
+
+  <meta name="theme-color" content="#2ecc71">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://cloud.umami.is; frame-ancestors 'none';">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "TravelPlanner",
+    "url": "https://stuzzicadenti-ag.github.io/travel-planner/de/",
+    "description": "KI-gestuetzter Reisebegleiter und Reiseplaner. Entdecke Reiseziele, erstelle Reiserouten, dokumentiere deine Reisen und teile deine Geschichten.",
+    "applicationCategory": "TravelApplication",
+    "inLanguage": "de",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Kostenlos",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      {
+        "@type": "Offer",
+        "name": "Explorer",
+        "price": "4.99",
+        "priceCurrency": "EUR",
+        "billingIncrement": "P1M"
+      },
+      {
+        "@type": "Offer",
+        "name": "Premium",
+        "price": "9.99",
+        "priceCurrency": "EUR",
+        "billingIncrement": "P1M"
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">&#9992;</span>
+        <span class="logo-text">TravelPlanner</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Navigationsmenue umschalten">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero" class="nav-link active">Startseite</a></li>
+        <li><a href="#destinations" class="nav-link">Entdecken</a></li>
+        <li><a href="#features" class="nav-link">Meine Reisen</a></li>
+        <li><a href="#community" class="nav-link">Community</a></li>
+        <li><a href="#pricing" class="nav-link">Preise</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn btn-ghost" id="loginBtn">Anmelden</button>
+        <button class="btn btn-primary btn-sm" id="registerBtn">Registrieren</button>
+        <div class="lang-switch">
+          <a href="../">EN</a>
+          <a href="../de/" class="active">DE</a>
+          <a href="../fr/">FR</a>
+          <a href="../it/">IT</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="cloud cloud-1">&#9729;</div>
+      <div class="cloud cloud-2">&#9729;</div>
+      <div class="cloud cloud-3">&#9925;</div>
+    </div>
+    <div class="container hero-content">
+      <h1 class="hero-title">Planen. Erkunden. Erinnern.</h1>
+      <p class="hero-subtitle">Dein KI-gestuetzter Reisebegleiter. Erstelle personalisierte Reiserouten, dokumentiere jeden Moment und teile deine Abenteuer mit der Welt.</p>
+      <div class="hero-actions">
+        <a href="#destinations" class="btn btn-primary btn-lg">Jetzt planen</a>
+        <a href="#how-it-works" class="btn btn-outline btn-lg">So funktioniert's</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">50K+</span>
+          <span class="stat-label">Geplante Reisen</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">120+</span>
+          <span class="stat-label">Laender</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">10K+</span>
+          <span class="stat-label">Reisende</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beliebte Reiseziele -->
+  <section class="section destinations" id="destinations">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Beliebte Reiseziele</h2>
+        <p class="section-subtitle">Handverlesen von unserer Community und KI. Wohin fuehrt dich dein naechstes Abenteuer?</p>
+      </div>
+      <div class="destinations-grid">
+
+        <div class="destination-card">
+          <div class="destination-img destination-tokyo">
+            <span class="destination-emoji">&#127471;&#127477;</span>
+          </div>
+          <div class="destination-body">
+            <h3 class="destination-name">Tokio</h3>
+            <p class="destination-desc">Eine schillernde Mischung aus ultramodernem Neon und uralten Tempeln. Von Shibuya Crossing bis zu ruhigen Schreinen - Tokio hoert nie auf zu ueberraschen.</p>
+            <div class="destination-meta">
+              <span class="tag">Kultur</span>
+              <span class="tag">Essen</span>
+              <span class="tag">Technik</span>
+            </div>
+            <a href="#" class="btn btn-primary btn-sm btn-block">Reise planen</a>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <div class="destination-img destination-paris">
+            <span class="destination-emoji">&#127467;&#127479;</span>
+          </div>
+          <div class="destination-body">
+            <h3 class="destination-name">Paris</h3>
+            <p class="destination-desc">Die Stadt des Lichts verzaubert mit Weltklasse-Kunst, ikonischen Wahrzeichen und unvergesslicher Kueche an jeder Ecke.</p>
+            <div class="destination-meta">
+              <span class="tag">Romantik</span>
+              <span class="tag">Kunst</span>
+              <span class="tag">Essen</span>
+            </div>
+            <a href="#" class="btn btn-primary btn-sm btn-block">Reise planen</a>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <div class="destination-img destination-nyc">
+            <span class="destination-emoji">&#127482;&#127480;</span>
+          </div>
+          <div class="destination-body">
+            <h3 class="destination-name">New York</h3>
+            <p class="destination-desc">Die Stadt, die niemals schlaeft. Broadway, Central Park, weltberuehmte Museen und eine Skyline, die Ehrgeiz verkuerpert.</p>
+            <div class="destination-meta">
+              <span class="tag">Staedtisch</span>
+              <span class="tag">Kultur</span>
+              <span class="tag">Nachtleben</span>
+            </div>
+            <a href="#" class="btn btn-primary btn-sm btn-block">Reise planen</a>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <div class="destination-img destination-bali">
+            <span class="destination-emoji">&#127470;&#127465;</span>
+          </div>
+          <div class="destination-body">
+            <h3 class="destination-name">Bali</h3>
+            <p class="destination-desc">Ueppige Reisterrassen, heilige Tempel und unberuehrte Straende. Bali ist der ultimative Rueckzugsort fuer Koerper und Seele.</p>
+            <div class="destination-meta">
+              <span class="tag">Natur</span>
+              <span class="tag">Wellness</span>
+              <span class="tag">Strand</span>
+            </div>
+            <a href="#" class="btn btn-primary btn-sm btn-block">Reise planen</a>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <div class="destination-img destination-rome">
+            <span class="destination-emoji">&#127470;&#127481;</span>
+          </div>
+          <div class="destination-body">
+            <h3 class="destination-name">Rom</h3>
+            <p class="destination-desc">Wandere durch Jahrtausende der Geschichte. Die Ewige Stadt verbindet antike Ruinen, Renaissance-Kunst und la dolce vita.</p>
+            <div class="destination-meta">
+              <span class="tag">Geschichte</span>
+              <span class="tag">Essen</span>
+              <span class="tag">Kunst</span>
+            </div>
+            <a href="#" class="btn btn-primary btn-sm btn-block">Reise planen</a>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <div class="destination-img destination-machu">
+            <span class="destination-emoji">&#127477;&#127466;</span>
+          </div>
+          <div class="destination-body">
+            <h3 class="destination-name">Machu Picchu</h3>
+            <p class="destination-desc">Eine verlorene Inka-Zitadelle ueber den Wolken. Wandere durch die Anden und entdecke eines der groessten Weltwunder.</p>
+            <div class="destination-meta">
+              <span class="tag">Abenteuer</span>
+              <span class="tag">Geschichte</span>
+              <span class="tag">Wandern</span>
+            </div>
+            <a href="#" class="btn btn-primary btn-sm btn-block">Reise planen</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- So funktioniert's -->
+  <section class="section how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">So funktioniert's</h2>
+        <p class="section-subtitle">Von der Inspiration zur Erinnerung, in fuenf einfachen Schritten.</p>
+      </div>
+      <div class="steps-flow">
+        <div class="step">
+          <div class="step-icon">&#127758;</div>
+          <div class="step-number">1</div>
+          <h3 class="step-title">Reiseziel waehlen</h3>
+          <p class="step-desc">Durchsuche beliebte Orte oder suche nach deinem Traumziel.</p>
+        </div>
+        <div class="step-arrow">&#10132;</div>
+        <div class="step">
+          <div class="step-icon">&#129302;</div>
+          <div class="step-number">2</div>
+          <h3 class="step-title">KI schlaegt Reiseroute vor</h3>
+          <p class="step-desc">Unsere KI erstellt einen personalisierten Tagesplan fuer dich.</p>
+        </div>
+        <div class="step-arrow">&#10132;</div>
+        <div class="step">
+          <div class="step-icon">&#9997;</div>
+          <div class="step-number">3</div>
+          <h3 class="step-title">Anpassen &amp; Buchen</h3>
+          <p class="step-desc">Passe den Plan an, fuege eigene Vorschlaege hinzu und buche Aktivitaeten.</p>
+        </div>
+        <div class="step-arrow">&#10132;</div>
+        <div class="step">
+          <div class="step-icon">&#128247;</div>
+          <div class="step-number">4</div>
+          <h3 class="step-title">Reisen &amp; Dokumentieren</h3>
+          <p class="step-desc">Halte Fotos, Notizen und Erinnerungen fest, waehrend du die Welt erkundest.</p>
+        </div>
+        <div class="step-arrow">&#10132;</div>
+        <div class="step">
+          <div class="step-icon">&#127752;</div>
+          <div class="step-number">5</div>
+          <h3 class="step-title">Geschichte teilen</h3>
+          <p class="step-desc">Veroeffentliche dein Reisetagebuch fuer Freunde oder die Community.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Funktionen -->
+  <section class="section features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Funktionen</h2>
+        <p class="section-subtitle">Alles, was du brauchst, um deine Reisen zu planen, zu erleben und in Erinnerung zu behalten.</p>
+      </div>
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">&#129302;</div>
+          <h3 class="feature-title">KI-Reisevorschlaege</h3>
+          <p class="feature-desc">Erhalte personalisierte Empfehlungen fuer beliebte Orte, ikonische Denkmaeler und versteckte Geheimtipps, die nur Einheimische kennen.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">&#128506;</div>
+          <h3 class="feature-title">Interaktive Karte</h3>
+          <p class="feature-desc">Visualisiere deine gesamte Reiseroute auf einer interaktiven Karte. Sieh Entfernungen, Routen und nahegelegene Sehenswuerdigkeiten auf einen Blick.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">&#128248;</div>
+          <h3 class="feature-title">Fototagebuch</h3>
+          <p class="feature-desc">Lade Fotos mit automatischen Standort-Metadaten hoch. Erstelle eine visuelle Zeitleiste deiner Reise, ein Schnappschuss nach dem anderen.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">&#128197;</div>
+          <h3 class="feature-title">Reise-Zeitleiste</h3>
+          <p class="feature-desc">Ein schoener visueller Ablauf deiner taeglichen Aktivitaeten, komplett mit Beschreibungen, Zeitstempeln und Reisenotizen.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">&#128200;</div>
+          <h3 class="feature-title">Reisestatistiken</h3>
+          <p class="feature-desc">Verfolge besuchte Laender, zurueckgelegte Kilometer und Reisetage. Beobachte, wie dein Reiseprofil mit der Zeit waechst.</p>
+        </div>
+
+        <div class="feature-card" id="community">
+          <div class="feature-icon">&#127760;</div>
+          <h3 class="feature-title">Community-Sharing</h3>
+          <p class="feature-desc">Teile deine Reisen oeffentlich oder halte sie privat. Folge anderen Reisenden, lass dich inspirieren und tausche Tipps aus.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- KI-Reiseassistent -->
+  <section class="section ai-assistant" id="ai-assistant">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">KI-Reiseassistent</h2>
+        <p class="section-subtitle">Sag uns, wohin du reist, und unsere KI erledigt den Rest. Hier ist eine Beispiel-Reiseroute.</p>
+      </div>
+      <div class="ai-demo">
+        <div class="ai-chat">
+          <div class="ai-prompt">
+            <span class="ai-user-icon">&#128100;</span>
+            <p>Plane mir <strong>3 Tage in Rom</strong> mit Schwerpunkt auf Geschichte und Essen.</p>
+          </div>
+          <div class="ai-response">
+            <span class="ai-bot-icon">&#129302;</span>
+            <div class="ai-response-body">
+              <p class="ai-intro">Hier ist deine personalisierte Rom-Reiseroute:</p>
+
+              <div class="itinerary">
+                <div class="itinerary-day">
+                  <h4 class="day-title">&#9728; Tag 1 &mdash; Antikes Rom</h4>
+                  <div class="day-items">
+                    <div class="day-item">
+                      <span class="day-time">09:00</span>
+                      <div class="day-detail">
+                        <strong>Kolosseum &amp; Forum Romanum</strong>
+                        <p>Beginne frueh, um den Menschenmassen zuvorzukommen. Buche Skip-the-Line-Tickets im Voraus. Plane 2-3 Stunden ein, um das Amphitheater und die weitlaeufigen Ruinen des Forums zu erkunden.</p>
+                      </div>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-time">13:00</span>
+                      <div class="day-detail">
+                        <strong>Mittagessen in Rione Monti</strong>
+                        <p>Probiere Cacio e Pepe in einer lokalen Trattoria in Roms aeltestem Viertel.</p>
+                      </div>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-time">15:30</span>
+                      <div class="day-detail">
+                        <strong>Trevi-Brunnen &amp; Spanische Treppe</strong>
+                        <p>Wirf eine Muenze, wuensch dir etwas. Am besten am spaeten Nachmittag besuchen, wenn das Licht golden ist. Steige die Treppe hinauf fuer eine Panoramaaussicht.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="itinerary-day">
+                  <h4 class="day-title">&#127752; Tag 2 &mdash; Vatikanstadt</h4>
+                  <div class="day-items">
+                    <div class="day-item">
+                      <span class="day-time">08:00</span>
+                      <div class="day-detail">
+                        <strong>Vatikanische Museen &amp; Sixtinische Kapelle</strong>
+                        <p>Komm zur Oeffnung. Die Decke der Sixtinischen Kapelle von Michelangelo ist atemberaubend. Nimm dir Zeit&mdash;verbringe mindestens 3 Stunden hier.</p>
+                      </div>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-time">12:00</span>
+                      <div class="day-detail">
+                        <strong>Petersdom</strong>
+                        <p>Eintritt frei. Besteige die Kuppel fuer den besten Blick ueber Rom. Tipp: Die letzten 320 Stufen sind eng&mdash;aber jede einzelne lohnt sich.</p>
+                      </div>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-time">15:00</span>
+                      <div class="day-detail">
+                        <strong>Engelsburg &amp; Gelato</strong>
+                        <p>Spaziere am Tiber entlang zu dieser antiken Festung. Halte an fuer handgemachtes Gelato bei Fatamorgana in der Naehe.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="itinerary-day">
+                  <h4 class="day-title">&#127773; Tag 3 &mdash; Lokales Leben</h4>
+                  <div class="day-items">
+                    <div class="day-item">
+                      <span class="day-time">10:00</span>
+                      <div class="day-detail">
+                        <strong>Morgenspaziergang in Trastevere</strong>
+                        <p>Schlendere durch Kopfsteinpflasterstrassen, entdecke versteckte Piazzas und geniesse Roms charmantestes Viertel.</p>
+                      </div>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-time">12:30</span>
+                      <div class="day-detail">
+                        <strong>Mercato di Testaccio</strong>
+                        <p>Roms bester Lebensmittelmarkt. Probiere Suppli (frittierte Reisbaellchen) und frische Pasta. Ein Paradies fuer Feinschmecker.</p>
+                      </div>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-time">15:00</span>
+                      <div class="day-detail">
+                        <strong>Pantheon &amp; Piazza Navona</strong>
+                        <p>Die 2.000 Jahre alte Kuppel des Pantheons ist ein Meisterwerk der Ingenieurskunst. Beende die Reise an der Piazza Navona mit einem Espresso.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="ai-tip">&#128161; <strong>Tipp:</strong> Hol dir einen Roma Pass fuer kostenlosen oeffentlichen Nahverkehr und ermaessigte Museumseintritte. Beste Reisezeit: April-Mai oder September-Oktober.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Preise -->
+  <section class="section pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Preise</h2>
+        <p class="section-subtitle">Starte kostenlos. Upgrade, wenn du bereit fuer mehr bist.</p>
+      </div>
+      <div class="pricing-grid">
+
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3 class="pricing-name">Kostenlos</h3>
+            <div class="pricing-price">
+              <span class="price-amount">&euro;0</span>
+              <span class="price-period">fuer immer</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li>&#10003; 3 Reisen</li>
+            <li>&#10003; Einfache KI-Vorschlaege</li>
+            <li>&#10003; Fototagebuch (50 Fotos)</li>
+            <li>&#10003; Reise-Zeitleiste</li>
+            <li>&#10003; Community-Zugang</li>
+            <li class="disabled">&#10007; Offline-Karten</li>
+            <li class="disabled">&#10007; API-Zugang</li>
+          </ul>
+          <a href="#" class="btn btn-outline btn-block">Jetzt starten</a>
+        </div>
+
+        <div class="pricing-card pricing-featured">
+          <div class="pricing-badge">Beliebteste Wahl</div>
+          <div class="pricing-header">
+            <h3 class="pricing-name">Explorer</h3>
+            <div class="pricing-price">
+              <span class="price-amount">&euro;4,99</span>
+              <span class="price-period">/Monat</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li>&#10003; Unbegrenzte Reisen</li>
+            <li>&#10003; Voller KI-Assistent</li>
+            <li>&#10003; Unbegrenzter Fotospeicher</li>
+            <li>&#10003; Reise-Zeitleiste &amp; Statistiken</li>
+            <li>&#10003; Community-Sharing</li>
+            <li>&#10003; Priorisierter E-Mail-Support</li>
+            <li class="disabled">&#10007; API-Zugang</li>
+          </ul>
+          <a href="#" class="btn btn-primary btn-block">Kostenlos testen</a>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3 class="pricing-name">Premium</h3>
+            <div class="pricing-price">
+              <span class="price-amount">&euro;9,99</span>
+              <span class="price-period">/Monat</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li>&#10003; Alles aus Explorer</li>
+            <li>&#10003; Offline-Karten</li>
+            <li>&#10003; Priorisierter Support</li>
+            <li>&#10003; API-Zugang</li>
+            <li>&#10003; Eigene Reisevorlagen</li>
+            <li>&#10003; Erweiterte Reiseanalysen</li>
+            <li>&#10003; Fruehzeitiger Zugang zu neuen Funktionen</li>
+          </ul>
+          <a href="#" class="btn btn-outline btn-block">Kostenlos testen</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="section cta-banner">
+    <div class="container">
+      <h2 class="cta-title">Bereit fuer dein naechstes Abenteuer?</h2>
+      <p class="cta-subtitle">Schliesse dich Tausenden von Reisenden an, die klueger planen, tiefer erkunden und fuer immer erinnern.</p>
+      <a href="#" class="btn btn-primary btn-lg" id="ctaRegisterBtn">Kostenloses Konto erstellen</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">
+            <span class="logo-icon">&#9992;</span>
+            <span class="logo-text">TravelPlanner</span>
+          </a>
+          <p class="footer-tagline">Erkunden. Traeumen. Entdecken.</p>
+          <p class="footer-copy">&copy; 2026 TravelPlanner. Alle Rechte vorbehalten.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Produkt</h4>
+          <ul>
+            <li><a href="#features">Funktionen</a></li>
+            <li><a href="#pricing">Preise</a></li>
+            <li><a href="#ai-assistant">KI-Assistent</a></li>
+            <li><a href="#destinations">Reiseziele</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Unternehmen</h4>
+          <ul>
+            <li><a href="#">Ueber uns</a></li>
+            <li><a href="#">Karriere</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Presse</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Hilfe</h4>
+          <ul>
+            <li><a href="#">Hilfezentrum</a></li>
+            <li><a href="#">Kontakt</a></li>
+            <li><a href="#">Datenschutz</a></li>
+            <li><a href="#">Nutzungsbedingungen</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Login/Register Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <button class="modal-close" id="modalClose" aria-label="Modal schliessen">&times;</button>
+
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="tabLogin">Anmelden</button>
+        <button class="modal-tab" id="tabRegister">Registrieren</button>
+      </div>
+
+      <!-- Login Form -->
+      <form class="modal-form" id="loginForm">
+        <h2 class="modal-title">Willkommen zurueck</h2>
+        <div class="form-group">
+          <label for="loginEmail">E-Mail</label>
+          <input type="email" id="loginEmail" placeholder="du@beispiel.com" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Passwort</label>
+          <input type="password" id="loginPassword" placeholder="Dein Passwort" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Anmelden</button>
+        <p class="form-footer">Noch kein Konto? <a href="#" id="switchToRegister">Registrieren</a></p>
+      </form>
+
+      <!-- Register Form -->
+      <form class="modal-form hidden" id="registerForm">
+        <h2 class="modal-title">Konto erstellen</h2>
+        <div class="form-group">
+          <label for="regName">Vollstaendiger Name</label>
+          <input type="text" id="regName" placeholder="Dein Name" required>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">E-Mail</label>
+          <input type="email" id="regEmail" placeholder="du@beispiel.com" required>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Passwort</label>
+          <input type="password" id="regPassword" placeholder="Passwort erstellen" required>
+        </div>
+        <div class="form-group">
+          <label for="regConfirm">Passwort bestaetigen</label>
+          <input type="password" id="regConfirm" placeholder="Passwort bestaetigen" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Konto erstellen</button>
+        <p class="form-footer">Bereits ein Konto? <a href="#" id="switchToLogin">Anmelden</a></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var modal = document.getElementById('authModal');
+      var loginForm = document.getElementById('loginForm');
+      var registerForm = document.getElementById('registerForm');
+      var tabLogin = document.getElementById('tabLogin');
+      var tabRegister = document.getElementById('tabRegister');
+
+      function openModal(tab) {
+        modal.classList.add('active');
+        if (tab === 'register') {
+          showRegister();
+        } else {
+          showLogin();
+        }
+      }
+      function closeModal() { modal.classList.remove('active'); }
+      function showLogin() {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+      }
+      function showRegister() {
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+      }
+
+      document.getElementById('loginBtn').addEventListener('click', function() { openModal('login'); });
+      document.getElementById('registerBtn').addEventListener('click', function() { openModal('register'); });
+      document.getElementById('ctaRegisterBtn').addEventListener('click', function(e) { e.preventDefault(); openModal('register'); });
+      document.getElementById('modalClose').addEventListener('click', closeModal);
+      modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
+      tabLogin.addEventListener('click', showLogin);
+      tabRegister.addEventListener('click', showRegister);
+      document.getElementById('switchToRegister').addEventListener('click', function(e) { e.preventDefault(); showRegister(); });
+      document.getElementById('switchToLogin').addEventListener('click', function(e) { e.preventDefault(); showLogin(); });
+
+      document.getElementById('navToggle').addEventListener('click', function() {
+        document.getElementById('navLinks').classList.toggle('open');
+        this.classList.toggle('open');
+      });
+
+      window.addEventListener('scroll', function() {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+      });
+    })();
+  </script>
+</body>
+</html>
