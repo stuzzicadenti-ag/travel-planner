@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TravelPlanner - Plan. Explore. Remember.</title>
-  <meta name="description" content="TravelPlanner is an AI-powered travel diary and trip planner. Discover destinations, build itineraries, document your journeys, and share your stories.">
+  <meta name="description" content="TravelPlanner is a WeRoad-style group travel platform. Discover curated group trips, read reviews, find last-minute deals, and join a community of travelers.">
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
   <link rel="stylesheet" href="/public/style.css">
   <link rel="stylesheet" href="/public/landing.css">
@@ -13,16 +13,18 @@
 
   <nav class="navbar" id="navbar">
     <div class="container nav-container">
-      <a href="/" class="nav-logo">
-        <span class="logo-icon">&#9992;</span>
-        <span class="logo-text">TravelPlanner</span>
+      <a href="/" class="nav-brand">
+        <span class="nav-icon">&#9992;</span>
+        TravelPlanner
       </a>
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation menu">
+      <input type="checkbox" id="nav-toggle" class="nav-toggle-checkbox" aria-label="Toggle navigation">
+      <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu">
         <span></span><span></span><span></span>
-      </button>
-      <ul class="nav-links" id="navLinks">
+      </label>
+      <ul class="nav-links">
         <li><a href="/" class="nav-link active">Home</a></li>
-        <li><a href="/itineraries" class="nav-link">Browse Itineraries</a></li>
+        <li><a href="/itineraries" class="nav-link">Browse Trips</a></li>
+        <li><a href="/community" class="nav-link">Community</a></li>
         <% if (typeof user !== 'undefined' && user) { %>
           <li><a href="/trips" class="nav-link">My Trips</a></li>
         <% } %>

@@ -37,6 +37,18 @@ export const itineraries = pgTable("itineraries", {
   description: text("description"),
   tier: tierEnum("tier").default("free").notNull(),
   rating: numeric("rating", { precision: 2, scale: 1 }).default("4.5"),
+  // WeRoad-style fields
+  season: varchar("season", { length: 20 }),
+  mood: varchar("mood", { length: 30 }),
+  groupSize: integer("group_size"),
+  ageRange: varchar("age_range", { length: 20 }),
+  coordinatorName: varchar("coordinator_name", { length: 255 }),
+  coordinatorBio: text("coordinator_bio"),
+  originalPrice: numeric("original_price", { precision: 10, scale: 2 }),
+  discount: integer("discount"),
+  departureDate: timestamp("departure_date"),
+  spotsLeft: integer("spots_left"),
+  coverGradient: varchar("cover_gradient", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -80,4 +92,42 @@ export const affiliateClicks = pgTable("affiliate_clicks", {
     .notNull(),
   partner: varchar("partner", { length: 100 }).notNull(),
   clickedAt: timestamp("clicked_at").defaultNow().notNull(),
+});
+
+// WeRoad-style new tables
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  itineraryId: integer("itinerary_id")
+    .references(() => itineraries.id, { onDelete: "cascade" })
+    .notNull(),
+  rating: integer("rating").notNull(),
+  comment: text("comment"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const newsletterSubscribers = pgTable("newsletter_subscribers", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  subscribedAt: timestamp("subscribed_at").defaultNow().notNull(),
+});
+
+export const itineraryPhotos = pgTable("itinerary_photos", {
+  id: serial("id").primaryKey(),
+  itineraryId: integer("itinerary_id")
+    .references(() => itineraries.id, { onDelete: "cascade" })
+    .notNull(),
+  url: varchar("url", { length: 500 }).notNull(),
+  caption: varchar("caption", { length: 255 }),
+  position: integer("position").default(0),
+});
+
+export const itineraryTags = pgTable("itinerary_tags", {
+  id: serial("id").primaryKey(),
+  itineraryId: integer("itinerary_id")
+    .references(() => itineraries.id, { onDelete: "cascade" })
+    .notNull(),
+  tag: varchar("tag", { length: 50 }).notNull(),
 });

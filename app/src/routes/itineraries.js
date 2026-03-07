@@ -1,4 +1,4 @@
-import { eq, sql, and, gte, lte } from "drizzle-orm";
+import { eq, sql, and, gte, lte, desc, asc } from "drizzle-orm";
 import { db, pool } from "../db/index.js";
 import {
   itineraries,
@@ -6,14 +6,20 @@ import {
   itineraryItems,
   savedTrips,
   affiliateClicks,
+  reviews,
+  itineraryPhotos,
+  itineraryTags,
 } from "../db/schema.js";
 
 const TIER_LEVELS = { free: 0, explorer: 1, premium: 2 };
+const VALID_MOODS = ["adventure", "relaxation", "culture", "party", "wellness"];
+const VALID_SEASONS = ["summer", "winter", "spring", "autumn", "all"];
+const VALID_SORTS = ["rating", "price", "price_desc", "departure", "discount"];
 
 export async function itineraryRoutes(app) {
   // GET /itineraries - List itineraries with optional filters
   app.get("/", async (req, reply) => {
-    const { country, min_days, max_days, min_budget, max_budget, search } = req.query;
+    const { country, min_days, max_days, min_budget, max_budget, search, mood, season, tag, sort } = req.query;
 
     const conditions = [];
 
@@ -41,17 +47,83 @@ export async function itineraryRoutes(app) {
         sql`(${itineraries.title} ILIKE ${'%' + search + '%'} OR ${itineraries.destination} ILIKE ${'%' + search + '%'})`
       );
     }
+    if (mood && VALID_MOODS.includes(mood)) {
+      conditions.push(eq(itineraries.mood, mood));
+    }
+    if (season && VALID_SEASONS.includes(season)) {
+      conditions.push(eq(itineraries.season, season));
+    }
 
     let query = db.select().from(itineraries);
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
-    const rows = await query.orderBy(itineraries.createdAt).limit(50);
+
+    // Sort
+    if (sort === "rating") {
+      query = query.orderBy(desc(itineraries.rating));
+    } else if (sort === "price") {
+      query = query.orderBy(asc(itineraries.budgetAmount));
+    } else if (sort === "price_desc") {
+      query = query.orderBy(desc(itineraries.budgetAmount));
+    } else if (sort === "departure") {
+      query = query.orderBy(asc(itineraries.departureDate));
+    } else if (sort === "discount") {
+      query = query.orderBy(desc(itineraries.discount));
+    } else {
+      query = query.orderBy(itineraries.createdAt);
+    }
+
+    let rows = await query.limit(50);
+
+    // If tag filter, we need to filter by tag join
+    if (tag && tag.trim()) {
+      const tagFilter = tag.trim();
+      const taggedIds = await pool.query(
+        "SELECT DISTINCT itinerary_id FROM itinerary_tags WHERE tag ILIKE $1",
+        [tagFilter]
+      );
+      const ids = new Set(taggedIds.rows.map(r => r.itinerary_id));
+      rows = rows.filter(r => ids.has(r.id));
+    }
+
+    // Fetch tags for displayed itineraries
+    const itinIds = rows.map(r => r.id);
+    let tagsMap = {};
+    if (itinIds.length > 0) {
+      const tagsRes = await pool.query(
+        `SELECT itinerary_id, tag FROM itinerary_tags WHERE itinerary_id = ANY($1)`,
+        [itinIds]
+      );
+      for (const t of tagsRes.rows) {
+        if (!tagsMap[t.itinerary_id]) tagsMap[t.itinerary_id] = [];
+        tagsMap[t.itinerary_id].push(t.tag);
+      }
+    }
+
+    // Fetch avg ratings from reviews
+    let ratingsMap = {};
+    if (itinIds.length > 0) {
+      const ratingsRes = await pool.query(
+        `SELECT itinerary_id, AVG(rating)::numeric(2,1) AS avg_rating, COUNT(*)::int AS review_count
+         FROM reviews WHERE itinerary_id = ANY($1) GROUP BY itinerary_id`,
+        [itinIds]
+      );
+      for (const r of ratingsRes.rows) {
+        ratingsMap[r.itinerary_id] = { avgRating: parseFloat(r.avg_rating), reviewCount: r.review_count };
+      }
+    }
 
     return reply.view("itineraries/list.ejs", {
       user: req.user,
       itineraries: rows,
-      filters: { country: country || '', min_days: min_days || '', max_days: max_days || '', min_budget: min_budget || '', max_budget: max_budget || '', search: search || '' },
+      tagsMap,
+      ratingsMap,
+      filters: {
+        country: country || '', min_days: min_days || '', max_days: max_days || '',
+        min_budget: min_budget || '', max_budget: max_budget || '', search: search || '',
+        mood: mood || '', season: season || '', tag: tag || '', sort: sort || '',
+      },
     });
   });
 
@@ -113,6 +185,56 @@ export async function itineraryRoutes(app) {
       isSaved = !!saved;
     }
 
+    // Fetch reviews
+    const reviewsRes = await pool.query(
+      `SELECT r.*, u.name AS user_name
+       FROM reviews r JOIN users u ON u.id = r.user_id
+       WHERE r.itinerary_id = $1 ORDER BY r.created_at DESC`,
+      [id]
+    );
+    const itinReviews = reviewsRes.rows;
+
+    // Average rating
+    const avgRes = await pool.query(
+      `SELECT AVG(rating)::numeric(2,1) AS avg_rating, COUNT(*)::int AS review_count FROM reviews WHERE itinerary_id = $1`,
+      [id]
+    );
+    const avgRating = avgRes.rows[0]?.avg_rating ? parseFloat(avgRes.rows[0].avg_rating) : null;
+    const reviewCount = avgRes.rows[0]?.review_count || 0;
+
+    // Fetch photos
+    const photosRes = await pool.query(
+      `SELECT * FROM itinerary_photos WHERE itinerary_id = $1 ORDER BY position ASC`,
+      [id]
+    );
+
+    // Fetch tags
+    const tagsRes = await pool.query(
+      `SELECT tag FROM itinerary_tags WHERE itinerary_id = $1`,
+      [id]
+    );
+
+    // Related itineraries (same destination or mood, excluding current)
+    const relatedRes = await pool.query(
+      `SELECT id, title, destination, country_code, budget_amount, budget_currency,
+              duration_days, rating, cover_gradient, discount, original_price, mood, season
+       FROM itineraries
+       WHERE id != $1 AND (destination = $2 OR mood = $3)
+       ORDER BY rating DESC NULLS LAST
+       LIMIT 3`,
+      [id, itin.destination, itin.mood]
+    );
+
+    // Check if user already reviewed
+    let userReviewed = false;
+    if (req.user) {
+      const revCheck = await pool.query(
+        "SELECT id FROM reviews WHERE user_id = $1 AND itinerary_id = $2 LIMIT 1",
+        [req.user.id, id]
+      );
+      userReviewed = revCheck.rows.length > 0;
+    }
+
     return reply.view("itineraries/detail.ejs", {
       user: req.user,
       itinerary: itin,
@@ -120,7 +242,52 @@ export async function itineraryRoutes(app) {
       hasAccess,
       isSaved,
       error: req.query.error || null,
+      reviews: itinReviews,
+      avgRating,
+      reviewCount,
+      photos: photosRes.rows,
+      tags: tagsRes.rows.map(t => t.tag),
+      related: relatedRes.rows,
+      userReviewed,
+      reviewError: req.query.reviewError || null,
     });
+  });
+
+  // POST /itineraries/:id/review - Submit a review
+  app.post("/:id/review", async (req, reply) => {
+    const itineraryId = parseInt(req.params.id, 10);
+    if (isNaN(itineraryId)) return reply.code(404).send("Not found");
+
+    if (!req.user) return reply.redirect("/auth/login");
+
+    const { rating, comment } = req.body || {};
+    const ratingInt = parseInt(rating, 10);
+
+    if (isNaN(ratingInt) || ratingInt < 1 || ratingInt > 5) {
+      return reply.redirect(`/itineraries/${itineraryId}?reviewError=invalid_rating`);
+    }
+
+    const cleanComment = comment ? String(comment).substring(0, 1000).trim() : null;
+
+    // Check one per user per itinerary
+    const existing = await pool.query(
+      "SELECT id FROM reviews WHERE user_id = $1 AND itinerary_id = $2 LIMIT 1",
+      [req.user.id, itineraryId]
+    );
+    if (existing.rows.length > 0) {
+      return reply.redirect(`/itineraries/${itineraryId}?reviewError=already_reviewed`);
+    }
+
+    // Verify itinerary exists
+    const itinCheck = await pool.query("SELECT id FROM itineraries WHERE id = $1", [itineraryId]);
+    if (itinCheck.rows.length === 0) return reply.code(404).send("Not found");
+
+    await pool.query(
+      "INSERT INTO reviews (user_id, itinerary_id, rating, comment) VALUES ($1, $2, $3, $4)",
+      [req.user.id, itineraryId, ratingInt, cleanComment]
+    );
+
+    return reply.redirect(`/itineraries/${itineraryId}`);
   });
 
   // POST /itineraries/:id/save - Save trip

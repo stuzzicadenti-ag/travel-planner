@@ -2,7 +2,7 @@
 
 <section class="section">
   <div class="container">
-    <a href="/itineraries" class="back-link">&larr; Back to Itineraries</a>
+    <a href="/itineraries" class="back-link">&larr; Back to Trips</a>
 
     <% if (typeof error !== 'undefined' && error === 'limit') { %>
       <div class="alert alert-error" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -10,68 +10,280 @@
       </div>
     <% } %>
 
-    <div class="itinerary-header">
-      <div class="itinerary-header-info">
-        <span class="tier-badge tier-<%= itinerary.tier %> tier-badge--lg"><%= itinerary.tier.toUpperCase() %></span>
-        <h1 class="itinerary-title"><%= itinerary.title %></h1>
-        <div class="itinerary-meta">
-          <span class="meta-item meta-item--lg">&#127758; <%= itinerary.destination %></span>
-          <span class="meta-item meta-item--lg">&#128197; <%= itinerary.durationDays %> days</span>
-          <span class="meta-item meta-item--lg">&#128176; <%= itinerary.budgetCurrency %> <%= Number(itinerary.budgetAmount).toLocaleString() %></span>
-          <span class="meta-item meta-item--lg">&#11088; <%= itinerary.rating %></span>
-        </div>
-        <p class="itinerary-desc"><%= itinerary.description %></p>
+    <!-- Last-Minute Deal Banner -->
+    <% if (itinerary.discount && itinerary.discount > 0) { %>
+      <div class="deal-banner">
+        <span class="deal-banner__badge">&#128293; LAST MINUTE</span>
+        <span class="deal-banner__text">Save <%= itinerary.discount %>% on this trip! Limited spots available.</span>
       </div>
-      <div class="itinerary-actions">
-        <% if (user) { %>
-          <% if (isSaved) { %>
-            <span class="saved-indicator">&#10003; Saved to My Trips</span>
-          <% } else { %>
-            <form method="POST" action="/itineraries/<%= itinerary.id %>/save">
-              <button type="submit" class="btn btn-orange">&#128278; Save Trip</button>
-            </form>
-          <% } %>
-        <% } else { %>
-          <a href="/auth/login" class="btn btn-outline">Login to Save</a>
-        <% } %>
-      </div>
-    </div>
+    <% } %>
 
-    <% if (!hasAccess) { %>
-      <div class="upgrade-prompt">
-        <div class="upgrade-icon">&#128274;</div>
-        <h2>Upgrade Required</h2>
-        <p>This itinerary requires the <strong><%= itinerary.tier %></strong> plan. Upgrade your account to unlock the full day-by-day details, booking links, and insider tips.</p>
-        <a href="/auth/register" class="btn btn-primary btn-lg">Upgrade Now</a>
-      </div>
-    <% } else { %>
-      <div class="timeline">
-        <% days.forEach(function(day) { %>
-          <div class="timeline-day">
-            <div class="timeline-day-header">
-              <span class="day-number">Day <%= day.dayNumber %></span>
-              <h2 class="day-title"><%= day.title %></h2>
-            </div>
-            <div class="timeline-items">
-              <% day.items.forEach(function(item) { %>
-                <div class="timeline-item">
-                  <div class="timeline-time"><%= item.time %></div>
-                  <div class="timeline-content">
-                    <h3 class="item-title"><%= item.title %></h3>
-                    <p class="item-desc"><%= item.description %></p>
-                    <% if (item.affiliateUrl && item.partnerName) { %>
-                      <form method="POST" action="/itineraries/click/<%= item.id %>" class="affiliate-form">
-                        <button type="submit" class="btn btn-affiliate">
-                          &#128279; Book via <%= item.partnerName %>
-                        </button>
-                      </form>
-                    <% } %>
-                  </div>
-                </div>
-              <% }); %>
+    <!-- Photo Gallery -->
+    <% if (typeof photos !== 'undefined' && photos.length > 0) { %>
+      <div class="photo-gallery">
+        <% photos.forEach(function(photo) { %>
+          <div class="photo-gallery__item">
+            <div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #e8f4fd, #b8ddf3);">
+              <span class="photo-gallery__caption"><%= photo.caption || 'Trip photo' %></span>
             </div>
           </div>
         <% }); %>
+      </div>
+    <% } else { %>
+      <!-- Colored placeholder cards if no photos -->
+      <div class="photo-gallery">
+        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);"><span class="photo-gallery__caption"><%= itinerary.destination %></span></div></div>
+        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);"><span class="photo-gallery__caption">Day & Night</span></div></div>
+        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #d4fc79, #96e6a1);"><span class="photo-gallery__caption">Nature</span></div></div>
+        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #e0c3fc, #8ec5fc);"><span class="photo-gallery__caption">Culture</span></div></div>
+      </div>
+    <% } %>
+
+    <div class="detail-layout">
+      <div class="detail-main">
+        <div class="itinerary-header">
+          <div class="itinerary-header-info">
+            <span class="tier-badge tier-<%= itinerary.tier %> tier-badge--lg"><%= itinerary.tier.toUpperCase() %></span>
+            <h1 class="itinerary-title"><%= itinerary.title %></h1>
+
+            <!-- Average Rating Display -->
+            <div class="rating-display">
+              <% const displayAvg = typeof avgRating !== 'undefined' && avgRating ? avgRating : Number(itinerary.rating); %>
+              <% for (let i = 1; i <= 5; i++) { %>
+                <span class="star star--lg <%= i <= Math.round(displayAvg) ? 'star--filled' : '' %>">&#9733;</span>
+              <% } %>
+              <span class="rating-num-lg"><%= displayAvg ? displayAvg.toFixed(1) : (itinerary.rating || '4.5') %></span>
+              <% if (typeof reviewCount !== 'undefined' && reviewCount > 0) { %>
+                <span class="review-count-lg">(<%= reviewCount %> review<%= reviewCount !== 1 ? 's' : '' %>)</span>
+              <% } %>
+            </div>
+
+            <div class="itinerary-meta">
+              <span class="meta-item meta-item--lg">&#127758; <%= itinerary.destination %></span>
+              <span class="meta-item meta-item--lg">&#128197; <%= itinerary.durationDays %> days</span>
+              <% if (itinerary.discount && itinerary.discount > 0 && itinerary.originalPrice) { %>
+                <span class="meta-item meta-item--lg"><span class="price-struck">&euro;<%= Number(itinerary.originalPrice).toLocaleString() %></span> &#128176; &euro;<%= Number(itinerary.budgetAmount).toLocaleString() %></span>
+              <% } else { %>
+                <span class="meta-item meta-item--lg">&#128176; <%= itinerary.budgetCurrency %> <%= Number(itinerary.budgetAmount).toLocaleString() %></span>
+              <% } %>
+            </div>
+
+            <!-- Tags -->
+            <% if (typeof tags !== 'undefined' && tags.length > 0) { %>
+              <div class="itinerary-tags">
+                <% tags.forEach(function(tag) { %>
+                  <span class="tag"><%= tag %></span>
+                <% }); %>
+              </div>
+            <% } %>
+
+            <p class="itinerary-desc"><%= itinerary.description %></p>
+          </div>
+          <div class="itinerary-actions">
+            <% if (user) { %>
+              <% if (isSaved) { %>
+                <span class="saved-indicator">&#10003; Saved to My Trips</span>
+              <% } else { %>
+                <form method="POST" action="/itineraries/<%= itinerary.id %>/save">
+                  <button type="submit" class="btn btn-orange">&#128278; Save Trip</button>
+                </form>
+              <% } %>
+            <% } else { %>
+              <a href="/auth/login" class="btn btn-outline">Login to Save</a>
+            <% } %>
+            <!-- Share button -->
+            <button type="button" class="btn btn-outline btn-sm" style="margin-top: 8px;" onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert('Link copied!')})">&#128279; Share</button>
+          </div>
+        </div>
+
+        <!-- Group Info Card -->
+        <% if (itinerary.coordinatorName || itinerary.groupSize || itinerary.ageRange) { %>
+          <div class="group-info-card">
+            <h3 class="group-info-title">&#128101; Group Trip Details</h3>
+            <div class="group-info-grid">
+              <% if (itinerary.coordinatorName) { %>
+                <div class="group-info-item">
+                  <div class="coordinator-avatar"><%= itinerary.coordinatorName.charAt(0).toUpperCase() %></div>
+                  <div>
+                    <div class="group-info-label">Your Coordinator</div>
+                    <div class="group-info-value"><%= itinerary.coordinatorName %></div>
+                    <% if (itinerary.coordinatorBio) { %>
+                      <p class="coordinator-bio"><%= itinerary.coordinatorBio %></p>
+                    <% } %>
+                  </div>
+                </div>
+              <% } %>
+              <% if (itinerary.groupSize) { %>
+                <div class="group-info-item">
+                  <div class="group-info-icon">&#128101;</div>
+                  <div>
+                    <div class="group-info-label">Group Size</div>
+                    <div class="group-info-value">Max <%= itinerary.groupSize %> travelers</div>
+                  </div>
+                </div>
+              <% } %>
+              <% if (itinerary.ageRange) { %>
+                <div class="group-info-item">
+                  <div class="group-info-icon">&#128100;</div>
+                  <div>
+                    <div class="group-info-label">Age Range</div>
+                    <div class="group-info-value"><%= itinerary.ageRange %></div>
+                  </div>
+                </div>
+              <% } %>
+              <% if (itinerary.departureDate) { %>
+                <div class="group-info-item">
+                  <div class="group-info-icon">&#128197;</div>
+                  <div>
+                    <div class="group-info-label">Next Departure</div>
+                    <div class="group-info-value"><%= new Date(itinerary.departureDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></div>
+                  </div>
+                </div>
+              <% } %>
+              <% if (itinerary.spotsLeft != null) { %>
+                <div class="group-info-item">
+                  <div class="group-info-icon"><%= itinerary.spotsLeft <= 3 ? '&#128293;' : '&#127919;' %></div>
+                  <div>
+                    <div class="group-info-label">Spots Left</div>
+                    <div class="group-info-value <%= itinerary.spotsLeft <= 5 ? 'spots-urgent' : '' %>"><%= itinerary.spotsLeft %> spots remaining</div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% } %>
+
+        <% if (!hasAccess) { %>
+          <div class="upgrade-prompt">
+            <div class="upgrade-icon">&#128274;</div>
+            <h2>Upgrade Required</h2>
+            <p>This itinerary requires the <strong><%= itinerary.tier %></strong> plan. Upgrade your account to unlock the full day-by-day details, booking links, and insider tips.</p>
+            <a href="/auth/register" class="btn btn-primary btn-lg">Upgrade Now</a>
+          </div>
+        <% } else { %>
+          <div class="timeline">
+            <% days.forEach(function(day) { %>
+              <div class="timeline-day">
+                <div class="timeline-day-header">
+                  <span class="day-number">Day <%= day.dayNumber %></span>
+                  <h2 class="day-title"><%= day.title %></h2>
+                </div>
+                <div class="timeline-items">
+                  <% day.items.forEach(function(item) { %>
+                    <div class="timeline-item">
+                      <div class="timeline-time"><%= item.time %></div>
+                      <div class="timeline-content">
+                        <h3 class="item-title"><%= item.title %></h3>
+                        <p class="item-desc"><%= item.description %></p>
+                        <% if (item.affiliateUrl && item.partnerName) { %>
+                          <form method="POST" action="/itineraries/click/<%= item.id %>" class="affiliate-form">
+                            <button type="submit" class="btn btn-affiliate">
+                              &#128279; Book via <%= item.partnerName %>
+                            </button>
+                          </form>
+                        <% } %>
+                      </div>
+                    </div>
+                  <% }); %>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+          <h2 class="reviews-title">&#11088; Reviews</h2>
+
+          <% if (typeof reviewError !== 'undefined' && reviewError === 'invalid_rating') { %>
+            <div class="alert alert-error" style="margin-bottom: 16px;">Rating must be between 1 and 5.</div>
+          <% } %>
+          <% if (typeof reviewError !== 'undefined' && reviewError === 'already_reviewed') { %>
+            <div class="alert alert-error" style="margin-bottom: 16px;">You have already reviewed this trip.</div>
+          <% } %>
+
+          <!-- Write a Review Form -->
+          <% if (user && typeof userReviewed !== 'undefined' && !userReviewed) { %>
+            <div class="review-form-card">
+              <h3>Write a Review</h3>
+              <form method="POST" action="/itineraries/<%= itinerary.id %>/review" class="review-form">
+                <div class="form-group">
+                  <label class="form-label">Rating</label>
+                  <div class="rating-input">
+                    <% for (let i = 5; i >= 1; i--) { %>
+                      <input type="radio" name="rating" id="star<%= i %>" value="<%= i %>" required>
+                      <label for="star<%= i %>" class="rating-input__star">&#9733;</label>
+                    <% } %>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Comment (optional, max 1000 chars)</label>
+                  <textarea name="comment" class="form-input" maxlength="1000" rows="3" placeholder="Share your experience..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+              </form>
+            </div>
+          <% } else if (!user) { %>
+            <p style="margin-bottom: 16px; color: var(--text-light);"><a href="/auth/login">Login</a> to write a review.</p>
+          <% } %>
+
+          <!-- Reviews List -->
+          <% if (typeof reviews !== 'undefined' && reviews.length > 0) { %>
+            <div class="reviews-list">
+              <% reviews.forEach(function(rev) { %>
+                <div class="review-card">
+                  <div class="review-card__header">
+                    <div class="review-avatar"><%= rev.user_name ? rev.user_name.charAt(0).toUpperCase() : '?' %></div>
+                    <div class="review-info">
+                      <span class="review-name"><%= rev.user_name %></span>
+                      <span class="review-date"><%= new Date(rev.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+                    </div>
+                  </div>
+                  <div class="review-stars">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                      <span class="star <%= i <= rev.rating ? 'star--filled' : '' %>">&#9733;</span>
+                    <% } %>
+                  </div>
+                  <% if (rev.comment) { %>
+                    <p class="review-comment"><%= rev.comment %></p>
+                  <% } %>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <p class="no-reviews">No reviews yet. Be the first to share your experience!</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Itineraries -->
+    <% if (typeof related !== 'undefined' && related.length > 0) { %>
+      <div class="related-section">
+        <h2 class="section-title" style="text-align: left; margin-bottom: 24px;">You Might Also Like</h2>
+        <div class="related-grid">
+          <% related.forEach(function(rel) { %>
+            <div class="card">
+              <div class="card-header" style="background: <%= rel.cover_gradient || 'var(--sky)' %>; min-height: 80px; align-items: center; justify-content: center; position: relative;">
+                <span class="card-flag" style="font-size: 1.5rem;"><%= rel.country_code %></span>
+                <% if (rel.discount && rel.discount > 0) { %>
+                  <span class="deal-badge deal-badge--card" style="position: absolute; top: 8px; left: 8px;">-<%= rel.discount %>%</span>
+                <% } %>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title"><%= rel.title %></h3>
+                <div class="card-meta">
+                  <span class="meta-item">&#128197; <%= rel.duration_days %> days</span>
+                  <span class="meta-item">&#128176; &euro;<%= Number(rel.budget_amount).toLocaleString() %></span>
+                  <span class="meta-item">&#11088; <%= rel.rating %></span>
+                </div>
+              </div>
+              <div class="card-footer">
+                <a href="/itineraries/<%= rel.id %>" class="btn btn-primary btn-block">View Trip</a>
+              </div>
+            </div>
+          <% }); %>
+        </div>
       </div>
     <% } %>
   </div>

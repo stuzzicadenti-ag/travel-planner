@@ -2,13 +2,35 @@
 
 <section class="section">
   <div class="container">
-    <h1 class="page-title">Browse Itineraries</h1>
-    <p class="page-subtitle">Explore our curated collection of travel itineraries for every budget and style.</p>
+    <h1 class="page-title">Browse Trips</h1>
+    <p class="page-subtitle">Explore our curated collection of group travel experiences for every mood and season.</p>
 
-    <!-- Filters -->
+    <!-- Mood/Season Filter Pills -->
     <% const f = typeof filters !== 'undefined' ? filters : {}; %>
+    <div class="filter-pills-row" style="margin-bottom: 12px;">
+      <span class="filter-pills-label">Mood:</span>
+      <a href="/itineraries?mood=adventure<%= f.season ? '&season=' + f.season : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill <%= f.mood === 'adventure' ? 'filter-pill--active' : '' %>">&#127956; Adventure</a>
+      <a href="/itineraries?mood=relaxation<%= f.season ? '&season=' + f.season : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill <%= f.mood === 'relaxation' ? 'filter-pill--active' : '' %>">&#127796; Relaxation</a>
+      <a href="/itineraries?mood=culture<%= f.season ? '&season=' + f.season : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill <%= f.mood === 'culture' ? 'filter-pill--active' : '' %>">&#127963; Culture</a>
+      <a href="/itineraries?mood=party<%= f.season ? '&season=' + f.season : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill <%= f.mood === 'party' ? 'filter-pill--active' : '' %>">&#127881; Party</a>
+      <a href="/itineraries?mood=wellness<%= f.season ? '&season=' + f.season : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill <%= f.mood === 'wellness' ? 'filter-pill--active' : '' %>">&#128518; Wellness</a>
+    </div>
+    <div class="filter-pills-row" style="margin-bottom: 20px;">
+      <span class="filter-pills-label">Season:</span>
+      <a href="/itineraries?season=summer<%= f.mood ? '&mood=' + f.mood : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill filter-pill--summer <%= f.season === 'summer' ? 'filter-pill--active' : '' %>">&#9728; Summer</a>
+      <a href="/itineraries?season=winter<%= f.mood ? '&mood=' + f.mood : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill filter-pill--winter <%= f.season === 'winter' ? 'filter-pill--active' : '' %>">&#10052; Winter</a>
+      <a href="/itineraries?season=spring<%= f.mood ? '&mood=' + f.mood : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill filter-pill--spring <%= f.season === 'spring' ? 'filter-pill--active' : '' %>">&#127800; Spring</a>
+      <a href="/itineraries?season=autumn<%= f.mood ? '&mood=' + f.mood : '' %><%= f.sort ? '&sort=' + f.sort : '' %>" class="filter-pill filter-pill--autumn <%= f.season === 'autumn' ? 'filter-pill--active' : '' %>">&#127810; Autumn</a>
+      <% if (f.mood || f.season || f.tag || f.sort) { %>
+        <a href="/itineraries" class="filter-pill filter-pill--clear">&#10005; Clear Filters</a>
+      <% } %>
+    </div>
+
+    <!-- Sort + Advanced Filters -->
     <div class="card" style="margin-bottom: 24px; padding: 20px;">
       <form action="/itineraries" method="GET" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+        <% if (f.mood) { %><input type="hidden" name="mood" value="<%= f.mood %>"><% } %>
+        <% if (f.season) { %><input type="hidden" name="season" value="<%= f.season %>"><% } %>
         <div class="form-group" style="flex: 1; min-width: 140px; margin-bottom: 0;">
           <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Search</label>
           <input type="text" name="search" class="form-input" placeholder="Destination or title..." value="<%= f.search || '' %>" style="padding: 8px;">
@@ -25,13 +47,16 @@
           <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Max Days</label>
           <input type="number" name="max_days" class="form-input" placeholder="30" min="1" value="<%= f.max_days || '' %>" style="padding: 8px;">
         </div>
-        <div class="form-group" style="flex: 0 0 100px; margin-bottom: 0;">
-          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Min Budget</label>
-          <input type="number" name="min_budget" class="form-input" placeholder="0" min="0" value="<%= f.min_budget || '' %>" style="padding: 8px;">
-        </div>
-        <div class="form-group" style="flex: 0 0 100px; margin-bottom: 0;">
-          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Max Budget</label>
-          <input type="number" name="max_budget" class="form-input" placeholder="10000" min="0" value="<%= f.max_budget || '' %>" style="padding: 8px;">
+        <div class="form-group" style="flex: 0 0 140px; margin-bottom: 0;">
+          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Sort By</label>
+          <select name="sort" class="form-input sort-select" style="padding: 8px;">
+            <option value="">Default</option>
+            <option value="rating" <%= f.sort === 'rating' ? 'selected' : '' %>>Rating (High-Low)</option>
+            <option value="price" <%= f.sort === 'price' ? 'selected' : '' %>>Price (Low-High)</option>
+            <option value="price_desc" <%= f.sort === 'price_desc' ? 'selected' : '' %>>Price (High-Low)</option>
+            <option value="departure" <%= f.sort === 'departure' ? 'selected' : '' %>>Departure (Soonest)</option>
+            <option value="discount" <%= f.sort === 'discount' ? 'selected' : '' %>>Biggest Discount</option>
+          </select>
         </div>
         <div style="display: flex; gap: 8px; margin-bottom: 0;">
           <button type="submit" class="btn btn-primary" style="padding: 8px 16px;">Filter</button>
@@ -41,11 +66,19 @@
     </div>
 
     <div class="card-grid">
+      <% const tm = typeof tagsMap !== 'undefined' ? tagsMap : {}; %>
+      <% const rm = typeof ratingsMap !== 'undefined' ? ratingsMap : {}; %>
       <% itineraries.forEach(function(itin) { %>
         <div class="card">
-          <div class="card-header">
-            <span class="card-flag"><%= itin.countryCode %></span>
-            <span class="tier-badge tier-<%= itin.tier %>"><%= itin.tier.toUpperCase() %></span>
+          <div class="card-header" style="background: <%= itin.coverGradient || 'var(--sky)' %>; min-height: 100px; align-items: center; justify-content: center; position: relative;">
+            <span class="card-flag" style="font-size: 2rem;"><%= itin.countryCode %></span>
+            <span class="tier-badge tier-<%= itin.tier %>" style="position: absolute; top: 8px; right: 8px;"><%= itin.tier.toUpperCase() %></span>
+            <% if (itin.discount && itin.discount > 0) { %>
+              <span class="deal-badge deal-badge--card" style="position: absolute; top: 8px; left: 8px;">-<%= itin.discount %>%</span>
+            <% } %>
+            <% if (itin.spotsLeft && itin.spotsLeft <= 5) { %>
+              <span class="spots-badge spots-badge--pulse" style="position: absolute; bottom: 8px; right: 8px;"><%= itin.spotsLeft %> spots left!</span>
+            <% } %>
           </div>
           <div class="card-body">
             <h3 class="card-title">
@@ -54,15 +87,40 @@
               <% } %>
               <%= itin.title %>
             </h3>
+            <div class="card-rating">
+              <% const displayRating = rm[itin.id] ? rm[itin.id].avgRating : Number(itin.rating); %>
+              <% for (let i = 1; i <= 5; i++) { %>
+                <span class="star <%= i <= Math.round(displayRating) ? 'star--filled' : '' %>">&#9733;</span>
+              <% } %>
+              <span class="rating-text"><%= displayRating ? displayRating.toFixed(1) : (itin.rating || '4.5') %></span>
+              <% if (rm[itin.id]) { %>
+                <span class="review-count">(<%= rm[itin.id].reviewCount %> reviews)</span>
+              <% } %>
+            </div>
             <div class="card-meta">
               <span class="meta-item">&#128197; <%= itin.durationDays %> days</span>
-              <span class="meta-item">&#128176; <%= itin.budgetCurrency %> <%= Number(itin.budgetAmount).toLocaleString() %></span>
-              <span class="meta-item">&#11088; <%= itin.rating %></span>
+              <% if (itin.discount && itin.discount > 0 && itin.originalPrice) { %>
+                <span class="meta-item"><span class="price-struck">&euro;<%= Number(itin.originalPrice).toLocaleString() %></span> &euro;<%= Number(itin.budgetAmount).toLocaleString() %></span>
+              <% } else { %>
+                <span class="meta-item">&#128176; &euro;<%= Number(itin.budgetAmount).toLocaleString() %></span>
+              <% } %>
             </div>
-            <p class="card-desc"><%= itin.description ? itin.description.substring(0, 140) + '...' : '' %></p>
+            <div class="card-meta" style="margin-top: 4px;">
+              <% if (itin.groupSize) { %><span class="meta-item">&#128101; Max <%= itin.groupSize %></span><% } %>
+              <% if (itin.ageRange) { %><span class="meta-item">&#128100; <%= itin.ageRange %></span><% } %>
+              <% if (itin.departureDate) { %><span class="meta-item">&#128197; <%= new Date(itin.departureDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></span><% } %>
+            </div>
+            <% if (tm[itin.id] && tm[itin.id].length > 0) { %>
+              <div class="card-tags">
+                <% tm[itin.id].slice(0, 4).forEach(function(tag) { %>
+                  <a href="/itineraries?tag=<%= encodeURIComponent(tag) %>" class="tag tag--sm"><%= tag %></a>
+                <% }); %>
+              </div>
+            <% } %>
+            <p class="card-desc"><%= itin.description ? itin.description.substring(0, 120) + '...' : '' %></p>
           </div>
           <div class="card-footer">
-            <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-block">View Itinerary</a>
+            <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-block">View Trip</a>
           </div>
         </div>
       <% }); %>
@@ -70,7 +128,8 @@
 
     <% if (itineraries.length === 0) { %>
       <div class="empty-state">
-        <p>No itineraries available yet. Check back soon!</p>
+        <p>No trips match your filters. Try adjusting your search.</p>
+        <a href="/itineraries" class="btn btn-outline" style="margin-top: 16px;">Clear Filters</a>
       </div>
     <% } %>
   </div>

@@ -1,0 +1,83 @@
+<%- include('../partials/header') %>
+
+<section class="section">
+  <div class="container">
+    <h1 class="page-title">Traveler Community</h1>
+    <p class="page-subtitle">Real stories and reviews from our community of explorers. Get inspired for your next adventure.</p>
+
+    <div class="community-layout">
+      <!-- Main feed -->
+      <div class="community-main">
+        <h2 class="community-section-title">Recent Reviews</h2>
+
+        <% if (reviews && reviews.length > 0) { %>
+          <div class="reviews-list">
+            <% reviews.forEach(function(rev) { %>
+              <div class="review-card review-card--full">
+                <div class="review-card__header">
+                  <div class="review-avatar"><%= rev.user_name ? rev.user_name.charAt(0).toUpperCase() : '?' %></div>
+                  <div class="review-info">
+                    <span class="review-name"><%= rev.user_name %></span>
+                    <span class="review-trip">
+                      reviewed <a href="/itineraries/<%= rev.itin_id %>"><%= rev.itinerary_title %></a>
+                      <% if (rev.destination) { %> in <%= rev.destination %><% } %>
+                    </span>
+                  </div>
+                </div>
+                <div class="review-stars">
+                  <% for (let i = 1; i <= 5; i++) { %>
+                    <span class="star <%= i <= rev.rating ? 'star--filled' : '' %>">&#9733;</span>
+                  <% } %>
+                  <span class="review-date"><%= new Date(rev.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+                </div>
+                <% if (rev.comment) { %>
+                  <p class="review-comment"><%= rev.comment %></p>
+                <% } %>
+              </div>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <div class="empty-icon">&#128172;</div>
+            <h2>No reviews yet</h2>
+            <p>Be the first to share your travel experience!</p>
+            <a href="/itineraries" class="btn btn-primary">Browse Trips</a>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Sidebar -->
+      <% if (typeof topRated !== 'undefined' && topRated.length > 0) { %>
+        <aside class="community-sidebar">
+          <h3 class="sidebar-title">&#11088; Top-Rated Trips</h3>
+          <div class="sidebar-trips">
+            <% topRated.forEach(function(trip) { %>
+              <a href="/itineraries/<%= trip.id %>" class="sidebar-trip">
+                <div class="sidebar-trip__info">
+                  <span class="sidebar-trip__title"><%= trip.title %></span>
+                  <span class="sidebar-trip__meta"><%= trip.destination %> &middot; <%= trip.duration_days %> days</span>
+                </div>
+                <div class="sidebar-trip__rating">
+                  <span class="star star--filled">&#9733;</span>
+                  <span><%= Number(trip.avg_rating).toFixed(1) %></span>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+
+          <div class="community-cta">
+            <h3>Join the Community</h3>
+            <p>Share your travel stories, rate trips, and connect with fellow explorers.</p>
+            <% if (typeof user !== 'undefined' && user) { %>
+              <a href="/itineraries" class="btn btn-primary btn-sm btn-block">Browse & Review Trips</a>
+            <% } else { %>
+              <a href="/auth/register" class="btn btn-primary btn-sm btn-block">Create Free Account</a>
+            <% } %>
+          </div>
+        </aside>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

@@ -1,5 +1,21 @@
   </main>
 
+  <!-- Newsletter Section -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-inner">
+        <div class="newsletter-text">
+          <h3>Get exclusive deals & travel inspiration</h3>
+          <p>Join 10,000+ travelers. Weekly curated trips, last-minute deals, and community stories.</p>
+        </div>
+        <form class="newsletter-form" action="/newsletter/subscribe" method="POST">
+          <input type="email" name="email" class="newsletter-input" placeholder="Enter your email" required maxlength="255" autocomplete="email">
+          <button type="submit" class="btn btn-primary newsletter-btn">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
@@ -14,19 +30,19 @@
         <div class="footer-col">
           <h4>Product</h4>
           <ul>
-            <li><a href="/itineraries">Itineraries</a></li>
+            <li><a href="/itineraries">Browse Trips</a></li>
             <li><a href="#features">Features</a></li>
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="#partners">Partners</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Company</h4>
+          <h4>Community</h4>
           <ul>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Careers</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Press</a></li>
+            <li><a href="/community">Reviews & Stories</a></li>
+            <li><a href="/community/reviews">All Reviews</a></li>
+            <li><a href="#">Travel Blog</a></li>
+            <li><a href="#">Become a Coordinator</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -44,15 +60,12 @@
 
   <script>
     // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
-    }, { passive: true });
-
-    // Mobile nav toggle
-    document.getElementById('navToggle').addEventListener('click', function() {
-      document.getElementById('navLinks').classList.toggle('open');
-      this.classList.toggle('open');
-    });
+    var navEl = document.getElementById('navbar');
+    if (navEl) {
+      window.addEventListener('scroll', function() {
+        navEl.classList.toggle('scrolled', window.scrollY > 50);
+      }, { passive: true });
+    }
   </script>
 </body>
 </html>

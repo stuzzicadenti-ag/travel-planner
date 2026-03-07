@@ -7,15 +7,21 @@ import ejs from "ejs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { db, pool } from "./db/index.js";
+import { runWeRoadMigration } from "./db/migrate-weroad.js";
 import { authRoutes } from "./routes/auth.js";
 import { itineraryRoutes } from "./routes/itineraries.js";
 import { tripRoutes } from "./routes/trips.js";
 import { adminRoutes } from "./routes/admin.js";
+import { communityRoutes } from "./routes/community.js";
+import { newsletterRoutes } from "./routes/newsletter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = Fastify({ logger: true, trustProxy: true, bodyLimit: 1048576 });
+
+// Run WeRoad migration at startup
+await runWeRoadMigration();
 
 // Security headers
 app.addHook('onSend', async (request, reply) => {
@@ -108,12 +114,39 @@ app.addHook("onRequest", async (req, reply) => {
 app.get("/health", async () => ({ status: "ok", service: "travelplanner" }));
 
 // Homepage
-import { eq } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { itineraries } from "./db/schema.js";
 
 app.get("/", async (req, reply) => {
-  const rows = await db.select().from(itineraries).orderBy(itineraries.rating).limit(6);
-  return reply.view("index.ejs", { user: req.user, itineraries: rows });
+  // Featured itineraries sorted by rating DESC
+  const featured = await db.select().from(itineraries).orderBy(desc(itineraries.rating)).limit(6);
+
+  // Last-minute deals: discount > 0, departure in future
+  const dealsRes = await pool.query(`
+    SELECT * FROM itineraries
+    WHERE discount IS NOT NULL AND discount > 0
+      AND (departure_date IS NULL OR departure_date > NOW())
+    ORDER BY discount DESC, departure_date ASC NULLS LAST
+    LIMIT 4
+  `);
+
+  // Recent reviews for homepage
+  const reviewsRes = await pool.query(`
+    SELECT r.rating, r.comment, r.created_at, u.name AS user_name,
+           i.title AS itinerary_title, i.id AS itinerary_id
+    FROM reviews r
+    JOIN users u ON u.id = r.user_id
+    JOIN itineraries i ON i.id = r.itinerary_id
+    ORDER BY r.created_at DESC
+    LIMIT 3
+  `);
+
+  return reply.view("index.ejs", {
+    user: req.user,
+    itineraries: featured,
+    deals: dealsRes.rows,
+    recentReviews: reviewsRes.rows,
+  });
 });
 
 // FAQ page
@@ -126,6 +159,8 @@ await app.register(authRoutes, { prefix: "/auth" });
 await app.register(itineraryRoutes, { prefix: "/itineraries" });
 await app.register(tripRoutes, { prefix: "/trips" });
 await app.register(adminRoutes, { prefix: "/admin" });
+await app.register(communityRoutes, { prefix: "/community" });
+await app.register(newsletterRoutes, { prefix: "/newsletter" });
 
 // Graceful shutdown
 const shutdown = async () => {

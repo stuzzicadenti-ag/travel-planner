@@ -8,11 +8,11 @@
     <div class="cloud cloud-3">&#9925;</div>
   </div>
   <div class="container hero-content">
-    <h1 class="hero-title">Plan. Explore. Remember.</h1>
-    <p class="hero-subtitle">Discover expert-curated itineraries for the world's best destinations. Browse for free, customize your perfect trip, and book everything in one place.</p>
+    <h1 class="hero-title">Travel Together. Explore Further.</h1>
+    <p class="hero-subtitle">Join curated group trips with like-minded travelers. Expert coordinators, handpicked destinations, unforgettable memories.</p>
     <div class="hero-actions">
-      <a href="/itineraries" class="btn btn-primary btn-lg">Start Planning</a>
-      <a href="#how-it-works" class="btn btn-outline btn-lg">See How It Works</a>
+      <a href="/itineraries" class="btn btn-primary btn-lg">Explore Trips</a>
+      <a href="#how-it-works" class="btn btn-outline btn-lg">How It Works</a>
     </div>
     <div class="hero-stats">
       <div class="stat">
@@ -21,7 +21,7 @@
       </div>
       <div class="stat">
         <span class="stat-number">120+</span>
-        <span class="stat-label">Countries</span>
+        <span class="stat-label">Destinations</span>
       </div>
       <div class="stat">
         <span class="stat-number">10K+</span>
@@ -31,112 +31,144 @@
   </div>
 </section>
 
-<!-- Popular Destinations -->
+<!-- Trust Bar -->
+<section class="trust-bar">
+  <div class="container">
+    <div class="trust-items">
+      <div class="trust-item">
+        <span class="trust-icon">&#11088;</span>
+        <span>4.8/5 rating from travelers</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">&#128101;</span>
+        <span>Trusted by 10,000+ travelers</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">&#128274;</span>
+        <span>Free cancellation up to 30 days</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">&#127760;</span>
+        <span>120+ destinations worldwide</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Bar -->
+<section class="section filter-section" id="filter-bar">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Find Your Perfect Trip</h2>
+      <p class="section-subtitle">Filter by mood or season to discover trips made for you.</p>
+    </div>
+    <div class="filter-pills-row">
+      <span class="filter-pills-label">Mood:</span>
+      <a href="/itineraries?mood=adventure" class="filter-pill">&#127956; Adventure</a>
+      <a href="/itineraries?mood=relaxation" class="filter-pill">&#127796; Relaxation</a>
+      <a href="/itineraries?mood=culture" class="filter-pill">&#127963; Culture</a>
+      <a href="/itineraries?mood=party" class="filter-pill">&#127881; Party</a>
+      <a href="/itineraries?mood=wellness" class="filter-pill">&#128518; Wellness</a>
+    </div>
+    <div class="filter-pills-row" style="margin-top: 12px;">
+      <span class="filter-pills-label">Season:</span>
+      <a href="/itineraries?season=summer" class="filter-pill filter-pill--summer">&#9728; Summer</a>
+      <a href="/itineraries?season=winter" class="filter-pill filter-pill--winter">&#10052; Winter</a>
+      <a href="/itineraries?season=spring" class="filter-pill filter-pill--spring">&#127800; Spring</a>
+      <a href="/itineraries?season=autumn" class="filter-pill filter-pill--autumn">&#127810; Autumn</a>
+    </div>
+  </div>
+</section>
+
+<!-- Last-Minute Deals -->
+<% if (typeof deals !== 'undefined' && deals.length > 0) { %>
+<section class="section deals-section" id="deals">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">&#128293; Last-Minute Deals</h2>
+      <p class="section-subtitle">Limited spots at unbeatable prices. Book before they're gone!</p>
+    </div>
+    <div class="deals-grid">
+      <% deals.forEach(function(deal) { %>
+        <div class="deal-card">
+          <div class="deal-card__img" style="background: <%= deal.cover_gradient || 'linear-gradient(135deg, #ffecd2, #fcb69f)' %>;">
+            <span class="deal-card__emoji"><%= deal.country_code || '&#127758;' %></span>
+            <span class="deal-badge">-<%= deal.discount %>%</span>
+            <% if (deal.spots_left && deal.spots_left <= 5) { %>
+              <span class="spots-badge spots-badge--pulse"><%= deal.spots_left %> spots left!</span>
+            <% } else if (deal.spots_left) { %>
+              <span class="spots-badge"><%= deal.spots_left %> spots left</span>
+            <% } %>
+          </div>
+          <div class="deal-card__body">
+            <h3 class="deal-card__title"><%= deal.title %></h3>
+            <div class="deal-card__meta">
+              <span>&#127758; <%= deal.destination %></span>
+              <span>&#128197; <%= deal.duration_days %> days</span>
+              <% if (deal.age_range) { %><span>&#128100; <%= deal.age_range %></span><% } %>
+            </div>
+            <div class="deal-pricing">
+              <% if (deal.original_price) { %>
+                <span class="deal-original-price">&euro;<%= Number(deal.original_price).toLocaleString() %></span>
+              <% } %>
+              <span class="deal-current-price">&euro;<%= Number(deal.budget_amount).toLocaleString() %></span>
+            </div>
+            <% if (deal.departure_date) { %>
+              <div class="deal-departure">Departs: <%= new Date(deal.departure_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></div>
+            <% } %>
+            <a href="/itineraries/<%= deal.id %>" class="btn btn-primary btn-sm btn-block">View Deal</a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Trending Destinations (DB-driven) -->
 <section class="section destinations" id="destinations">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Popular Destinations</h2>
-      <p class="section-subtitle">Handpicked by our community and AI. Where will your next adventure take you?</p>
+      <h2 class="section-title">Trending Destinations</h2>
+      <p class="section-subtitle">Top-rated group trips handpicked by our community.</p>
     </div>
-    <div class="destinations-grid">
-
-      <div class="destination-card">
-        <div class="destination-img destination-tokyo">
-          <span class="destination-emoji">&#127471;&#127477;</span>
-        </div>
-        <div class="destination-body">
-          <h3 class="destination-name">Tokyo</h3>
-          <p class="destination-desc">A dazzling mix of ultramodern neon and ancient temples. From Shibuya Crossing to serene shrines, Tokyo never stops surprising.</p>
-          <div class="destination-meta">
-            <span class="tag">Culture</span>
-            <span class="tag">Food</span>
-            <span class="tag">Tech</span>
+    <% if (itineraries && itineraries.length > 0) { %>
+      <div class="destinations-grid">
+        <% itineraries.forEach(function(itin) { %>
+          <div class="destination-card">
+            <div class="destination-img" style="background: <%= itin.coverGradient || 'linear-gradient(135deg, #e8f4fd, #b8ddf3)' %>;">
+              <span class="destination-emoji"><%= itin.countryCode || '&#127758;' %></span>
+              <% if (itin.discount && itin.discount > 0) { %>
+                <span class="deal-badge deal-badge--card">-<%= itin.discount %>%</span>
+              <% } %>
+            </div>
+            <div class="destination-body">
+              <h3 class="destination-name"><%= itin.title %></h3>
+              <div class="destination-rating">
+                <span class="stars"><%= '&#9733;'.repeat(Math.round(Number(itin.rating) || 0)) %><%= '&#9734;'.repeat(5 - Math.round(Number(itin.rating) || 0)) %></span>
+                <span class="rating-num"><%= itin.rating || '4.5' %></span>
+              </div>
+              <p class="destination-desc"><%= itin.description ? itin.description.substring(0, 100) + '...' : '' %></p>
+              <div class="destination-meta">
+                <span class="tag">&#128197; <%= itin.durationDays %> days</span>
+                <span class="tag">&#128176; &euro;<%= Number(itin.budgetAmount).toLocaleString() %></span>
+                <% if (itin.groupSize) { %><span class="tag">&#128101; Max <%= itin.groupSize %></span><% } %>
+                <% if (itin.ageRange) { %><span class="tag">&#128100; <%= itin.ageRange %></span><% } %>
+              </div>
+              <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-sm btn-block">View Trip</a>
+            </div>
           </div>
-          <a href="/itineraries" class="btn btn-primary btn-sm btn-block">Plan Trip</a>
-        </div>
+        <% }); %>
       </div>
-
-      <div class="destination-card">
-        <div class="destination-img destination-paris">
-          <span class="destination-emoji">&#127467;&#127479;</span>
-        </div>
-        <div class="destination-body">
-          <h3 class="destination-name">Paris</h3>
-          <p class="destination-desc">The City of Light enchants with world-class art, iconic landmarks, and unforgettable cuisine at every corner.</p>
-          <div class="destination-meta">
-            <span class="tag">Romance</span>
-            <span class="tag">Art</span>
-            <span class="tag">Food</span>
-          </div>
-          <a href="/itineraries" class="btn btn-primary btn-sm btn-block">Plan Trip</a>
-        </div>
+      <div style="text-align: center; margin-top: 48px;">
+        <a href="/itineraries" class="btn btn-outline btn-lg">Browse All Trips</a>
       </div>
-
-      <div class="destination-card">
-        <div class="destination-img destination-nyc">
-          <span class="destination-emoji">&#127482;&#127480;</span>
-        </div>
-        <div class="destination-body">
-          <h3 class="destination-name">New York</h3>
-          <p class="destination-desc">The city that never sleeps. Broadway, Central Park, world-famous museums, and a skyline that defines ambition.</p>
-          <div class="destination-meta">
-            <span class="tag">Urban</span>
-            <span class="tag">Culture</span>
-            <span class="tag">Nightlife</span>
-          </div>
-          <a href="/itineraries" class="btn btn-primary btn-sm btn-block">Plan Trip</a>
-        </div>
+    <% } else { %>
+      <div style="text-align: center; padding: 48px 0; color: var(--text-light);">
+        <p>No trips yet. Check back soon!</p>
+        <a href="/itineraries" class="btn btn-outline" style="margin-top: 16px;">Browse Trips</a>
       </div>
-
-      <div class="destination-card">
-        <div class="destination-img destination-bali">
-          <span class="destination-emoji">&#127470;&#127465;</span>
-        </div>
-        <div class="destination-body">
-          <h3 class="destination-name">Bali</h3>
-          <p class="destination-desc">Lush rice terraces, sacred temples, and pristine beaches. Bali is the ultimate retreat for body and soul.</p>
-          <div class="destination-meta">
-            <span class="tag">Nature</span>
-            <span class="tag">Wellness</span>
-            <span class="tag">Beach</span>
-          </div>
-          <a href="/itineraries" class="btn btn-primary btn-sm btn-block">Plan Trip</a>
-        </div>
-      </div>
-
-      <div class="destination-card">
-        <div class="destination-img destination-rome">
-          <span class="destination-emoji">&#127470;&#127481;</span>
-        </div>
-        <div class="destination-body">
-          <h3 class="destination-name">Rome</h3>
-          <p class="destination-desc">Walk through millennia of history. The Eternal City blends ancient ruins, Renaissance art, and la dolce vita.</p>
-          <div class="destination-meta">
-            <span class="tag">History</span>
-            <span class="tag">Food</span>
-            <span class="tag">Art</span>
-          </div>
-          <a href="/itineraries" class="btn btn-primary btn-sm btn-block">Plan Trip</a>
-        </div>
-      </div>
-
-      <div class="destination-card">
-        <div class="destination-img destination-machu">
-          <span class="destination-emoji">&#127477;&#127466;</span>
-        </div>
-        <div class="destination-body">
-          <h3 class="destination-name">Machu Picchu</h3>
-          <p class="destination-desc">A lost Incan citadel above the clouds. Trek through the Andes to discover one of the world's greatest wonders.</p>
-          <div class="destination-meta">
-            <span class="tag">Adventure</span>
-            <span class="tag">History</span>
-            <span class="tag">Hiking</span>
-          </div>
-          <a href="/itineraries" class="btn btn-primary btn-sm btn-block">Plan Trip</a>
-        </div>
-      </div>
-
-    </div>
+    <% } %>
   </div>
 </section>
 
@@ -145,42 +177,42 @@
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">How It Works</h2>
-      <p class="section-subtitle">From inspiration to memory, in five simple steps.</p>
+      <p class="section-subtitle">From inspiration to adventure, in five simple steps.</p>
     </div>
     <div class="steps-flow">
       <div class="step">
         <div class="step-icon">&#127758;</div>
         <div class="step-number">1</div>
-        <h3 class="step-title">Browse Destinations</h3>
-        <p class="step-desc">Explore our curated collection of itineraries by destination, duration, or travel style.</p>
+        <h3 class="step-title">Browse Trips</h3>
+        <p class="step-desc">Filter by mood, season, or destination. Find the group trip that matches your vibe.</p>
       </div>
       <div class="step-arrow">&#10132;</div>
       <div class="step">
-        <div class="step-icon">&#128203;</div>
+        <div class="step-icon">&#128101;</div>
         <div class="step-number">2</div>
-        <h3 class="step-title">Pick Your Trip</h3>
-        <p class="step-desc">Choose from ready-made itineraries crafted by experienced travelers and local experts.</p>
+        <h3 class="step-title">Join a Group</h3>
+        <p class="step-desc">Book your spot. You'll travel with a small group of 10-15 like-minded people your age.</p>
       </div>
       <div class="step-arrow">&#10132;</div>
       <div class="step">
-        <div class="step-icon">&#9997;</div>
+        <div class="step-icon">&#128587;</div>
         <div class="step-number">3</div>
-        <h3 class="step-title">Customize (Explorer+)</h3>
-        <p class="step-desc">Duplicate any itinerary and make it yours. Add stops, change hotels, adjust the schedule.</p>
+        <h3 class="step-title">Meet Your Coordinator</h3>
+        <p class="step-desc">Your expert travel coordinator handles logistics so you can focus on the experience.</p>
       </div>
       <div class="step-arrow">&#10132;</div>
       <div class="step">
         <div class="step-icon">&#128176;</div>
         <div class="step-number">4</div>
         <h3 class="step-title">Book Everything</h3>
-        <p class="step-desc">Book flights, hotels, and activities directly through our partner links. One place, best prices.</p>
+        <p class="step-desc">Flights, hotels, and activities booked through our partner links at the best prices.</p>
       </div>
       <div class="step-arrow">&#10132;</div>
       <div class="step">
         <div class="step-icon">&#127752;</div>
         <div class="step-number">5</div>
-        <h3 class="step-title">Travel and Share</h3>
-        <p class="step-desc">Hit the road with your itinerary on your phone. Snap photos and share your journey.</p>
+        <h3 class="step-title">Travel & Share</h3>
+        <p class="step-desc">Hit the road! Share your journey, leave reviews, and inspire the next group.</p>
       </div>
     </div>
   </div>
@@ -190,96 +222,79 @@
 <section class="section features" id="features">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Features</h2>
-      <p class="section-subtitle">Everything you need to plan, experience, and remember your travels.</p>
+      <h2 class="section-title">Why TravelPlanner?</h2>
+      <p class="section-subtitle">Everything you need to plan, experience, and share your travels.</p>
     </div>
     <div class="features-grid">
-
       <div class="feature-card">
-        <div class="feature-icon">&#128205;</div>
-        <h3 class="feature-title">Expert-Curated Trips</h3>
-        <p class="feature-desc">Itineraries crafted by experienced travelers and local experts. Every recommendation is tested and reviewed.</p>
+        <div class="feature-icon">&#128101;</div>
+        <h3 class="feature-title">Small Group Travel</h3>
+        <p class="feature-desc">Travel with 10-15 people your age. Make lifelong friends while exploring the world together.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#128506;</div>
-        <h3 class="feature-title">Interactive Map</h3>
-        <p class="feature-desc">Visualize your entire itinerary on an interactive map. See distances, routes, and nearby attractions at a glance.</p>
+        <div class="feature-icon">&#128587;</div>
+        <h3 class="feature-title">Expert Coordinators</h3>
+        <p class="feature-desc">Every trip has a local coordinator who knows the destination inside out. No stress, just adventure.</p>
       </div>
-
       <div class="feature-card">
         <div class="feature-icon">&#128248;</div>
-        <h3 class="feature-title">Photo Diary</h3>
-        <p class="feature-desc">Upload photos with automatic location metadata. Build a visual timeline of your journey, one snapshot at a time.</p>
+        <h3 class="feature-title">Photo Gallery</h3>
+        <p class="feature-desc">Browse stunning photos from each destination. See what awaits you before booking.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#128197;</div>
-        <h3 class="feature-title">Trip Timeline</h3>
-        <p class="feature-desc">A beautiful visual flow of your daily activities, complete with descriptions, timestamps, and travel notes.</p>
+        <div class="feature-icon">&#11088;</div>
+        <h3 class="feature-title">Verified Reviews</h3>
+        <p class="feature-desc">Real reviews from real travelers. See ratings, read stories, and book with confidence.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#128200;</div>
-        <h3 class="feature-title">Travel Stats</h3>
-        <p class="feature-desc">Track countries visited, kilometers traveled, and days on the road. Watch your travel profile grow over time.</p>
+        <div class="feature-icon">&#128293;</div>
+        <h3 class="feature-title">Last-Minute Deals</h3>
+        <p class="feature-desc">Grab discounted trips departing soon. Up to 30% off on selected departures.</p>
       </div>
-
       <div class="feature-card" id="community">
         <div class="feature-icon">&#127760;</div>
-        <h3 class="feature-title">Community Sharing</h3>
-        <p class="feature-desc">Share your trips publicly or keep them private. Follow other travelers, get inspired, and exchange tips.</p>
+        <h3 class="feature-title">Traveler Community</h3>
+        <p class="feature-desc">Join a community of adventurers. Share stories, get tips, and find your next travel buddy.</p>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- Featured Itineraries (from DB) -->
-<section class="section featured-trips" id="featured-trips">
+<!-- Community Reviews -->
+<% if (typeof recentReviews !== 'undefined' && recentReviews.length > 0) { %>
+<section class="section community-reviews-section">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Featured Itineraries</h2>
-      <p class="section-subtitle">Handcrafted by travel experts. Ready to explore.</p>
+      <h2 class="section-title">What Travelers Say</h2>
+      <p class="section-subtitle">Real reviews from our community of explorers.</p>
     </div>
-    <% if (itineraries && itineraries.length > 0) { %>
-      <div class="trips-grid">
-        <% itineraries.forEach(function(itin) { %>
-          <div class="trip-card">
-            <div class="trip-card__img">
-              <span class="trip-card__emoji"><%= itin.countryCode || '&#127758;' %></span>
-              <% if (itin.tier === 'free') { %>
-                <span class="trip-card__badge">FREE</span>
-              <% } else if (itin.tier === 'explorer') { %>
-                <span class="trip-card__badge badge--premium">Explorer</span>
-              <% } else if (itin.tier === 'premium') { %>
-                <span class="trip-card__badge badge--premium">Premium</span>
-              <% } %>
-            </div>
-            <div class="trip-card__body">
-              <h3 class="trip-card__title"><%= itin.title %></h3>
-              <p class="trip-card__desc"><%= itin.description ? itin.description.substring(0, 120) + '...' : '' %></p>
-              <div class="trip-card__meta">
-                <span>&#128197; <%= itin.durationDays %> days</span>
-                <span>&#128176; ~<%= itin.budgetCurrency %> <%= Number(itin.budgetAmount).toLocaleString() %></span>
-                <span>&#11088; <%= itin.rating %></span>
-              </div>
-              <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-sm btn-block">View Itinerary</a>
+    <div class="reviews-grid">
+      <% recentReviews.forEach(function(rev) { %>
+        <div class="review-card">
+          <div class="review-card__header">
+            <div class="review-avatar"><%= rev.user_name ? rev.user_name.charAt(0).toUpperCase() : '?' %></div>
+            <div class="review-info">
+              <span class="review-name"><%= rev.user_name %></span>
+              <span class="review-trip"><a href="/itineraries/<%= rev.itinerary_id %>"><%= rev.itinerary_title %></a></span>
             </div>
           </div>
-        <% }); %>
-      </div>
-      <div style="text-align: center; margin-top: 48px;">
-        <a href="/itineraries" class="btn btn-outline btn-lg">Browse All Itineraries</a>
-      </div>
-    <% } else { %>
-      <div style="text-align: center; padding: 48px 0; color: var(--text-light);">
-        <p>No itineraries yet. Check back soon!</p>
-        <a href="/itineraries" class="btn btn-outline" style="margin-top: 16px;">Browse Itineraries</a>
-      </div>
-    <% } %>
+          <div class="review-stars">
+            <% for (let i = 1; i <= 5; i++) { %>
+              <span class="star <%= i <= rev.rating ? 'star--filled' : '' %>">&#9733;</span>
+            <% } %>
+          </div>
+          <% if (rev.comment) { %>
+            <p class="review-comment"><%= rev.comment.length > 200 ? rev.comment.substring(0, 200) + '...' : rev.comment %></p>
+          <% } %>
+        </div>
+      <% }); %>
+    </div>
+    <div style="text-align: center; margin-top: 32px;">
+      <a href="/community" class="btn btn-outline">See All Reviews</a>
+    </div>
   </div>
 </section>
+<% } %>
 
 <!-- Booking Partners -->
 <section class="section partners" id="partners">
@@ -325,7 +340,6 @@
       <p class="section-subtitle">Start free. Upgrade when you're ready for more.</p>
     </div>
     <div class="pricing-grid">
-
       <div class="pricing-card">
         <div class="pricing-header">
           <h3 class="pricing-name">Free</h3>
@@ -347,7 +361,6 @@
           <a href="/auth/register" class="btn btn-outline btn-block">Get Started</a>
         <% } %>
       </div>
-
       <div class="pricing-card pricing-featured">
         <div class="pricing-badge">Most Popular</div>
         <div class="pricing-header">
@@ -371,7 +384,6 @@
           <a href="/auth/register" class="btn btn-primary btn-block">Start Free Trial</a>
         <% } %>
       </div>
-
       <div class="pricing-card">
         <div class="pricing-header">
           <h3 class="pricing-name">Premium</h3>
@@ -382,9 +394,9 @@
         </div>
         <ul class="pricing-features">
           <li>&#10003; Everything in Explorer</li>
-          <li>&#10003; Build trips from scratch (drag-and-drop builder)</li>
-          <li>&#10003; Collaborative planning (share with friends)</li>
-          <li>&#10003; Photo diary with Instagram import</li>
+          <li>&#10003; Build trips from scratch</li>
+          <li>&#10003; Collaborative planning</li>
+          <li>&#10003; Photo diary with import</li>
           <li>&#10003; Offline access</li>
           <li>&#10003; Early access to new destinations</li>
         </ul>
@@ -394,7 +406,6 @@
           <a href="/auth/register" class="btn btn-outline btn-block">Start Free Trial</a>
         <% } %>
       </div>
-
     </div>
   </div>
 </section>
@@ -403,9 +414,9 @@
 <section class="section cta-banner">
   <div class="container">
     <h2 class="cta-title">Ready for your next adventure?</h2>
-    <p class="cta-subtitle">Join thousands of travelers who plan smarter, explore deeper, and remember forever.</p>
+    <p class="cta-subtitle">Join thousands of travelers who explore together, make friends, and create memories that last forever.</p>
     <% if (typeof user !== 'undefined' && user) { %>
-      <a href="/itineraries" class="btn btn-primary btn-lg">Browse Itineraries</a>
+      <a href="/itineraries" class="btn btn-primary btn-lg">Browse Trips</a>
     <% } else { %>
       <a href="/auth/register" class="btn btn-primary btn-lg">Create Free Account</a>
     <% } %>
