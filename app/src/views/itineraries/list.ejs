@@ -5,6 +5,41 @@
     <h1 class="page-title">Browse Itineraries</h1>
     <p class="page-subtitle">Explore our curated collection of travel itineraries for every budget and style.</p>
 
+    <!-- Filters -->
+    <% const f = typeof filters !== 'undefined' ? filters : {}; %>
+    <div class="card" style="margin-bottom: 24px; padding: 20px;">
+      <form action="/itineraries" method="GET" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+        <div class="form-group" style="flex: 1; min-width: 140px; margin-bottom: 0;">
+          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Search</label>
+          <input type="text" name="search" class="form-input" placeholder="Destination or title..." value="<%= f.search || '' %>" style="padding: 8px;">
+        </div>
+        <div class="form-group" style="flex: 0 0 80px; margin-bottom: 0;">
+          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Country</label>
+          <input type="text" name="country" class="form-input" placeholder="CH" maxlength="2" value="<%= f.country || '' %>" style="padding: 8px; text-transform: uppercase;">
+        </div>
+        <div class="form-group" style="flex: 0 0 80px; margin-bottom: 0;">
+          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Min Days</label>
+          <input type="number" name="min_days" class="form-input" placeholder="1" min="1" value="<%= f.min_days || '' %>" style="padding: 8px;">
+        </div>
+        <div class="form-group" style="flex: 0 0 80px; margin-bottom: 0;">
+          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Max Days</label>
+          <input type="number" name="max_days" class="form-input" placeholder="30" min="1" value="<%= f.max_days || '' %>" style="padding: 8px;">
+        </div>
+        <div class="form-group" style="flex: 0 0 100px; margin-bottom: 0;">
+          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Min Budget</label>
+          <input type="number" name="min_budget" class="form-input" placeholder="0" min="0" value="<%= f.min_budget || '' %>" style="padding: 8px;">
+        </div>
+        <div class="form-group" style="flex: 0 0 100px; margin-bottom: 0;">
+          <label class="form-label" style="font-size: 0.8rem; margin-bottom: 4px;">Max Budget</label>
+          <input type="number" name="max_budget" class="form-input" placeholder="10000" min="0" value="<%= f.max_budget || '' %>" style="padding: 8px;">
+        </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 0;">
+          <button type="submit" class="btn btn-primary" style="padding: 8px 16px;">Filter</button>
+          <a href="/itineraries" class="btn btn-outline" style="padding: 8px 16px;">Clear</a>
+        </div>
+      </form>
+    </div>
+
     <div class="card-grid">
       <% itineraries.forEach(function(itin) { %>
         <div class="card">

@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, and, gte, lte } from "drizzle-orm";
 import { db, pool } from "../db/index.js";
 import {
   itineraries,
@@ -11,17 +11,47 @@ import {
 const TIER_LEVELS = { free: 0, explorer: 1, premium: 2 };
 
 export async function itineraryRoutes(app) {
-  // GET /itineraries - List all itineraries
+  // GET /itineraries - List itineraries with optional filters
   app.get("/", async (req, reply) => {
-    const rows = await db
-      .select()
-      .from(itineraries)
-      .orderBy(itineraries.createdAt)
-      .limit(50);
+    const { country, min_days, max_days, min_budget, max_budget, search } = req.query;
+
+    const conditions = [];
+
+    if (country) {
+      conditions.push(eq(itineraries.countryCode, country.toUpperCase().trim()));
+    }
+    if (min_days) {
+      const minD = parseInt(min_days, 10);
+      if (!isNaN(minD)) conditions.push(gte(itineraries.durationDays, minD));
+    }
+    if (max_days) {
+      const maxD = parseInt(max_days, 10);
+      if (!isNaN(maxD)) conditions.push(lte(itineraries.durationDays, maxD));
+    }
+    if (min_budget) {
+      const minB = parseFloat(min_budget);
+      if (!isNaN(minB)) conditions.push(gte(itineraries.budgetAmount, String(minB)));
+    }
+    if (max_budget) {
+      const maxB = parseFloat(max_budget);
+      if (!isNaN(maxB)) conditions.push(lte(itineraries.budgetAmount, String(maxB)));
+    }
+    if (search) {
+      conditions.push(
+        sql`(${itineraries.title} ILIKE ${'%' + search + '%'} OR ${itineraries.destination} ILIKE ${'%' + search + '%'})`
+      );
+    }
+
+    let query = db.select().from(itineraries);
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    const rows = await query.orderBy(itineraries.createdAt).limit(50);
 
     return reply.view("itineraries/list.ejs", {
       user: req.user,
       itineraries: rows,
+      filters: { country: country || '', min_days: min_days || '', max_days: max_days || '', min_budget: min_budget || '', max_budget: max_budget || '', search: search || '' },
     });
   });
 
@@ -89,6 +119,7 @@ export async function itineraryRoutes(app) {
       days: daysWithItems,
       hasAccess,
       isSaved,
+      error: req.query.error || null,
     });
   });
 

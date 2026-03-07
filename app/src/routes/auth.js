@@ -24,6 +24,7 @@ export async function authRoutes(app) {
 
   // POST /auth/register
   app.post("/register", async (req, reply) => {
+    if (app.checkAuthRateLimit && !app.checkAuthRateLimit(req, reply)) return;
     const { name, email, password } = req.body || {};
 
     if (!name || !email || !password) {
@@ -40,10 +41,10 @@ export async function authRoutes(app) {
       });
     }
 
-    if (password.length < 8) {
+    if (password.length < 8 || password.length > 1000) {
       return reply.view("auth/register.ejs", {
         user: null,
-        error: "Password must be at least 8 characters.",
+        error: "Password must be 8-1000 characters.",
       });
     }
 
@@ -96,6 +97,7 @@ export async function authRoutes(app) {
 
   // POST /auth/login
   app.post("/login", async (req, reply) => {
+    if (app.checkAuthRateLimit && !app.checkAuthRateLimit(req, reply)) return;
     const { email, password } = req.body || {};
 
     if (!email || !password) {

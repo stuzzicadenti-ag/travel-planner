@@ -4,6 +4,12 @@
   <div class="container">
     <a href="/itineraries" class="back-link">&larr; Back to Itineraries</a>
 
+    <% if (typeof error !== 'undefined' && error === 'limit') { %>
+      <div class="alert alert-error" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+        You have reached the maximum of 3 saved trips on the free plan. Upgrade to save more!
+      </div>
+    <% } %>
+
     <div class="itinerary-header">
       <div class="itinerary-header-info">
         <span class="tier-badge tier-<%= itinerary.tier %> tier-badge--lg"><%= itinerary.tier.toUpperCase() %></span>
