@@ -5,8 +5,11 @@ import { db } from "../db/index.js";
 import { users } from "../db/schema.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "change-me";
+const IS_PROD = process.env.NODE_ENV === "production";
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const COOKIE_OPTS = {
   httpOnly: true,
+  secure: IS_PROD,
   sameSite: "lax",
   path: "/",
   maxAge: 7 * 24 * 60 * 60, // 7 days
@@ -30,10 +33,24 @@ export async function authRoutes(app) {
       });
     }
 
-    if (password.length < 6) {
+    if (!EMAIL_RE.test(email)) {
       return reply.view("auth/register.ejs", {
         user: null,
-        error: "Password must be at least 6 characters.",
+        error: "Invalid email format.",
+      });
+    }
+
+    if (password.length < 8) {
+      return reply.view("auth/register.ejs", {
+        user: null,
+        error: "Password must be at least 8 characters.",
+      });
+    }
+
+    if (name.length > 255 || email.length > 255) {
+      return reply.view("auth/register.ejs", {
+        user: null,
+        error: "Input too long.",
       });
     }
 

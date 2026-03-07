@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   app:
     container_name: stz-travelplanner-app
@@ -9,12 +8,22 @@ services:
     environment:
       NODE_ENV: production
       PORT: 4002
-      DATABASE_URL: postgresql://travelplanner_app:travelplanner_pass@stz-shared-db:5432/stz_travelplanner
-      JWT_SECRET: ${JWT_SECRET:-change-me}
-      COOKIE_SECRET: ${COOKIE_SECRET:-change-me}
+      DATABASE_URL: postgresql://travelplanner_app:${TRAVELPLANNER_DB_PASSWORD}@stz-shared-db:5432/stz_travelplanner
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
     networks:
       - stz-net
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 0.5
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:4002/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     labels:
       stz.project: "stuzzicadenti-ag"
       stz.service: "travelplanner"
