@@ -93,11 +93,16 @@
       <div class="nav-actions">
         <button class="btn btn-ghost" id="loginBtn">Accedi</button>
         <button class="btn btn-primary btn-sm" id="registerBtn">Registrati</button>
-        <div class="lang-switch">
-          <a href="../">EN</a>
-          <a href="../de/">DE</a>
-          <a href="../fr/">FR</a>
-          <a href="../it/" class="active">IT</a>
+        <div class="lang-dropdown">
+          <button type="button" class="lang-dropdown__btn" aria-expanded="false" aria-haspopup="true">
+            &#127760; <span class="lang-dropdown__current">IT</span> &#9662;
+          </button>
+          <ul class="lang-dropdown__menu" role="menu">
+            <li><a href="../" role="menuitem">English</a></li>
+            <li><a href="../de/" role="menuitem">Deutsch</a></li>
+            <li><a href="../fr/" role="menuitem">Français</a></li>
+            <li><a href="./" role="menuitem" class="active">Italiano</a></li>
+          </ul>
         </div>
       </div>
     </div>
@@ -358,7 +363,7 @@
 
               <div class="itinerary">
                 <div class="itinerary-day">
-                  <h4 class="day-title">&#9728; Giorno 1 &mdash; Roma Antica</h4>
+                  <h4 class="day-title">&#9728; Giorno 1 - Roma Antica</h4>
                   <div class="day-items">
                     <div class="day-item">
                       <span class="day-time">09:00</span>
@@ -385,20 +390,20 @@
                 </div>
 
                 <div class="itinerary-day">
-                  <h4 class="day-title">&#127752; Giorno 2 &mdash; Citta del Vaticano</h4>
+                  <h4 class="day-title">&#127752; Giorno 2 - Citta del Vaticano</h4>
                   <div class="day-items">
                     <div class="day-item">
                       <span class="day-time">08:00</span>
                       <div class="day-detail">
                         <strong>Musei Vaticani &amp; Cappella Sistina</strong>
-                        <p>Arriva all'apertura. Il soffitto della Cappella Sistina di Michelangelo e mozzafiato. Non avere fretta&mdash;trascorri almeno 3 ore qui.</p>
+                        <p>Arriva all'apertura. Il soffitto della Cappella Sistina di Michelangelo e mozzafiato. Non avere fretta. Trascorri almeno 3 ore qui.</p>
                       </div>
                     </div>
                     <div class="day-item">
                       <span class="day-time">12:00</span>
                       <div class="day-detail">
                         <strong>Basilica di San Pietro</strong>
-                        <p>Ingresso gratuito. Sali sulla cupola per la vista piu bella di Roma. Consiglio: gli ultimi 320 gradini sono stretti&mdash;ma ne vale ogni singolo.</p>
+                        <p>Ingresso gratuito. Sali sulla cupola per la vista piu bella di Roma. Consiglio: gli ultimi 320 gradini sono stretti, ma ne vale ogni singolo.</p>
                       </div>
                     </div>
                     <div class="day-item">
@@ -412,7 +417,7 @@
                 </div>
 
                 <div class="itinerary-day">
-                  <h4 class="day-title">&#127773; Giorno 3 &mdash; Vita locale</h4>
+                  <h4 class="day-title">&#127773; Giorno 3 - Vita locale</h4>
                   <div class="day-items">
                     <div class="day-item">
                       <span class="day-time">10:00</span>
@@ -595,6 +600,15 @@
           <input type="password" id="loginPassword" placeholder="La tua password" required>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Accedi</button>
+      <div class="social-login">
+        <p class="social-login__divider">oppure continua con</p>
+        <div class="social-login__buttons">
+          <button type="button" class="social-btn social-btn--instagram">&#128247; Instagram</button>
+          <button type="button" class="social-btn social-btn--google">G Google</button>
+          <button type="button" class="social-btn social-btn--facebook">f Facebook</button>
+        </div>
+        <p class="social-login__note">Importa le tue foto di viaggio direttamente da Instagram!</p>
+      </div>
         <p class="form-footer">Non hai un account? <a href="#" id="switchToRegister">Registrati</a></p>
       </form>
 
@@ -618,6 +632,15 @@
           <input type="password" id="regConfirm" placeholder="Conferma password" required>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Crea account</button>
+      <div class="social-login">
+        <p class="social-login__divider">oppure continua con</p>
+        <div class="social-login__buttons">
+          <button type="button" class="social-btn social-btn--instagram">&#128247; Instagram</button>
+          <button type="button" class="social-btn social-btn--google">G Google</button>
+          <button type="button" class="social-btn social-btn--facebook">f Facebook</button>
+        </div>
+        <p class="social-login__note">Importa le tue foto di viaggio direttamente da Instagram!</p>
+      </div>
         <p class="form-footer">Hai gia un account? <a href="#" id="switchToLogin">Accedi</a></p>
       </form>
     </div>
@@ -673,5 +696,26 @@
       });
     })();
   </script>
+<script>
+// Language dropdown
+(function() {
+  var btn = document.querySelector('.lang-dropdown__btn');
+  var menu = document.querySelector('.lang-dropdown__menu');
+  if (!btn || !menu) return;
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+  document.addEventListener('click', function() {
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+  });
+})();
+(function() { sessionStorage.setItem('lang-chosen', '1'); })();
+</script>
 </body>
 </html>
