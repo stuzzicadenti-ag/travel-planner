@@ -993,39 +993,77 @@ ul { list-style: none; }
   align-items: center;
   justify-content: center;
   font-size: 3rem;
+  position: relative;
 }
 
+.trip-card__emoji {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
+}
+
+.trip-card__badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 14px;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--white);
+  color: var(--blue);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 2;
+}
+
+.badge--premium {
+  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+  color: var(--white);
+}
+
+.trip-card__img--rome { background: linear-gradient(135deg, #ffecd2, #fcb69f); }
+.trip-card__img--tokyo { background: linear-gradient(135deg, #ffecd2, #f3e7e9); }
+.trip-card__img--swiss { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+.trip-card__img--bali { background: linear-gradient(135deg, #d4fc79, #96e6a1); }
+.trip-card__img--nyc { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
+.trip-card__img--iceland { background: linear-gradient(135deg, #667eea, #764ba2); }
+
 .trip-card__body {
-  padding: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .trip-card__title {
   font-size: 1.15rem;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .trip-card__desc {
   font-size: 0.9rem;
   color: var(--text-light);
-  margin-bottom: 12px;
-  line-height: 1.5;
+  margin-bottom: 16px;
+  line-height: 1.55;
 }
 
 .trip-card__meta {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  color: var(--text-light);
 }
 
-.trip-card__tag {
-  font-size: 0.75rem;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: var(--orange-light);
-  color: var(--orange-dark);
-  font-weight: 600;
+.trip-card__tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
 }
 
 .trip-card__footer {
@@ -1074,7 +1112,7 @@ ul { list-style: none; }
   margin-bottom: 12px;
 }
 
-.partner-card__name {
+.partner-card__title {
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 6px;
@@ -1084,6 +1122,16 @@ ul { list-style: none; }
   font-size: 0.85rem;
   color: var(--text-light);
   line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.partner-card__brand {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* ===== Responsive: Trips & Partners ===== */
