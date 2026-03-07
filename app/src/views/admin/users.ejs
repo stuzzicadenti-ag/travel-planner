@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Users - TravelPlanner Admin</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="stylesheet" href="/public/style.css">
+  <style>
+    .admin-layout { display: flex; min-height: 100vh; }
+    .admin-sidebar { width: 240px; background: linear-gradient(180deg, #e8f4fd 0%, #d0e8f7 100%); border-right: 1px solid #cde0ed; display: flex; flex-direction: column; padding: 1.5rem 0; flex-shrink: 0; }
+    .admin-sidebar__brand { padding: 0 1.25rem 1.5rem; border-bottom: 1px solid #cde0ed; text-align: center; }
+    .admin-sidebar__brand .logo-icon { font-size: 1.5rem; }
+    .admin-sidebar__title { display: block; font-size: 1.1rem; font-weight: 700; color: #2c3e50; margin-top: 0.25rem; }
+    .admin-sidebar__subtitle { display: block; font-size: 0.75rem; color: #5a6d7e; text-transform: uppercase; letter-spacing: 0.05em; }
+    .admin-sidebar__nav { flex: 1; padding: 1rem 0; }
+    .admin-sidebar__link { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.25rem; color: #2c3e50; font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+    .admin-sidebar__link:hover { background: rgba(58,155,213,0.12); color: #2a7ab5; }
+    .admin-sidebar__link--active { background: rgba(58,155,213,0.18); color: #2a7ab5; font-weight: 600; border-right: 3px solid #3a9bd5; }
+    .admin-sidebar__link--back { color: #5a6d7e; }
+    .admin-sidebar__icon { font-size: 1.1rem; width: 1.4rem; text-align: center; }
+    .admin-sidebar__footer { padding: 1rem 0; border-top: 1px solid #cde0ed; }
+    .admin-main { flex: 1; padding: 2rem; background: #fafcfe; overflow-y: auto; }
+    .admin-header { margin-bottom: 2rem; }
+    .admin-header h1 { font-size: 1.75rem; font-weight: 700; color: #2c3e50; }
+    .admin-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e8ecf1; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .admin-table th { background: #e8f4fd; padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #5a6d7e; font-weight: 600; letter-spacing: 0.03em; }
+    .admin-table td { padding: 0.75rem 1rem; border-top: 1px solid #e8ecf1; font-size: 0.9rem; vertical-align: middle; }
+    .admin-table tr:hover td { background: #f8fbfe; }
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; margin-bottom: 1.5rem; background: #fff; padding: 1rem; border-radius: 12px; border: 1px solid #e8ecf1; }
+    .filter-bar .form-group { margin-bottom: 0; }
+    .role-badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .role-user { background: #e8f8ef; color: #27ae60; }
+    .role-admin { background: #e8f4fd; color: #3a9bd5; }
+    .role-owner { background: #fef3e0; color: #e67e22; }
+    .banned-badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700; background: #fde8e8; color: #e74c3c; }
+    .actions-cell { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .actions-cell form { display: inline; }
+    .actions-cell select { padding: 0.25rem 0.4rem; font-size: 0.8rem; border: 1px solid #e8ecf1; border-radius: 6px; }
+    @media (max-width: 768px) { .admin-layout { flex-direction: column; } .admin-sidebar { width: 100%; flex-direction: row; padding: 0.5rem; overflow-x: auto; } .admin-sidebar__brand { display: none; } .admin-sidebar__nav { display: flex; padding: 0; gap: 0.25rem; } .admin-sidebar__link { padding: 0.5rem 0.75rem; font-size: 0.8rem; white-space: nowrap; } .admin-sidebar__footer { display: none; } .admin-table { font-size: 0.8rem; } }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <% const activePage = 'users'; %>
+    <%- include('_sidebar') %>
+    <div class="admin-main">
+      <div class="admin-header">
+        <h1>Users</h1>
+      </div>
+
+      <form action="/admin/users" method="GET" class="filter-bar">
+        <div class="form-group">
+          <label class="form-label" style="font-size: 0.8rem;">Search</label>
+          <input type="text" name="search" class="form-input" placeholder="Name or email..." value="<%= filters.search %>" style="padding: 6px 10px; font-size: 0.85rem;">
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-size: 0.8rem;">Role</label>
+          <select name="role" class="form-input" style="padding: 6px 10px; font-size: 0.85rem;">
+            <option value="">All</option>
+            <option value="user" <%= filters.role === 'user' ? 'selected' : '' %>>User</option>
+            <option value="admin" <%= filters.role === 'admin' ? 'selected' : '' %>>Admin</option>
+            <option value="owner" <%= filters.role === 'owner' ? 'selected' : '' %>>Owner</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-size: 0.8rem;">Banned</label>
+          <select name="banned" class="form-input" style="padding: 6px 10px; font-size: 0.85rem;">
+            <option value="">All</option>
+            <option value="true" <%= filters.banned === 'true' ? 'selected' : '' %>>Banned</option>
+            <option value="false" <%= filters.banned === 'false' ? 'selected' : '' %>>Not Banned</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+        <a href="/admin/users" class="btn btn-outline btn-sm">Clear</a>
+      </form>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Plan</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(function(u) { %>
+            <tr>
+              <td><%= u.id %></td>
+              <td><%= u.name %></td>
+              <td><%= u.email %></td>
+              <td><span class="plan-badge plan-<%= u.plan %>"><%= u.plan %></span></td>
+              <td><span class="role-badge role-<%= u.role || 'user' %>"><%= u.role || 'user' %></span></td>
+              <td>
+                <% if (u.banned) { %>
+                  <span class="banned-badge">BANNED</span>
+                  <% if (u.banned_reason) { %>
+                    <br><small style="color: #95a5b6;"><%= u.banned_reason %></small>
+                  <% } %>
+                <% } else { %>
+                  <span style="color: #27ae60; font-size: 0.85rem;">Active</span>
+                <% } %>
+              </td>
+              <td><%= u.created_at ? new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '' %></td>
+              <td>
+                <div class="actions-cell">
+                  <form method="POST" action="/admin/users/<%= u.id %>/role" style="display: flex; gap: 4px;">
+                    <select name="role">
+                      <option value="user" <%= (u.role || 'user') === 'user' ? 'selected' : '' %>>user</option>
+                      <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>admin</option>
+                      <option value="owner" <%= u.role === 'owner' ? 'selected' : '' %>>owner</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 2px 8px; font-size: 0.75rem;">Set</button>
+                  </form>
+                  <% if (u.banned) { %>
+                    <form method="POST" action="/admin/users/<%= u.id %>/unban">
+                      <button type="submit" class="btn btn-sm" style="padding: 2px 8px; font-size: 0.75rem; background: #27ae60; color: #fff;">Unban</button>
+                    </form>
+                  <% } else { %>
+                    <form method="POST" action="/admin/users/<%= u.id %>/ban" style="display: flex; gap: 4px;">
+                      <input type="text" name="reason" placeholder="Reason..." style="padding: 2px 6px; font-size: 0.75rem; border: 1px solid #e8ecf1; border-radius: 4px; width: 100px;">
+                      <button type="submit" class="btn btn-danger btn-sm" style="padding: 2px 8px; font-size: 0.75rem;">Ban</button>
+                    </form>
+                  <% } %>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+
+      <% if (users.length === 0) { %>
+        <div style="text-align: center; padding: 2rem; color: #5a6d7e;">No users found.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

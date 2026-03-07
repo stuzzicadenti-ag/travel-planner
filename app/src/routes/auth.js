@@ -80,7 +80,7 @@ export async function authRoutes(app) {
       .returning();
 
     const token = jwt.sign(
-      { id: newUser.id, email: newUser.email, name: newUser.name, plan: newUser.plan },
+      { id: newUser.id, email: newUser.email, name: newUser.name, plan: newUser.plan, role: newUser.role || "user" },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -120,8 +120,16 @@ export async function authRoutes(app) {
       });
     }
 
+    // Check if user is banned
+    if (found.banned) {
+      return reply.view("auth/banned.ejs", {
+        user: null,
+        reason: found.bannedReason || null,
+      });
+    }
+
     const token = jwt.sign(
-      { id: found.id, email: found.email, name: found.name, plan: found.plan },
+      { id: found.id, email: found.email, name: found.name, plan: found.plan, role: found.role || "user" },
       JWT_SECRET,
       { expiresIn: "7d" }
     );

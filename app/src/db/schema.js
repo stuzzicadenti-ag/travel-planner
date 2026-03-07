@@ -5,6 +5,7 @@ import {
   text,
   integer,
   numeric,
+  boolean,
   timestamp,
   pgEnum,
 } from "drizzle-orm/pg-core";
@@ -18,6 +19,10 @@ export const users = pgTable("users", {
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   plan: planEnum("plan").default("free").notNull(),
+  role: varchar("role", { length: 20 }).default("user"),
+  banned: boolean("banned").default(false),
+  bannedReason: text("banned_reason"),
+  bannedAt: timestamp("banned_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

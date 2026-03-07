@@ -1,0 +1,29 @@
+<aside class="admin-sidebar">
+  <div class="admin-sidebar__brand">
+    <span class="logo-icon">&#9992;</span>
+    <span class="admin-sidebar__title">TravelPlanner</span>
+    <span class="admin-sidebar__subtitle">Admin Panel</span>
+  </div>
+  <nav class="admin-sidebar__nav">
+    <a href="/admin" class="admin-sidebar__link<%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? ' admin-sidebar__link--active' : '' %>">
+      <span class="admin-sidebar__icon">&#128202;</span> Dashboard
+    </a>
+    <a href="/admin/users" class="admin-sidebar__link<%= typeof activePage !== 'undefined' && activePage === 'users' ? ' admin-sidebar__link--active' : '' %>">
+      <span class="admin-sidebar__icon">&#128101;</span> Users
+    </a>
+    <a href="/admin/itineraries" class="admin-sidebar__link<%= typeof activePage !== 'undefined' && activePage === 'itineraries' ? ' admin-sidebar__link--active' : '' %>">
+      <span class="admin-sidebar__icon">&#128506;</span> Itineraries
+    </a>
+    <a href="/admin/flags" class="admin-sidebar__link<%= typeof activePage !== 'undefined' && activePage === 'flags' ? ' admin-sidebar__link--active' : '' %>">
+      <span class="admin-sidebar__icon">&#9873;</span> Flags
+    </a>
+    <a href="/admin/logs" class="admin-sidebar__link<%= typeof activePage !== 'undefined' && activePage === 'logs' ? ' admin-sidebar__link--active' : '' %>">
+      <span class="admin-sidebar__icon">&#128220;</span> Logs
+    </a>
+  </nav>
+  <div class="admin-sidebar__footer">
+    <a href="/" class="admin-sidebar__link admin-sidebar__link--back">
+      <span class="admin-sidebar__icon">&#8592;</span> Back to Site
+    </a>
+  </div>
+</aside>

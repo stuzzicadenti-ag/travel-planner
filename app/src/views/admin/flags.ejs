@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flag Queue - TravelPlanner Admin</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="stylesheet" href="/public/style.css">
+  <style>
+    .admin-layout { display: flex; min-height: 100vh; }
+    .admin-sidebar { width: 240px; background: linear-gradient(180deg, #e8f4fd 0%, #d0e8f7 100%); border-right: 1px solid #cde0ed; display: flex; flex-direction: column; padding: 1.5rem 0; flex-shrink: 0; }
+    .admin-sidebar__brand { padding: 0 1.25rem 1.5rem; border-bottom: 1px solid #cde0ed; text-align: center; }
+    .admin-sidebar__brand .logo-icon { font-size: 1.5rem; }
+    .admin-sidebar__title { display: block; font-size: 1.1rem; font-weight: 700; color: #2c3e50; margin-top: 0.25rem; }
+    .admin-sidebar__subtitle { display: block; font-size: 0.75rem; color: #5a6d7e; text-transform: uppercase; letter-spacing: 0.05em; }
+    .admin-sidebar__nav { flex: 1; padding: 1rem 0; }
+    .admin-sidebar__link { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.25rem; color: #2c3e50; font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+    .admin-sidebar__link:hover { background: rgba(58,155,213,0.12); color: #2a7ab5; }
+    .admin-sidebar__link--active { background: rgba(58,155,213,0.18); color: #2a7ab5; font-weight: 600; border-right: 3px solid #3a9bd5; }
+    .admin-sidebar__link--back { color: #5a6d7e; }
+    .admin-sidebar__icon { font-size: 1.1rem; width: 1.4rem; text-align: center; }
+    .admin-sidebar__footer { padding: 1rem 0; border-top: 1px solid #cde0ed; }
+    .admin-main { flex: 1; padding: 2rem; background: #fafcfe; overflow-y: auto; }
+    .admin-header { margin-bottom: 2rem; }
+    .admin-header h1 { font-size: 1.75rem; font-weight: 700; color: #2c3e50; }
+    .admin-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e8ecf1; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .admin-table th { background: #e8f4fd; padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #5a6d7e; font-weight: 600; letter-spacing: 0.03em; }
+    .admin-table td { padding: 0.75rem 1rem; border-top: 1px solid #e8ecf1; font-size: 0.9rem; vertical-align: middle; }
+    .admin-table tr:hover td { background: #f8fbfe; }
+    .status-badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .status-pending { background: #fef3e0; color: #e67e22; }
+    .status-dismissed { background: #e8ecf1; color: #5a6d7e; }
+    .status-actioned { background: #fde8e8; color: #e74c3c; }
+    .actions-cell { display: flex; gap: 0.5rem; align-items: center; }
+    .actions-cell form { display: inline; }
+    @media (max-width: 768px) { .admin-layout { flex-direction: column; } .admin-sidebar { width: 100%; flex-direction: row; padding: 0.5rem; overflow-x: auto; } .admin-sidebar__brand { display: none; } .admin-sidebar__nav { display: flex; padding: 0; gap: 0.25rem; } .admin-sidebar__link { padding: 0.5rem 0.75rem; font-size: 0.8rem; white-space: nowrap; } .admin-sidebar__footer { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <% const activePage = 'flags'; %>
+    <%- include('_sidebar') %>
+    <div class="admin-main">
+      <div class="admin-header">
+        <h1>Flag Queue</h1>
+      </div>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Itinerary</th>
+            <th>User</th>
+            <th>Details</th>
+            <th>Status</th>
+            <th>Reviewed By</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% flags.forEach(function(flag) { %>
+            <tr>
+              <td><%= flag.id %></td>
+              <td><%= flag.type %></td>
+              <td>
+                <% if (flag.itinerary_id) { %>
+                  <a href="/itineraries/<%= flag.itinerary_id %>"><%= flag.itinerary_title || '#' + flag.itinerary_id %></a>
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
+              <td>
+                <% if (flag.user_id) { %>
+                  <%= flag.user_name || '' %> (<%= flag.user_email || '' %>)
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
+              <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= flag.details || '' %></td>
+              <td>
+                <span class="status-badge status-<%= flag.status %>"><%= flag.status %></span>
+              </td>
+              <td><%= flag.reviewer_name || '-' %></td>
+              <td><%= flag.created_at ? new Date(flag.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '' %></td>
+              <td>
+                <% if (flag.status === 'pending') { %>
+                  <div class="actions-cell">
+                    <form method="POST" action="/admin/flags/<%= flag.id %>/dismiss">
+                      <button type="submit" class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 0.75rem;">Dismiss</button>
+                    </form>
+                    <form method="POST" action="/admin/flags/<%= flag.id %>/action" onsubmit="return confirm('This will remove the content and ban the user. Continue?');">
+                      <button type="submit" class="btn btn-danger btn-sm" style="padding: 2px 8px; font-size: 0.75rem;">Action</button>
+                    </form>
+                  </div>
+                <% } else { %>
+                  <span style="color: #95a5b6; font-size: 0.8rem;">Reviewed</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+
+      <% if (flags.length === 0) { %>
+        <div style="text-align: center; padding: 2rem; color: #5a6d7e;">No flags found. The queue is clean.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

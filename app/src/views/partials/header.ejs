@@ -28,6 +28,10 @@
         <% } %>
         <li><a href="#partners" class="nav-link">Partners</a></li>
         <li><a href="#pricing" class="nav-link">Pricing</a></li>
+        <li><a href="/faq" class="nav-link">FAQ</a></li>
+        <% if (typeof user !== 'undefined' && user && (user.role === 'admin' || user.role === 'owner')) { %>
+          <li><a href="/admin" class="nav-link" style="color: #f5a623; font-weight: 700;">Admin</a></li>
+        <% } %>
       </ul>
       <div class="nav-actions">
         <% if (typeof user !== 'undefined' && user) { %>

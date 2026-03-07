@@ -10,6 +10,7 @@ import { db, pool } from "./db/index.js";
 import { authRoutes } from "./routes/auth.js";
 import { itineraryRoutes } from "./routes/itineraries.js";
 import { tripRoutes } from "./routes/trips.js";
+import { adminRoutes } from "./routes/admin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -80,15 +81,24 @@ await app.register(fastifyStatic, {
   maxAge: process.env.NODE_ENV === "production" ? 86400000 : 0,
 });
 
-// Decode JWT on every request (non-blocking)
+// Decode JWT on every request (non-blocking) + banned check
 import jwt from "jsonwebtoken";
 app.decorateRequest("user", null);
-app.addHook("onRequest", async (req) => {
+app.addHook("onRequest", async (req, reply) => {
   const token = req.cookies?.token;
   if (!token) return;
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "change-me");
     req.user = decoded;
+
+    // Check if user is banned (skip for auth and static routes)
+    if (decoded && !req.url.startsWith("/auth") && !req.url.startsWith("/public") && !req.url.startsWith("/faq")) {
+      const { rows } = await pool.query("SELECT banned, banned_reason FROM users WHERE id = $1", [decoded.id]);
+      if (rows.length > 0 && rows[0].banned) {
+        reply.clearCookie("token", { path: "/" });
+        return reply.view("auth/banned.ejs", { user: null, reason: rows[0].banned_reason });
+      }
+    }
   } catch {
     // invalid token, ignore
   }
@@ -106,10 +116,16 @@ app.get("/", async (req, reply) => {
   return reply.view("index.ejs", { user: req.user, itineraries: rows });
 });
 
+// FAQ page
+app.get("/faq", async (req, reply) => {
+  return reply.view("faq.ejs", { user: req.user });
+});
+
 // Routes
 await app.register(authRoutes, { prefix: "/auth" });
 await app.register(itineraryRoutes, { prefix: "/itineraries" });
 await app.register(tripRoutes, { prefix: "/trips" });
+await app.register(adminRoutes, { prefix: "/admin" });
 
 // Graceful shutdown
 const shutdown = async () => {
