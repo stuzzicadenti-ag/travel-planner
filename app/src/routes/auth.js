@@ -9,7 +9,7 @@ const IS_PROD = process.env.NODE_ENV === "production";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const COOKIE_OPTS = {
   httpOnly: true,
-  secure: IS_PROD,
+  secure: false, // behind Caddy reverse proxy on HTTP/Tailscale
   sameSite: "lax",
   path: "/",
   maxAge: 7 * 24 * 60 * 60, // 7 days
