@@ -16,7 +16,8 @@ export async function itineraryRoutes(app) {
     const rows = await db
       .select()
       .from(itineraries)
-      .orderBy(itineraries.createdAt);
+      .orderBy(itineraries.createdAt)
+      .limit(50);
 
     return reply.view("itineraries/list.ejs", {
       user: req.user,
@@ -41,22 +42,33 @@ export async function itineraryRoutes(app) {
     const userPlan = req.user?.plan || "free";
     const hasAccess = TIER_LEVELS[userPlan] >= TIER_LEVELS[itin.tier];
 
-    // Get days with items
+    // Get days with items (single query instead of N+1)
     const days = await db
       .select()
       .from(itineraryDays)
       .where(eq(itineraryDays.itineraryId, id))
       .orderBy(itineraryDays.dayNumber);
 
-    const daysWithItems = [];
-    for (const day of days) {
-      const items = await db
+    const dayIds = days.map((d) => d.id);
+    let allItems = [];
+    if (dayIds.length > 0) {
+      allItems = await db
         .select()
         .from(itineraryItems)
-        .where(eq(itineraryItems.dayId, day.id))
+        .where(sql`${itineraryItems.dayId} IN (${sql.join(dayIds.map(id => sql`${id}`), sql`, `)})`)
         .orderBy(itineraryItems.time);
-      daysWithItems.push({ ...day, items });
     }
+
+    const itemsByDay = {};
+    for (const item of allItems) {
+      if (!itemsByDay[item.dayId]) itemsByDay[item.dayId] = [];
+      itemsByDay[item.dayId].push(item);
+    }
+
+    const daysWithItems = days.map((day) => ({
+      ...day,
+      items: itemsByDay[day.id] || [],
+    }));
 
     // Check if user has saved this trip
     let isSaved = false;
@@ -90,9 +102,10 @@ export async function itineraryRoutes(app) {
     // Free users max 3 saved trips
     if (req.user.plan === "free") {
       const saved = await db
-        .select()
+        .select({ id: savedTrips.id })
         .from(savedTrips)
-        .where(eq(savedTrips.userId, req.user.id));
+        .where(eq(savedTrips.userId, req.user.id))
+        .limit(4);
       if (saved.length >= 3) {
         return reply.redirect(`/itineraries/${itineraryId}?error=limit`);
       }

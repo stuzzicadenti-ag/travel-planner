@@ -14,7 +14,7 @@ import { tripRoutes } from "./routes/trips.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = Fastify({ logger: true });
+const app = Fastify({ logger: true, trustProxy: true });
 
 // Plugins
 await app.register(fastifyFormbody);
@@ -25,10 +25,12 @@ await app.register(fastifyView, {
   engine: { ejs },
   root: path.join(__dirname, "views"),
   defaultContext: { user: null },
+  production: process.env.NODE_ENV === "production",
 });
 await app.register(fastifyStatic, {
   root: path.join(__dirname, "public"),
   prefix: "/public/",
+  maxAge: process.env.NODE_ENV === "production" ? 86400000 : 0,
 });
 
 // Decode JWT on every request (non-blocking)
@@ -61,6 +63,15 @@ app.get("/", async (req, reply) => {
 await app.register(authRoutes, { prefix: "/auth" });
 await app.register(itineraryRoutes, { prefix: "/itineraries" });
 await app.register(tripRoutes, { prefix: "/trips" });
+
+// Graceful shutdown
+const shutdown = async () => {
+  await app.close();
+  await pool.end();
+  process.exit(0);
+};
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
 
 // Start
 const PORT = parseInt(process.env.PORT || "4002", 10);
