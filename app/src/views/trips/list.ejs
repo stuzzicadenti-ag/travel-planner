@@ -1,0 +1,45 @@
+<%- include('../partials/header') %>
+
+<section class="section">
+  <div class="container">
+    <h1 class="page-title">My Saved Trips</h1>
+    <p class="page-subtitle">Your personal collection of travel itineraries. Plan your next adventure!</p>
+
+    <% if (trips.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">&#128506;</div>
+        <h2>No saved trips yet</h2>
+        <p>Browse our itineraries and save the ones that inspire you.</p>
+        <a href="/itineraries" class="btn btn-primary btn-lg">Browse Itineraries</a>
+      </div>
+    <% } else { %>
+      <div class="card-grid">
+        <% trips.forEach(function(trip) { %>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-flag"><%= trip.countryCode %></span>
+              <span class="tier-badge tier-<%= trip.tier %>"><%= trip.tier.toUpperCase() %></span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title"><%= trip.title %></h3>
+              <div class="card-meta">
+                <span class="meta-item">&#128197; <%= trip.durationDays %> days</span>
+                <span class="meta-item">&#128176; <%= trip.budgetCurrency %> <%= Number(trip.budgetAmount).toLocaleString() %></span>
+                <span class="meta-item">&#11088; <%= trip.rating %></span>
+              </div>
+              <p class="card-saved-at">Saved on <%= new Date(trip.savedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></p>
+            </div>
+            <div class="card-footer card-footer--split">
+              <a href="/itineraries/<%= trip.itineraryId %>" class="btn btn-primary">View</a>
+              <form method="POST" action="/trips/unsave/<%= trip.savedId %>">
+                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

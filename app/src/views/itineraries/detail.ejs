@@ -1,0 +1,74 @@
+<%- include('../partials/header') %>
+
+<section class="section">
+  <div class="container">
+    <a href="/itineraries" class="back-link">&larr; Back to Itineraries</a>
+
+    <div class="itinerary-header">
+      <div class="itinerary-header-info">
+        <span class="tier-badge tier-<%= itinerary.tier %> tier-badge--lg"><%= itinerary.tier.toUpperCase() %></span>
+        <h1 class="itinerary-title"><%= itinerary.title %></h1>
+        <div class="itinerary-meta">
+          <span class="meta-item meta-item--lg">&#127758; <%= itinerary.destination %></span>
+          <span class="meta-item meta-item--lg">&#128197; <%= itinerary.durationDays %> days</span>
+          <span class="meta-item meta-item--lg">&#128176; <%= itinerary.budgetCurrency %> <%= Number(itinerary.budgetAmount).toLocaleString() %></span>
+          <span class="meta-item meta-item--lg">&#11088; <%= itinerary.rating %></span>
+        </div>
+        <p class="itinerary-desc"><%= itinerary.description %></p>
+      </div>
+      <div class="itinerary-actions">
+        <% if (user) { %>
+          <% if (isSaved) { %>
+            <span class="saved-indicator">&#10003; Saved to My Trips</span>
+          <% } else { %>
+            <form method="POST" action="/itineraries/<%= itinerary.id %>/save">
+              <button type="submit" class="btn btn-orange">&#128278; Save Trip</button>
+            </form>
+          <% } %>
+        <% } else { %>
+          <a href="/auth/login" class="btn btn-outline">Login to Save</a>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (!hasAccess) { %>
+      <div class="upgrade-prompt">
+        <div class="upgrade-icon">&#128274;</div>
+        <h2>Upgrade Required</h2>
+        <p>This itinerary requires the <strong><%= itinerary.tier %></strong> plan. Upgrade your account to unlock the full day-by-day details, booking links, and insider tips.</p>
+        <a href="/auth/register" class="btn btn-primary btn-lg">Upgrade Now</a>
+      </div>
+    <% } else { %>
+      <div class="timeline">
+        <% days.forEach(function(day) { %>
+          <div class="timeline-day">
+            <div class="timeline-day-header">
+              <span class="day-number">Day <%= day.dayNumber %></span>
+              <h2 class="day-title"><%= day.title %></h2>
+            </div>
+            <div class="timeline-items">
+              <% day.items.forEach(function(item) { %>
+                <div class="timeline-item">
+                  <div class="timeline-time"><%= item.time %></div>
+                  <div class="timeline-content">
+                    <h3 class="item-title"><%= item.title %></h3>
+                    <p class="item-desc"><%= item.description %></p>
+                    <% if (item.affiliateUrl && item.partnerName) { %>
+                      <form method="POST" action="/itineraries/click/<%= item.id %>" class="affiliate-form">
+                        <button type="submit" class="btn btn-affiliate">
+                          &#128279; Book via <%= item.partnerName %>
+                        </button>
+                      </form>
+                    <% } %>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

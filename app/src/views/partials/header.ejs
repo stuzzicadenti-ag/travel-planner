@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelPlanner - Curated Itineraries</title>
+  <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <span class="nav-icon">&#9992;</span> TravelPlanner
+      </a>
+      <div class="nav-links">
+        <a href="/itineraries" class="nav-link">Browse Itineraries</a>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <a href="/trips" class="nav-link">My Trips</a>
+          <span class="nav-user">
+            <span class="plan-badge plan-<%= user.plan %>"><%= user.plan %></span>
+            <%= user.name %>
+          </span>
+          <a href="/auth/logout" class="nav-link nav-link--muted">Logout</a>
+        <% } else { %>
+          <a href="/auth/login" class="nav-link">Login</a>
+          <a href="/auth/register" class="btn btn-primary btn-sm">Register</a>
+        <% } %>
+      </div>
+    </div>
+  </nav>
+  <main class="main-content">

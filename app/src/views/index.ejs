@@ -1,0 +1,68 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Discover Your Next Adventure</h1>
+    <p class="hero-subtitle">Curated day-by-day itineraries for the world's most incredible destinations. Plan smarter, travel better.</p>
+    <a href="/itineraries" class="btn btn-primary btn-lg">Browse All Itineraries</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Featured Itineraries</h2>
+    <p class="section-subtitle">Hand-picked travel plans with insider tips, booking links, and day-by-day schedules.</p>
+
+    <div class="card-grid">
+      <% itineraries.forEach(function(itin) { %>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-flag"><%= itin.countryCode %></span>
+            <span class="tier-badge tier-<%= itin.tier %>"><%= itin.tier.toUpperCase() %></span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title"><%= itin.title %></h3>
+            <div class="card-meta">
+              <span class="meta-item">&#128197; <%= itin.durationDays %> days</span>
+              <span class="meta-item">&#128176; <%= itin.budgetCurrency %> <%= Number(itin.budgetAmount).toLocaleString() %></span>
+              <span class="meta-item">&#11088; <%= itin.rating %></span>
+            </div>
+            <p class="card-desc"><%= itin.description ? itin.description.substring(0, 120) + '...' : '' %></p>
+          </div>
+          <div class="card-footer">
+            <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-block">View Itinerary</a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <div class="text-center mt-lg">
+      <a href="/itineraries" class="btn btn-outline btn-lg">Browse All Itineraries</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container">
+    <h2 class="section-title">Why TravelPlanner?</h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">&#128506;</div>
+        <h3>Day-by-Day Plans</h3>
+        <p>Every itinerary comes with detailed daily schedules, times, and descriptions so you never wonder what to do next.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#128279;</div>
+        <h3>Instant Booking</h3>
+        <p>Book tours, hotels, and experiences directly through our partner links. One click from plan to reservation.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#128188;</div>
+        <h3>Budget Friendly</h3>
+        <p>Each itinerary includes estimated budgets so you can plan your finances before you pack your bags.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

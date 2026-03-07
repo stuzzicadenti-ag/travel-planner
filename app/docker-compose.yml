@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  app:
+    container_name: stz-travelplanner-app
+    build: .
+    image: stz-travelplanner:latest
+    ports:
+      - "0.0.0.0:4002:4002"
+    environment:
+      NODE_ENV: production
+      PORT: 4002
+      DATABASE_URL: postgresql://travelplanner_app:travelplanner_pass@stz-shared-db:5432/stz_travelplanner
+      JWT_SECRET: ${JWT_SECRET:-change-me}
+      COOKIE_SECRET: ${COOKIE_SECRET:-change-me}
+    networks:
+      - stz-net
+    restart: unless-stopped
+    labels:
+      stz.project: "stuzzicadenti-ag"
+      stz.service: "travelplanner"
+
+networks:
+  stz-net:
+    external: true

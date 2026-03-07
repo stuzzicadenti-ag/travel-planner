@@ -1,0 +1,30 @@
+<%- include('../partials/header') %>
+
+<section class="section">
+  <div class="container container--narrow">
+    <div class="auth-card">
+      <h1 class="auth-title">Welcome Back</h1>
+      <p class="auth-subtitle">Log in to access your saved trips and premium itineraries.</p>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <form method="POST" action="/auth/login" class="auth-form">
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" name="password" class="form-input" placeholder="Your password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Log In</button>
+      </form>
+
+      <p class="auth-switch">Don't have an account? <a href="/auth/register">Register here</a></p>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

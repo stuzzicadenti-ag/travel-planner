@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+
+<section class="section">
+  <div class="container">
+    <h1 class="page-title">Browse Itineraries</h1>
+    <p class="page-subtitle">Explore our curated collection of travel itineraries for every budget and style.</p>
+
+    <div class="card-grid">
+      <% itineraries.forEach(function(itin) { %>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-flag"><%= itin.countryCode %></span>
+            <span class="tier-badge tier-<%= itin.tier %>"><%= itin.tier.toUpperCase() %></span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">
+              <% if (itin.tier !== 'free' && (!user || (user.plan === 'free' && itin.tier !== 'free') || (user.plan === 'explorer' && itin.tier === 'premium'))) { %>
+                <span class="lock-icon">&#128274;</span>
+              <% } %>
+              <%= itin.title %>
+            </h3>
+            <div class="card-meta">
+              <span class="meta-item">&#128197; <%= itin.durationDays %> days</span>
+              <span class="meta-item">&#128176; <%= itin.budgetCurrency %> <%= Number(itin.budgetAmount).toLocaleString() %></span>
+              <span class="meta-item">&#11088; <%= itin.rating %></span>
+            </div>
+            <p class="card-desc"><%= itin.description ? itin.description.substring(0, 140) + '...' : '' %></p>
+          </div>
+          <div class="card-footer">
+            <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-block">View Itinerary</a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <% if (itineraries.length === 0) { %>
+      <div class="empty-state">
+        <p>No itineraries available yet. Check back soon!</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
