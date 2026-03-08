@@ -8,6 +8,107 @@
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
   <link rel="stylesheet" href="/public/style.css">
   <link rel="stylesheet" href="/public/landing.css">
+  <style>
+    /* Dropdown system */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-light);
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: color 0.2s, background 0.2s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .nav-dropdown-btn:hover { color: var(--blue); background: var(--sky); }
+    .nav-dropdown-btn .caret { font-size: 0.55rem; transition: transform 0.2s; }
+    .nav-dropdown.open .nav-dropdown-btn .caret { transform: rotate(180deg); }
+    .nav-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 200px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      z-index: 1100;
+    }
+    .nav-dropdown.open .nav-dropdown-menu { display: block; }
+    .nav-dropdown-menu a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      color: var(--text-light);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s, background 0.2s;
+      text-decoration: none;
+    }
+    .nav-dropdown-menu a:hover { color: var(--blue); background: var(--sky); }
+    .nav-dropdown-menu a.active { color: var(--blue); font-weight: 600; }
+    .nav-dropdown-menu a.text-danger { color: var(--red, #ef4444); }
+    .nav-dropdown-menu a.text-danger:hover { background: #fef2f2; }
+    .nav-dropdown-menu a.text-admin { color: #f5a623; font-weight: 700; }
+    .nav-dropdown-menu a.text-admin:hover { background: #fffbeb; }
+    .dropdown-divider { height: 1px; background: var(--border); margin: 6px 0; }
+    .dropdown-header {
+      padding: 8px 16px 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Profile avatar */
+    .profile-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--sky, #e0f2fe));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--white);
+      flex-shrink: 0;
+    }
+
+    /* Language dropdown */
+    .lang-dropdown .nav-dropdown-btn {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 5px 10px;
+    }
+    .lang-dropdown .nav-dropdown-menu { min-width: 120px; }
+    .lang-dropdown .nav-dropdown-menu a { font-size: 0.8rem; font-weight: 600; padding: 7px 16px; }
+
+    /* Nav actions layout */
+    .nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* Mobile overrides */
+    @media (max-width: 768px) {
+      .nav-actions > a.btn, .nav-actions > .nav-user-inline { display: none; }
+      .nav-actions > .profile-dropdown { display: none; }
+      .mobile-profile-section { display: block !important; width: 100%; }
+      .mobile-divider { display: block !important; height: 1px; background: var(--border); margin: 6px 0; }
+      .lang-dropdown { width: 100%; }
+      .lang-dropdown .nav-dropdown-btn { width: 100%; justify-content: flex-start; }
+      .lang-dropdown .nav-dropdown-menu { position: static; box-shadow: none; border: none; background: var(--sky, #f0f9ff); border-radius: var(--radius-sm); }
+    }
+    @media (min-width: 769px) {
+      .mobile-profile-section { display: none !important; }
+      .mobile-divider { display: none !important; }
+    }
+  </style>
 </head>
 <body>
 
@@ -22,33 +123,106 @@
         <span></span><span></span><span></span>
       </label>
       <ul class="nav-links">
-        <li><a href="/" class="nav-link active"><%= typeof t !== 'undefined' ? t('nav_home') : 'Home' %></a></li>
         <li><a href="/itineraries" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_browse_trips') : 'Browse Trips' %></a></li>
         <li><a href="/community" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_community') : 'Community' %></a></li>
-        <% if (typeof user !== 'undefined' && user) { %>
-          <li><a href="/trips" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_my_trips') : 'My Trips' %></a></li>
-        <% } %>
-        <li><a href="#partners" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_partners') : 'Partners' %></a></li>
         <li><a href="#pricing" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_pricing') : 'Pricing' %></a></li>
         <li><a href="/faq" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_faq') : 'FAQ' %></a></li>
-        <% if (typeof user !== 'undefined' && user && (user.role === 'admin' || user.role === 'owner')) { %>
-          <li><a href="/admin" class="nav-link" style="color: #f5a623; font-weight: 700;"><%= typeof t !== 'undefined' ? t('nav_admin') : 'Admin' %></a></li>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <li class="mobile-divider"></li>
+          <li class="mobile-profile-section">
+            <div style="padding: 8px 10px; font-size: 0.75rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">
+              <%= user.name || 'Account' %>
+            </div>
+            <a href="/trips" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_my_trips') : 'My Trips' %></a>
+            <a href="/profile/settings" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_settings') : 'Settings' %></a>
+            <% if (user.role === 'admin' || user.role === 'owner') { %>
+              <a href="/admin" class="nav-link" style="color: #f5a623; font-weight: 700;"><%= typeof t !== 'undefined' ? t('nav_admin') : 'Admin' %></a>
+            <% } %>
+            <a href="/auth/logout" class="nav-link" style="color: var(--red, #ef4444);"><%= typeof t !== 'undefined' ? t('nav_logout') : 'Logout' %></a>
+          </li>
+        <% } else { %>
+          <li class="mobile-divider"></li>
+          <li class="mobile-profile-section">
+            <a href="/auth/login" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_login') : 'Login' %></a>
+            <a href="/auth/register" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_register') : 'Register' %></a>
+          </li>
         <% } %>
       </ul>
       <div class="nav-actions">
         <% if (typeof user !== 'undefined' && user) { %>
-          <span class="nav-user">
-            <span class="plan-badge plan-<%= user.plan %>"><%= user.plan %></span>
-            <%= user.name %>
-          </span>
-          <a href="/auth/logout" class="btn btn-ghost"><%= typeof t !== 'undefined' ? t('nav_logout') : 'Logout' %></a>
+          <div class="nav-dropdown profile-dropdown">
+            <button type="button" class="nav-dropdown-btn" aria-expanded="false">
+              <span class="profile-avatar"><%= (user.name || 'U').charAt(0).toUpperCase() %></span>
+              <span><%= user.name || user.email %></span>
+              <span class="caret">&#9662;</span>
+            </button>
+            <div class="nav-dropdown-menu">
+              <div class="dropdown-header"><%= user.name || user.email %></div>
+              <div class="dropdown-divider"></div>
+              <a href="/trips"><%= typeof t !== 'undefined' ? t('nav_my_trips') : 'My Trips' %></a>
+              <a href="/profile/settings"><%= typeof t !== 'undefined' ? t('nav_settings') : 'Settings' %></a>
+              <% if (user.role === 'admin' || user.role === 'owner') { %>
+                <a href="/admin" class="text-admin"><%= typeof t !== 'undefined' ? t('nav_admin') : 'Admin' %></a>
+              <% } %>
+              <div class="dropdown-divider"></div>
+              <a href="/auth/logout" class="text-danger"><%= typeof t !== 'undefined' ? t('nav_logout') : 'Logout' %></a>
+            </div>
+          </div>
         <% } else { %>
           <a href="/auth/login" class="btn btn-ghost"><%= typeof t !== 'undefined' ? t('nav_login') : 'Login' %></a>
           <a href="/auth/register" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('nav_register') : 'Register' %></a>
         <% } %>
-        <span class="lang-switcher" style="margin-left: 8px; font-size: 0.75rem;"><% var cl = typeof lang !== 'undefined' ? lang : 'en'; %><a href="/lang/en" style="<%= cl === 'en' ? 'font-weight:700;' : '' %>text-decoration:none;color:inherit;">EN</a> | <a href="/lang/it" style="<%= cl === 'it' ? 'font-weight:700;' : '' %>text-decoration:none;color:inherit;">IT</a> | <a href="/lang/de" style="<%= cl === 'de' ? 'font-weight:700;' : '' %>text-decoration:none;color:inherit;">DE</a> | <a href="/lang/fr" style="<%= cl === 'fr' ? 'font-weight:700;' : '' %>text-decoration:none;color:inherit;">FR</a></span>
+        <div class="nav-dropdown lang-dropdown">
+          <button type="button" class="nav-dropdown-btn" aria-expanded="false">
+            <%= (typeof lang !== 'undefined' ? lang : 'en').toUpperCase() %> <span class="caret">&#9662;</span>
+          </button>
+          <div class="nav-dropdown-menu">
+            <a href="/lang/en" class="<%= (typeof lang !== 'undefined' && lang === 'en') ? 'active' : '' %>">English</a>
+            <a href="/lang/it" class="<%= (typeof lang !== 'undefined' && lang === 'it') ? 'active' : '' %>">Italiano</a>
+            <a href="/lang/de" class="<%= (typeof lang !== 'undefined' && lang === 'de') ? 'active' : '' %>">Deutsch</a>
+            <a href="/lang/fr" class="<%= (typeof lang !== 'undefined' && lang === 'fr') ? 'active' : '' %>">Fran&ccedil;ais</a>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
 
   <main class="main-content">
+
+<script>
+(function() {
+  document.querySelectorAll('.nav-dropdown-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var dd = btn.closest('.nav-dropdown');
+      var isOpen = dd.classList.contains('open');
+      document.querySelectorAll('.nav-dropdown.open').forEach(function(d) {
+        d.classList.remove('open');
+        d.querySelector('.nav-dropdown-btn').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        dd.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+  document.addEventListener('click', function() {
+    document.querySelectorAll('.nav-dropdown.open').forEach(function(d) {
+      d.classList.remove('open');
+      d.querySelector('.nav-dropdown-btn').setAttribute('aria-expanded', 'false');
+    });
+  });
+  document.querySelectorAll('.nav-dropdown-menu').forEach(function(menu) {
+    menu.addEventListener('click', function(e) { if (!e.target.closest('a')) e.stopPropagation(); });
+  });
+  var toggle = document.getElementById('nav-toggle');
+  if (toggle) {
+    toggle.addEventListener('change', function() {
+      document.querySelectorAll('.nav-dropdown.open').forEach(function(d) {
+        d.classList.remove('open');
+        d.querySelector('.nav-dropdown-btn').setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+})();
+</script>
