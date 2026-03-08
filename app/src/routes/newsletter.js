@@ -5,6 +5,9 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export async function newsletterRoutes(app) {
   // POST /newsletter/subscribe
   app.post("/subscribe", async (req, reply) => {
+    // Rate limit newsletter subscriptions (reuse write rate limiter)
+    if (app.checkWriteRateLimit && !app.checkWriteRateLimit(req, reply)) return;
+
     const { email } = req.body || {};
     // Validate referer is same-origin to prevent open redirect
     let referer = "/";

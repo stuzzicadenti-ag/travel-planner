@@ -34,40 +34,49 @@ await runWeRoadMigration();
 
 // Security headers
 app.addHook('onSend', async (request, reply) => {
+  reply.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   reply.header('X-Content-Type-Options', 'nosniff');
   reply.header('X-Frame-Options', 'DENY');
   reply.header('X-XSS-Protection', '0');
   reply.header('Referrer-Policy', 'strict-origin-when-cross-origin');
   reply.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  reply.header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'");
+  reply.removeHeader('X-Powered-By');
 });
 
-// Rate limiting for auth routes (in-memory, per IP)
-const authAttempts = new Map();
-const RATE_LIMIT_WINDOW = 15 * 60 * 1000;
-const RATE_LIMIT_MAX = 10;
+// Rate limiting (in-memory, per IP) — shared infrastructure for auth, reviews, and writes
+function createRateLimiter(windowMs, maxRequests) {
+  const attempts = new Map();
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of attempts) {
+      if (now - entry.windowStart > windowMs) attempts.delete(key);
+    }
+  }, 60 * 1000);
 
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of authAttempts) {
-    if (now - entry.windowStart > RATE_LIMIT_WINDOW) authAttempts.delete(key);
-  }
-}, 60 * 1000);
+  return (request, reply) => {
+    const ip = request.ip;
+    const now = Date.now();
+    let entry = attempts.get(ip);
+    if (!entry || now - entry.windowStart > windowMs) {
+      entry = { count: 0, windowStart: now };
+      attempts.set(ip, entry);
+    }
+    entry.count++;
+    if (entry.count > maxRequests) {
+      reply.code(429).send('Too many attempts. Please try again later.');
+      return false;
+    }
+    return true;
+  };
+}
 
-app.decorate('checkAuthRateLimit', (request, reply) => {
-  const ip = request.ip;
-  const now = Date.now();
-  let entry = authAttempts.get(ip);
-  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW) {
-    entry = { count: 0, windowStart: now };
-    authAttempts.set(ip, entry);
-  }
-  entry.count++;
-  if (entry.count > RATE_LIMIT_MAX) {
-    reply.code(429).send('Too many attempts. Please try again later.');
-    return false;
-  }
-  return true;
-});
+// Auth: 10 attempts per 15 min
+app.decorate('checkAuthRateLimit', createRateLimiter(15 * 60 * 1000, 10));
+// Reviews: 5 submissions per 15 min
+app.decorate('checkReviewRateLimit', createRateLimiter(15 * 60 * 1000, 5));
+// Write operations (save trip, etc.): 20 per 15 min
+app.decorate('checkWriteRateLimit', createRateLimiter(15 * 60 * 1000, 20));
 
 // Global error handler
 app.setErrorHandler((error, request, reply) => {

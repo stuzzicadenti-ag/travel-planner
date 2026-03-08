@@ -23,8 +23,8 @@ export async function itineraryRoutes(app) {
 
     const conditions = [];
 
-    if (country) {
-      conditions.push(eq(itineraries.countryCode, country.toUpperCase().trim()));
+    if (country && String(country).length <= 3) {
+      conditions.push(eq(itineraries.countryCode, String(country).toUpperCase().trim()));
     }
     if (min_days) {
       const minD = parseInt(min_days, 10);
@@ -43,9 +43,13 @@ export async function itineraryRoutes(app) {
       if (!isNaN(maxB)) conditions.push(lte(itineraries.budgetAmount, String(maxB)));
     }
     if (search) {
-      conditions.push(
-        sql`(${itineraries.title} ILIKE ${'%' + search + '%'} OR ${itineraries.destination} ILIKE ${'%' + search + '%'})`
-      );
+      // Truncate search input to prevent abuse with very long strings
+      const cleanSearch = String(search).substring(0, 200).trim();
+      if (cleanSearch) {
+        conditions.push(
+          sql`(${itineraries.title} ILIKE ${'%' + cleanSearch + '%'} OR ${itineraries.destination} ILIKE ${'%' + cleanSearch + '%'})`
+        );
+      }
     }
     if (mood && VALID_MOODS.includes(mood)) {
       conditions.push(eq(itineraries.mood, mood));
@@ -77,8 +81,8 @@ export async function itineraryRoutes(app) {
     let rows = await query.limit(50);
 
     // If tag filter, we need to filter by tag join
-    if (tag && tag.trim()) {
-      const tagFilter = tag.trim();
+    if (tag && String(tag).trim() && String(tag).length <= 50) {
+      const tagFilter = String(tag).trim();
       const taggedIds = await pool.query(
         "SELECT DISTINCT itinerary_id FROM itinerary_tags WHERE tag ILIKE $1",
         [tagFilter]
@@ -260,6 +264,9 @@ export async function itineraryRoutes(app) {
 
     if (!req.user) return reply.redirect("/auth/login");
 
+    // Rate limit review submissions (5 per 15 min per IP)
+    if (app.checkReviewRateLimit && !app.checkReviewRateLimit(req, reply)) return;
+
     const { rating, comment } = req.body || {};
     const ratingInt = parseInt(rating, 10);
 
@@ -293,6 +300,9 @@ export async function itineraryRoutes(app) {
   // POST /itineraries/:id/save - Save trip
   app.post("/:id/save", async (req, reply) => {
     if (!req.user) return reply.redirect("/auth/login");
+
+    // Rate limit write operations (20 per 15 min per IP)
+    if (app.checkWriteRateLimit && !app.checkWriteRateLimit(req, reply)) return;
 
     const itineraryId = parseInt(req.params.id, 10);
     if (isNaN(itineraryId)) return reply.code(404).send("Not found");
