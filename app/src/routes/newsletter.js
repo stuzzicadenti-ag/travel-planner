@@ -6,7 +6,15 @@ export async function newsletterRoutes(app) {
   // POST /newsletter/subscribe
   app.post("/subscribe", async (req, reply) => {
     const { email } = req.body || {};
-    const referer = req.headers.referer || "/";
+    // Validate referer is same-origin to prevent open redirect
+    let referer = "/";
+    try {
+      const raw = req.headers.referer;
+      if (raw) {
+        const url = new URL(raw);
+        referer = url.pathname + url.search;
+      }
+    } catch { /* ignore malformed referer */ }
 
     if (!email || !EMAIL_RE.test(email) || email.length > 255) {
       return reply.redirect(referer + (referer.includes("?") ? "&" : "?") + "nl=invalid");
