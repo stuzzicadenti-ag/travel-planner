@@ -4,27 +4,27 @@
   <div class="container container--narrow">
     <div class="auth-card" style="text-align: center;">
       <div style="font-size: 3rem; margin-bottom: 1rem;">&#128683;</div>
-      <h1 class="auth-title">Account Suspended</h1>
-      <p class="auth-subtitle" style="margin-bottom: 1.5rem;">Your TravelPlanner account has been suspended due to a violation of our community guidelines.</p>
+      <h1 class="auth-title"><%= t('auth_banned_title') %></h1>
+      <p class="auth-subtitle" style="margin-bottom: 1.5rem;"><%= t('auth_banned_subtitle') %></p>
 
       <% if (typeof reason !== 'undefined' && reason) { %>
         <div class="alert alert-error" style="text-align: left; margin-bottom: 1.5rem;">
-          <strong>Reason:</strong> <%= reason %>
+          <strong><%= t('auth_banned_reason') %></strong> <%= reason %>
         </div>
       <% } %>
 
       <p style="color: #5a6d7e; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem;">
-        If you believe this was a mistake or would like to appeal, please contact our support team. We review all appeals within 48 hours.
+        <%= t('auth_banned_appeal') %>
       </p>
 
       <div style="background: #e8f4fd; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
-        <p style="font-weight: 600; margin-bottom: 0.5rem; color: #2c3e50;">Contact Support</p>
+        <p style="font-weight: 600; margin-bottom: 0.5rem; color: #2c3e50;"><%= t('auth_banned_contact') %></p>
         <a href="mailto:support@travelplanner.ch" style="font-size: 1.05rem; font-weight: 600;">support@travelplanner.ch</a>
       </div>
 
       <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <a href="/faq" class="btn btn-outline">View FAQ</a>
-        <a href="/" class="btn btn-primary">Back to Home</a>
+        <a href="/faq" class="btn btn-outline"><%= t('auth_banned_view_faq') %></a>
+        <a href="/" class="btn btn-primary"><%= t('auth_banned_back_home') %></a>
       </div>
     </div>
   </div>

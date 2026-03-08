@@ -5,12 +5,12 @@
     <div class="container">
       <div class="newsletter-inner">
         <div class="newsletter-text">
-          <h3>Get exclusive deals & travel inspiration</h3>
-          <p>Join 10,000+ travelers. Weekly curated trips, last-minute deals, and community stories.</p>
+          <h3><%= typeof t !== 'undefined' ? t('newsletter_title') : 'Get exclusive deals & travel inspiration' %></h3>
+          <p><%= typeof t !== 'undefined' ? t('newsletter_subtitle') : 'Join 10,000+ travelers. Weekly curated trips, last-minute deals, and community stories.' %></p>
         </div>
         <form class="newsletter-form" action="/newsletter/subscribe" method="POST">
-          <input type="email" name="email" class="newsletter-input" placeholder="Enter your email" required maxlength="255" autocomplete="email">
-          <button type="submit" class="btn btn-primary newsletter-btn">Subscribe</button>
+          <input type="email" name="email" class="newsletter-input" placeholder="<%= typeof t !== 'undefined' ? t('newsletter_placeholder') : 'Enter your email' %>" required maxlength="255" autocomplete="email">
+          <button type="submit" class="btn btn-primary newsletter-btn"><%= typeof t !== 'undefined' ? t('newsletter_subscribe') : 'Subscribe' %></button>
         </form>
       </div>
     </div>
@@ -24,34 +24,34 @@
             <span class="logo-icon">&#9992;</span>
             <span class="logo-text">TravelPlanner</span>
           </a>
-          <p class="footer-tagline">Explore. Dream. Discover.</p>
-          <p class="footer-copy">&copy; 2026 TravelPlanner. All rights reserved.</p>
+          <p class="footer-tagline"><%= typeof t !== 'undefined' ? t('footer_tagline') : 'Explore. Dream. Discover.' %></p>
+          <p class="footer-copy"><%- typeof t !== 'undefined' ? t('footer_copy') : '&copy; 2026 TravelPlanner. All rights reserved.' %></p>
         </div>
         <div class="footer-col">
-          <h4>Product</h4>
+          <h4><%= typeof t !== 'undefined' ? t('footer_product') : 'Product' %></h4>
           <ul>
-            <li><a href="/itineraries">Browse Trips</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#pricing">Pricing</a></li>
-            <li><a href="#partners">Partners</a></li>
+            <li><a href="/itineraries"><%= typeof t !== 'undefined' ? t('nav_browse_trips') : 'Browse Trips' %></a></li>
+            <li><a href="#features"><%= typeof t !== 'undefined' ? t('footer_features') : 'Features' %></a></li>
+            <li><a href="#pricing"><%= typeof t !== 'undefined' ? t('nav_pricing') : 'Pricing' %></a></li>
+            <li><a href="#partners"><%= typeof t !== 'undefined' ? t('nav_partners') : 'Partners' %></a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Community</h4>
+          <h4><%= typeof t !== 'undefined' ? t('footer_community') : 'Community' %></h4>
           <ul>
-            <li><a href="/community">Reviews & Stories</a></li>
-            <li><a href="/community/reviews">All Reviews</a></li>
-            <li><a href="#">Travel Blog</a></li>
-            <li><a href="#">Become a Coordinator</a></li>
+            <li><a href="/community"><%= typeof t !== 'undefined' ? t('footer_reviews_stories') : 'Reviews & Stories' %></a></li>
+            <li><a href="/community/reviews"><%= typeof t !== 'undefined' ? t('footer_all_reviews') : 'All Reviews' %></a></li>
+            <li><a href="#"><%= typeof t !== 'undefined' ? t('footer_travel_blog') : 'Travel Blog' %></a></li>
+            <li><a href="#"><%= typeof t !== 'undefined' ? t('footer_become_coordinator') : 'Become a Coordinator' %></a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Support</h4>
+          <h4><%= typeof t !== 'undefined' ? t('footer_support') : 'Support' %></h4>
           <ul>
-            <li><a href="/faq">Help Center</a></li>
-            <li><a href="mailto:support@travelplanner.ch">Contact</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
+            <li><a href="/faq"><%= typeof t !== 'undefined' ? t('footer_help_center') : 'Help Center' %></a></li>
+            <li><a href="mailto:support@travelplanner.ch"><%= typeof t !== 'undefined' ? t('footer_contact') : 'Contact' %></a></li>
+            <li><a href="#"><%= typeof t !== 'undefined' ? t('footer_privacy') : 'Privacy Policy' %></a></li>
+            <li><a href="#"><%= typeof t !== 'undefined' ? t('footer_terms') : 'Terms of Service' %></a></li>
           </ul>
         </div>
       </div>

@@ -5,6 +5,7 @@ import fastifyCookie from "@fastify/cookie";
 import fastifyView from "@fastify/view";
 import ejs from "ejs";
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { db, pool } from "./db/index.js";
 import { runWeRoadMigration } from "./db/migrate-weroad.js";
@@ -17,6 +18,14 @@ import { newsletterRoutes } from "./routes/newsletter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// i18n: load locale files
+const SUPPORTED_LANGS = ["en", "it", "de", "fr"];
+const locales = {};
+for (const lang of SUPPORTED_LANGS) {
+  const filePath = path.join(__dirname, "locales", `${lang}.json`);
+  locales[lang] = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+}
 
 const app = Fastify({ logger: true, trustProxy: true, bodyLimit: 1048576 });
 
@@ -108,6 +117,33 @@ app.addHook("onRequest", async (req, reply) => {
   } catch {
     // invalid token, ignore
   }
+});
+
+// i18n: inject translate helper into every request and auto-inject into views
+app.addHook("preHandler", async (req, reply) => {
+  const cookieLang = req.cookies?.lang;
+  const lang = SUPPORTED_LANGS.includes(cookieLang) ? cookieLang : "en";
+  const strings = locales[lang];
+  const fallback = locales["en"];
+  const t = (key) => strings[key] || fallback[key] || key;
+  req.lang = lang;
+  req.t = t;
+
+  // Wrap reply.view to auto-inject t and lang into every template
+  const originalView = reply.view.bind(reply);
+  reply.view = (template, data = {}) => {
+    return originalView(template, { t, lang, ...data });
+  };
+});
+
+// i18n: language switch route
+app.get("/lang/:code", async (req, reply) => {
+  const code = req.params.code;
+  if (SUPPORTED_LANGS.includes(code)) {
+    reply.setCookie("lang", code, { path: "/", maxAge: 365 * 24 * 60 * 60, sameSite: "lax" });
+  }
+  const referer = req.headers.referer || "/";
+  return reply.redirect(referer);
 });
 
 // Health check

@@ -8,24 +8,24 @@
     <div class="cloud cloud-3">&#9925;</div>
   </div>
   <div class="container hero-content">
-    <h1 class="hero-title">Travel Together. Explore Further.</h1>
-    <p class="hero-subtitle">Join curated group trips with like-minded travelers. Expert coordinators, handpicked destinations, unforgettable memories.</p>
+    <h1 class="hero-title"><%= t('hero_title') %></h1>
+    <p class="hero-subtitle"><%= t('hero_subtitle') %></p>
     <div class="hero-actions">
-      <a href="/itineraries" class="btn btn-primary btn-lg">Explore Trips</a>
-      <a href="#how-it-works" class="btn btn-outline btn-lg">How It Works</a>
+      <a href="/itineraries" class="btn btn-primary btn-lg"><%= t('hero_explore_trips') %></a>
+      <a href="#how-it-works" class="btn btn-outline btn-lg"><%= t('hero_how_it_works') %></a>
     </div>
     <div class="hero-stats">
       <div class="stat">
         <span class="stat-number">50K+</span>
-        <span class="stat-label">Trips Planned</span>
+        <span class="stat-label"><%= t('hero_trips_planned') %></span>
       </div>
       <div class="stat">
         <span class="stat-number">120+</span>
-        <span class="stat-label">Destinations</span>
+        <span class="stat-label"><%= t('hero_destinations') %></span>
       </div>
       <div class="stat">
         <span class="stat-number">10K+</span>
-        <span class="stat-label">Travelers</span>
+        <span class="stat-label"><%= t('hero_travelers') %></span>
       </div>
     </div>
   </div>
@@ -37,19 +37,19 @@
     <div class="trust-items">
       <div class="trust-item">
         <span class="trust-icon">&#11088;</span>
-        <span>4.8/5 rating from travelers</span>
+        <span><%= t('trust_rating') %></span>
       </div>
       <div class="trust-item">
         <span class="trust-icon">&#128101;</span>
-        <span>Trusted by 10,000+ travelers</span>
+        <span><%= t('trust_trusted') %></span>
       </div>
       <div class="trust-item">
         <span class="trust-icon">&#128274;</span>
-        <span>Free cancellation up to 30 days</span>
+        <span><%= t('trust_cancellation') %></span>
       </div>
       <div class="trust-item">
         <span class="trust-icon">&#127760;</span>
-        <span>120+ destinations worldwide</span>
+        <span><%= t('trust_destinations') %></span>
       </div>
     </div>
   </div>
@@ -59,23 +59,23 @@
 <section class="section filter-section" id="filter-bar">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Find Your Perfect Trip</h2>
-      <p class="section-subtitle">Filter by mood or season to discover trips made for you.</p>
+      <h2 class="section-title"><%= t('filter_title') %></h2>
+      <p class="section-subtitle"><%= t('filter_subtitle') %></p>
     </div>
     <div class="filter-pills-row">
-      <span class="filter-pills-label">Mood:</span>
-      <a href="/itineraries?mood=adventure" class="filter-pill">&#127956; Adventure</a>
-      <a href="/itineraries?mood=relaxation" class="filter-pill">&#127796; Relaxation</a>
-      <a href="/itineraries?mood=culture" class="filter-pill">&#127963; Culture</a>
-      <a href="/itineraries?mood=party" class="filter-pill">&#127881; Party</a>
-      <a href="/itineraries?mood=wellness" class="filter-pill">&#128518; Wellness</a>
+      <span class="filter-pills-label"><%= t('filter_mood') %></span>
+      <a href="/itineraries?mood=adventure" class="filter-pill">&#127956; <%= t('filter_adventure') %></a>
+      <a href="/itineraries?mood=relaxation" class="filter-pill">&#127796; <%= t('filter_relaxation') %></a>
+      <a href="/itineraries?mood=culture" class="filter-pill">&#127963; <%= t('filter_culture') %></a>
+      <a href="/itineraries?mood=party" class="filter-pill">&#127881; <%= t('filter_party') %></a>
+      <a href="/itineraries?mood=wellness" class="filter-pill">&#128518; <%= t('filter_wellness') %></a>
     </div>
     <div class="filter-pills-row" style="margin-top: 12px;">
-      <span class="filter-pills-label">Season:</span>
-      <a href="/itineraries?season=summer" class="filter-pill filter-pill--summer">&#9728; Summer</a>
-      <a href="/itineraries?season=winter" class="filter-pill filter-pill--winter">&#10052; Winter</a>
-      <a href="/itineraries?season=spring" class="filter-pill filter-pill--spring">&#127800; Spring</a>
-      <a href="/itineraries?season=autumn" class="filter-pill filter-pill--autumn">&#127810; Autumn</a>
+      <span class="filter-pills-label"><%= t('filter_season') %></span>
+      <a href="/itineraries?season=summer" class="filter-pill filter-pill--summer">&#9728; <%= t('filter_summer') %></a>
+      <a href="/itineraries?season=winter" class="filter-pill filter-pill--winter">&#10052; <%= t('filter_winter') %></a>
+      <a href="/itineraries?season=spring" class="filter-pill filter-pill--spring">&#127800; <%= t('filter_spring') %></a>
+      <a href="/itineraries?season=autumn" class="filter-pill filter-pill--autumn">&#127810; <%= t('filter_autumn') %></a>
     </div>
   </div>
 </section>
@@ -85,8 +85,8 @@
 <section class="section deals-section" id="deals">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">&#128293; Last-Minute Deals</h2>
-      <p class="section-subtitle">Limited spots at unbeatable prices. Book before they're gone!</p>
+      <h2 class="section-title">&#128293; <%= t('deals_title') %></h2>
+      <p class="section-subtitle"><%= t('deals_subtitle') %></p>
     </div>
     <div class="deals-grid">
       <% deals.forEach(function(deal) { %>
@@ -95,16 +95,16 @@
             <span class="deal-card__emoji"><%= deal.country_code || '&#127758;' %></span>
             <span class="deal-badge">-<%= deal.discount %>%</span>
             <% if (deal.spots_left && deal.spots_left <= 5) { %>
-              <span class="spots-badge spots-badge--pulse"><%= deal.spots_left %> spots left!</span>
+              <span class="spots-badge spots-badge--pulse"><%= deal.spots_left %> <%= t('deals_spots_left') %></span>
             <% } else if (deal.spots_left) { %>
-              <span class="spots-badge"><%= deal.spots_left %> spots left</span>
+              <span class="spots-badge"><%= deal.spots_left %> <%= t('deals_spots_left_calm') %></span>
             <% } %>
           </div>
           <div class="deal-card__body">
             <h3 class="deal-card__title"><%= deal.title %></h3>
             <div class="deal-card__meta">
               <span>&#127758; <%= deal.destination %></span>
-              <span>&#128197; <%= deal.duration_days %> days</span>
+              <span>&#128197; <%= deal.duration_days %> <%= t('days') %></span>
               <% if (deal.age_range) { %><span>&#128100; <%= deal.age_range %></span><% } %>
             </div>
             <div class="deal-pricing">
@@ -114,9 +114,9 @@
               <span class="deal-current-price">&euro;<%= Number(deal.budget_amount).toLocaleString() %></span>
             </div>
             <% if (deal.departure_date) { %>
-              <div class="deal-departure">Departs: <%= new Date(deal.departure_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></div>
+              <div class="deal-departure"><%= t('deals_departs') %> <%= new Date(deal.departure_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></div>
             <% } %>
-            <a href="/itineraries/<%= deal.id %>" class="btn btn-primary btn-sm btn-block">View Deal</a>
+            <a href="/itineraries/<%= deal.id %>" class="btn btn-primary btn-sm btn-block"><%= t('deals_view') %></a>
           </div>
         </div>
       <% }); %>
@@ -129,8 +129,8 @@
 <section class="section destinations" id="destinations">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Trending Destinations</h2>
-      <p class="section-subtitle">Top-rated group trips handpicked by our community.</p>
+      <h2 class="section-title"><%= t('trending_title') %></h2>
+      <p class="section-subtitle"><%= t('trending_subtitle') %></p>
     </div>
     <% if (itineraries && itineraries.length > 0) { %>
       <div class="destinations-grid">
@@ -150,23 +150,23 @@
               </div>
               <p class="destination-desc"><%= itin.description ? itin.description.substring(0, 100) + '...' : '' %></p>
               <div class="destination-meta">
-                <span class="tag">&#128197; <%= itin.durationDays %> days</span>
+                <span class="tag">&#128197; <%= itin.durationDays %> <%= t('days') %></span>
                 <span class="tag">&#128176; &euro;<%= Number(itin.budgetAmount).toLocaleString() %></span>
-                <% if (itin.groupSize) { %><span class="tag">&#128101; Max <%= itin.groupSize %></span><% } %>
+                <% if (itin.groupSize) { %><span class="tag">&#128101; <%= t('max') %> <%= itin.groupSize %></span><% } %>
                 <% if (itin.ageRange) { %><span class="tag">&#128100; <%= itin.ageRange %></span><% } %>
               </div>
-              <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-sm btn-block">View Trip</a>
+              <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-sm btn-block"><%= t('trending_view_trip') %></a>
             </div>
           </div>
         <% }); %>
       </div>
       <div style="text-align: center; margin-top: 48px;">
-        <a href="/itineraries" class="btn btn-outline btn-lg">Browse All Trips</a>
+        <a href="/itineraries" class="btn btn-outline btn-lg"><%= t('trending_browse_all') %></a>
       </div>
     <% } else { %>
       <div style="text-align: center; padding: 48px 0; color: var(--text-light);">
-        <p>No trips yet. Check back soon!</p>
-        <a href="/itineraries" class="btn btn-outline" style="margin-top: 16px;">Browse Trips</a>
+        <p><%= t('trending_no_trips') %></p>
+        <a href="/itineraries" class="btn btn-outline" style="margin-top: 16px;"><%= t('nav_browse_trips') %></a>
       </div>
     <% } %>
   </div>
@@ -176,43 +176,43 @@
 <section class="section how-it-works" id="how-it-works">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">How It Works</h2>
-      <p class="section-subtitle">From inspiration to adventure, in five simple steps.</p>
+      <h2 class="section-title"><%= t('how_title') %></h2>
+      <p class="section-subtitle"><%= t('how_subtitle') %></p>
     </div>
     <div class="steps-flow">
       <div class="step">
         <div class="step-icon">&#127758;</div>
         <div class="step-number">1</div>
-        <h3 class="step-title">Browse Trips</h3>
-        <p class="step-desc">Filter by mood, season, or destination. Find the group trip that matches your vibe.</p>
+        <h3 class="step-title"><%= t('how_step1_title') %></h3>
+        <p class="step-desc"><%= t('how_step1_desc') %></p>
       </div>
       <div class="step-arrow">&#10132;</div>
       <div class="step">
         <div class="step-icon">&#128101;</div>
         <div class="step-number">2</div>
-        <h3 class="step-title">Join a Group</h3>
-        <p class="step-desc">Book your spot. You'll travel with a small group of 10-15 like-minded people your age.</p>
+        <h3 class="step-title"><%= t('how_step2_title') %></h3>
+        <p class="step-desc"><%= t('how_step2_desc') %></p>
       </div>
       <div class="step-arrow">&#10132;</div>
       <div class="step">
         <div class="step-icon">&#128587;</div>
         <div class="step-number">3</div>
-        <h3 class="step-title">Meet Your Coordinator</h3>
-        <p class="step-desc">Your expert travel coordinator handles logistics so you can focus on the experience.</p>
+        <h3 class="step-title"><%= t('how_step3_title') %></h3>
+        <p class="step-desc"><%= t('how_step3_desc') %></p>
       </div>
       <div class="step-arrow">&#10132;</div>
       <div class="step">
         <div class="step-icon">&#128176;</div>
         <div class="step-number">4</div>
-        <h3 class="step-title">Book Everything</h3>
-        <p class="step-desc">Flights, hotels, and activities booked through our partner links at the best prices.</p>
+        <h3 class="step-title"><%= t('how_step4_title') %></h3>
+        <p class="step-desc"><%= t('how_step4_desc') %></p>
       </div>
       <div class="step-arrow">&#10132;</div>
       <div class="step">
         <div class="step-icon">&#127752;</div>
         <div class="step-number">5</div>
-        <h3 class="step-title">Travel & Share</h3>
-        <p class="step-desc">Hit the road! Share your journey, leave reviews, and inspire the next group.</p>
+        <h3 class="step-title"><%= t('how_step5_title') %></h3>
+        <p class="step-desc"><%= t('how_step5_desc') %></p>
       </div>
     </div>
   </div>
@@ -222,39 +222,39 @@
 <section class="section features" id="features">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Why TravelPlanner?</h2>
-      <p class="section-subtitle">Everything you need to plan, experience, and share your travels.</p>
+      <h2 class="section-title"><%= t('features_title') %></h2>
+      <p class="section-subtitle"><%= t('features_subtitle') %></p>
     </div>
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">&#128101;</div>
-        <h3 class="feature-title">Small Group Travel</h3>
-        <p class="feature-desc">Travel with 10-15 people your age. Make lifelong friends while exploring the world together.</p>
+        <h3 class="feature-title"><%= t('features_group_title') %></h3>
+        <p class="feature-desc"><%= t('features_group_desc') %></p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#128587;</div>
-        <h3 class="feature-title">Expert Coordinators</h3>
-        <p class="feature-desc">Every trip has a local coordinator who knows the destination inside out. No stress, just adventure.</p>
+        <h3 class="feature-title"><%= t('features_coordinators_title') %></h3>
+        <p class="feature-desc"><%= t('features_coordinators_desc') %></p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#128248;</div>
-        <h3 class="feature-title">Photo Gallery</h3>
-        <p class="feature-desc">Browse stunning photos from each destination. See what awaits you before booking.</p>
+        <h3 class="feature-title"><%= t('features_gallery_title') %></h3>
+        <p class="feature-desc"><%= t('features_gallery_desc') %></p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#11088;</div>
-        <h3 class="feature-title">Verified Reviews</h3>
-        <p class="feature-desc">Real reviews from real travelers. See ratings, read stories, and book with confidence.</p>
+        <h3 class="feature-title"><%= t('features_reviews_title') %></h3>
+        <p class="feature-desc"><%= t('features_reviews_desc') %></p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#128293;</div>
-        <h3 class="feature-title">Last-Minute Deals</h3>
-        <p class="feature-desc">Grab discounted trips departing soon. Up to 30% off on selected departures.</p>
+        <h3 class="feature-title"><%= t('features_deals_title') %></h3>
+        <p class="feature-desc"><%= t('features_deals_desc') %></p>
       </div>
       <div class="feature-card" id="community">
         <div class="feature-icon">&#127760;</div>
-        <h3 class="feature-title">Traveler Community</h3>
-        <p class="feature-desc">Join a community of adventurers. Share stories, get tips, and find your next travel buddy.</p>
+        <h3 class="feature-title"><%= t('features_community_title') %></h3>
+        <p class="feature-desc"><%= t('features_community_desc') %></p>
       </div>
     </div>
   </div>
@@ -265,8 +265,8 @@
 <section class="section community-reviews-section">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">What Travelers Say</h2>
-      <p class="section-subtitle">Real reviews from our community of explorers.</p>
+      <h2 class="section-title"><%= t('reviews_title') %></h2>
+      <p class="section-subtitle"><%= t('reviews_subtitle') %></p>
     </div>
     <div class="reviews-grid">
       <% recentReviews.forEach(function(rev) { %>
@@ -290,7 +290,7 @@
       <% }); %>
     </div>
     <div style="text-align: center; margin-top: 32px;">
-      <a href="/community" class="btn btn-outline">See All Reviews</a>
+      <a href="/community" class="btn btn-outline"><%= t('reviews_see_all') %></a>
     </div>
   </div>
 </section>
@@ -300,32 +300,32 @@
 <section class="section partners" id="partners">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Book Everything in One Place</h2>
-      <p class="section-subtitle">We partner with the world's best booking platforms so you get the best prices without leaving TravelPlanner.</p>
+      <h2 class="section-title"><%= t('partners_title') %></h2>
+      <p class="section-subtitle"><%= t('partners_subtitle') %></p>
     </div>
     <div class="partners-grid">
       <div class="partner-card">
         <div class="partner-card__icon">&#9992;</div>
-        <h3 class="partner-card__title">Flights</h3>
-        <p class="partner-card__desc">Compare prices from 100+ airlines. Find the cheapest routes with our Skyscanner integration.</p>
+        <h3 class="partner-card__title"><%= t('partners_flights_title') %></h3>
+        <p class="partner-card__desc"><%= t('partners_flights_desc') %></p>
         <span class="partner-card__brand">Powered by Skyscanner</span>
       </div>
       <div class="partner-card">
         <div class="partner-card__icon">&#127976;</div>
-        <h3 class="partner-card__title">Hotels</h3>
-        <p class="partner-card__desc">From budget hostels to luxury resorts. Book directly through Booking.com with best price guarantee.</p>
+        <h3 class="partner-card__title"><%= t('partners_hotels_title') %></h3>
+        <p class="partner-card__desc"><%= t('partners_hotels_desc') %></p>
         <span class="partner-card__brand">Powered by Booking.com</span>
       </div>
       <div class="partner-card">
         <div class="partner-card__icon">&#127915;</div>
-        <h3 class="partner-card__title">Activities</h3>
-        <p class="partner-card__desc">Skip-the-line tickets, guided tours, cooking classes, and unique local experiences.</p>
+        <h3 class="partner-card__title"><%= t('partners_activities_title') %></h3>
+        <p class="partner-card__desc"><%= t('partners_activities_desc') %></p>
         <span class="partner-card__brand">Powered by GetYourGuide</span>
       </div>
       <div class="partner-card">
         <div class="partner-card__icon">&#128663;</div>
-        <h3 class="partner-card__title">Car Rentals</h3>
-        <p class="partner-card__desc">Compare rental prices across providers. Pick up at the airport, drop off anywhere.</p>
+        <h3 class="partner-card__title"><%= t('partners_cars_title') %></h3>
+        <p class="partner-card__desc"><%= t('partners_cars_desc') %></p>
         <span class="partner-card__brand">Powered by RentalCars</span>
       </div>
     </div>
@@ -336,74 +336,74 @@
 <section class="section pricing" id="pricing">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Pricing</h2>
-      <p class="section-subtitle">Start free. Upgrade when you're ready for more.</p>
+      <h2 class="section-title"><%= t('pricing_title') %></h2>
+      <p class="section-subtitle"><%= t('pricing_subtitle') %></p>
     </div>
     <div class="pricing-grid">
       <div class="pricing-card">
         <div class="pricing-header">
-          <h3 class="pricing-name">Free</h3>
+          <h3 class="pricing-name"><%= t('pricing_free') %></h3>
           <div class="pricing-price">
             <span class="price-amount">&euro;0</span>
-            <span class="price-period">forever</span>
+            <span class="price-period"><%= t('pricing_forever') %></span>
           </div>
         </div>
         <ul class="pricing-features">
-          <li>&#10003; Browse all free itineraries</li>
-          <li>&#10003; Save up to 3 trips</li>
-          <li>&#10003; Basic trip timeline</li>
-          <li>&#10003; Book via partner links</li>
-          <li>&#10003; Community access</li>
+          <li>&#10003; <%= t('pricing_free_feat1') %></li>
+          <li>&#10003; <%= t('pricing_free_feat2') %></li>
+          <li>&#10003; <%= t('pricing_free_feat3') %></li>
+          <li>&#10003; <%= t('pricing_free_feat4') %></li>
+          <li>&#10003; <%= t('pricing_free_feat5') %></li>
         </ul>
         <% if (typeof user !== 'undefined' && user) { %>
-          <a href="/trips" class="btn btn-outline btn-block">My Trips</a>
+          <a href="/trips" class="btn btn-outline btn-block"><%= t('nav_my_trips') %></a>
         <% } else { %>
-          <a href="/auth/register" class="btn btn-outline btn-block">Get Started</a>
+          <a href="/auth/register" class="btn btn-outline btn-block"><%= t('pricing_get_started') %></a>
         <% } %>
       </div>
       <div class="pricing-card pricing-featured">
-        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-badge"><%= t('pricing_most_popular') %></div>
         <div class="pricing-header">
-          <h3 class="pricing-name">Explorer</h3>
+          <h3 class="pricing-name"><%= t('pricing_explorer') %></h3>
           <div class="pricing-price">
             <span class="price-amount">&euro;4.99</span>
-            <span class="price-period">/month</span>
+            <span class="price-period"><%= t('pricing_month') %></span>
           </div>
         </div>
         <ul class="pricing-features">
-          <li>&#10003; Everything in Free</li>
-          <li>&#10003; Unlock all itineraries (100+)</li>
-          <li>&#10003; Customize and duplicate trips</li>
-          <li>&#10003; Unlimited saved trips</li>
-          <li>&#10003; Export trip as PDF</li>
-          <li>&#10003; Priority support</li>
+          <li>&#10003; <%= t('pricing_explorer_feat1') %></li>
+          <li>&#10003; <%= t('pricing_explorer_feat2') %></li>
+          <li>&#10003; <%= t('pricing_explorer_feat3') %></li>
+          <li>&#10003; <%= t('pricing_explorer_feat4') %></li>
+          <li>&#10003; <%= t('pricing_explorer_feat5') %></li>
+          <li>&#10003; <%= t('pricing_explorer_feat6') %></li>
         </ul>
         <% if (typeof user !== 'undefined' && user) { %>
-          <a href="/trips" class="btn btn-primary btn-block">Start Free Trial</a>
+          <a href="/trips" class="btn btn-primary btn-block"><%= t('pricing_start_trial') %></a>
         <% } else { %>
-          <a href="/auth/register" class="btn btn-primary btn-block">Start Free Trial</a>
+          <a href="/auth/register" class="btn btn-primary btn-block"><%= t('pricing_start_trial') %></a>
         <% } %>
       </div>
       <div class="pricing-card">
         <div class="pricing-header">
-          <h3 class="pricing-name">Premium</h3>
+          <h3 class="pricing-name"><%= t('pricing_premium') %></h3>
           <div class="pricing-price">
             <span class="price-amount">&euro;9.99</span>
-            <span class="price-period">/month</span>
+            <span class="price-period"><%= t('pricing_month') %></span>
           </div>
         </div>
         <ul class="pricing-features">
-          <li>&#10003; Everything in Explorer</li>
-          <li>&#10003; Build trips from scratch</li>
-          <li>&#10003; Collaborative planning</li>
-          <li>&#10003; Photo diary with import</li>
-          <li>&#10003; Offline access</li>
-          <li>&#10003; Early access to new destinations</li>
+          <li>&#10003; <%= t('pricing_premium_feat1') %></li>
+          <li>&#10003; <%= t('pricing_premium_feat2') %></li>
+          <li>&#10003; <%= t('pricing_premium_feat3') %></li>
+          <li>&#10003; <%= t('pricing_premium_feat4') %></li>
+          <li>&#10003; <%= t('pricing_premium_feat5') %></li>
+          <li>&#10003; <%= t('pricing_premium_feat6') %></li>
         </ul>
         <% if (typeof user !== 'undefined' && user) { %>
-          <a href="/trips" class="btn btn-outline btn-block">Start Free Trial</a>
+          <a href="/trips" class="btn btn-outline btn-block"><%= t('pricing_start_trial') %></a>
         <% } else { %>
-          <a href="/auth/register" class="btn btn-outline btn-block">Start Free Trial</a>
+          <a href="/auth/register" class="btn btn-outline btn-block"><%= t('pricing_start_trial') %></a>
         <% } %>
       </div>
     </div>
@@ -413,12 +413,12 @@
 <!-- CTA Banner -->
 <section class="section cta-banner">
   <div class="container">
-    <h2 class="cta-title">Ready for your next adventure?</h2>
-    <p class="cta-subtitle">Join thousands of travelers who explore together, make friends, and create memories that last forever.</p>
+    <h2 class="cta-title"><%= t('cta_title') %></h2>
+    <p class="cta-subtitle"><%= t('cta_subtitle') %></p>
     <% if (typeof user !== 'undefined' && user) { %>
-      <a href="/itineraries" class="btn btn-primary btn-lg">Browse Trips</a>
+      <a href="/itineraries" class="btn btn-primary btn-lg"><%= t('nav_browse_trips') %></a>
     <% } else { %>
-      <a href="/auth/register" class="btn btn-primary btn-lg">Create Free Account</a>
+      <a href="/auth/register" class="btn btn-primary btn-lg"><%= t('cta_create_account') %></a>
     <% } %>
   </div>
 </section>

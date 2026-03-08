@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= typeof lang !== 'undefined' && lang ? lang : 'en' %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TravelPlanner - Plan. Explore. Remember.</title>
-  <meta name="description" content="TravelPlanner is a WeRoad-style group travel platform. Discover curated group trips, read reviews, find last-minute deals, and join a community of travelers.">
+  <title><%= typeof t !== 'undefined' ? t('site_title') : 'TravelPlanner - Plan. Explore. Remember.' %></title>
+  <meta name="description" content="<%= typeof t !== 'undefined' ? t('site_description') : 'TravelPlanner is a WeRoad-style group travel platform.' %>">
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
   <link rel="stylesheet" href="/public/style.css">
   <link rel="stylesheet" href="/public/landing.css">
@@ -22,17 +22,17 @@
         <span></span><span></span><span></span>
       </label>
       <ul class="nav-links">
-        <li><a href="/" class="nav-link active">Home</a></li>
-        <li><a href="/itineraries" class="nav-link">Browse Trips</a></li>
-        <li><a href="/community" class="nav-link">Community</a></li>
+        <li><a href="/" class="nav-link active"><%= typeof t !== 'undefined' ? t('nav_home') : 'Home' %></a></li>
+        <li><a href="/itineraries" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_browse_trips') : 'Browse Trips' %></a></li>
+        <li><a href="/community" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_community') : 'Community' %></a></li>
         <% if (typeof user !== 'undefined' && user) { %>
-          <li><a href="/trips" class="nav-link">My Trips</a></li>
+          <li><a href="/trips" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_my_trips') : 'My Trips' %></a></li>
         <% } %>
-        <li><a href="#partners" class="nav-link">Partners</a></li>
-        <li><a href="#pricing" class="nav-link">Pricing</a></li>
-        <li><a href="/faq" class="nav-link">FAQ</a></li>
+        <li><a href="#partners" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_partners') : 'Partners' %></a></li>
+        <li><a href="#pricing" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_pricing') : 'Pricing' %></a></li>
+        <li><a href="/faq" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_faq') : 'FAQ' %></a></li>
         <% if (typeof user !== 'undefined' && user && (user.role === 'admin' || user.role === 'owner')) { %>
-          <li><a href="/admin" class="nav-link" style="color: #f5a623; font-weight: 700;">Admin</a></li>
+          <li><a href="/admin" class="nav-link" style="color: #f5a623; font-weight: 700;"><%= typeof t !== 'undefined' ? t('nav_admin') : 'Admin' %></a></li>
         <% } %>
       </ul>
       <div class="nav-actions">
@@ -41,11 +41,12 @@
             <span class="plan-badge plan-<%= user.plan %>"><%= user.plan %></span>
             <%= user.name %>
           </span>
-          <a href="/auth/logout" class="btn btn-ghost">Logout</a>
+          <a href="/auth/logout" class="btn btn-ghost"><%= typeof t !== 'undefined' ? t('nav_logout') : 'Logout' %></a>
         <% } else { %>
-          <a href="/auth/login" class="btn btn-ghost">Login</a>
-          <a href="/auth/register" class="btn btn-primary btn-sm">Register</a>
+          <a href="/auth/login" class="btn btn-ghost"><%= typeof t !== 'undefined' ? t('nav_login') : 'Login' %></a>
+          <a href="/auth/register" class="btn btn-primary btn-sm"><%= typeof t !== 'undefined' ? t('nav_register') : 'Register' %></a>
         <% } %>
+        <span class="lang-switcher" style="margin-left: 8px; font-size: 0.75rem;"><% var cl = typeof lang !== 'undefined' ? lang : 'en'; %><a href="/lang/en" style="<%= cl === 'en' ? 'font-weight:700;' : '' %>text-decoration:none;color:inherit;">EN</a> | <a href="/lang/it" style="<%= cl === 'it' ? 'font-weight:700;' : '' %>text-decoration:none;color:inherit;">IT</a> | <a href="/lang/de" style="<%= cl === 'de' ? 'font-weight:700;' : '' %>text-decoration:none;color:inherit;">DE</a> | <a href="/lang/fr" style="<%= cl === 'fr' ? 'font-weight:700;' : '' %>text-decoration:none;color:inherit;">FR</a></span>
       </div>
     </div>
   </nav>

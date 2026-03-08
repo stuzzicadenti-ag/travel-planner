@@ -2,71 +2,71 @@
 
 <section class="section">
   <div class="container" style="max-width: 800px;">
-    <h1 class="page-title" style="text-align: center;">Frequently Asked Questions</h1>
-    <p class="page-subtitle" style="text-align: center;">Everything you need to know about TravelPlanner.</p>
+    <h1 class="page-title" style="text-align: center;"><%= t('faq_title') %></h1>
+    <p class="page-subtitle" style="text-align: center;"><%= t('faq_subtitle') %></p>
 
     <div style="display: flex; flex-direction: column; gap: 2rem; margin-top: 2rem;">
 
       <!-- How TravelPlanner Works -->
       <div class="card" style="padding: 1.5rem;">
-        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;">How TravelPlanner Works</h2>
-        <p style="color: #5a6d7e; line-height: 1.7;">TravelPlanner is a travel itinerary platform where you can browse expert-curated trip plans, save your favorites, and book flights, hotels, and activities through our trusted partners. We offer free itineraries for everyone, plus premium content for Explorer and Premium subscribers.</p>
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;"><%= t('faq_how_title') %></h2>
+        <p style="color: #5a6d7e; line-height: 1.7;"><%= t('faq_how_desc') %></p>
       </div>
 
       <!-- Creating & Sharing Itineraries -->
       <div class="card" style="padding: 1.5rem;">
-        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;">Creating & Sharing Itineraries</h2>
-        <p style="color: #5a6d7e; line-height: 1.7;">Premium users can create custom itineraries from scratch using our drag-and-drop builder. Explorer users can duplicate and customize existing itineraries. All shared itineraries are reviewed for quality and accuracy before being published to the community. Please ensure your content is original, accurate, and helpful for fellow travelers.</p>
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;"><%= t('faq_creating_title') %></h2>
+        <p style="color: #5a6d7e; line-height: 1.7;"><%= t('faq_creating_desc') %></p>
       </div>
 
       <!-- Saving Trips -->
       <div class="card" style="padding: 1.5rem;">
-        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;">Saving Trips</h2>
-        <p style="color: #5a6d7e; line-height: 1.7;">Free users can save up to 3 trips to their personal collection. Explorer and Premium subscribers enjoy unlimited saved trips. Saved trips are accessible from your "My Trips" page and can be removed at any time.</p>
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;"><%= t('faq_saving_title') %></h2>
+        <p style="color: #5a6d7e; line-height: 1.7;"><%= t('faq_saving_desc') %></p>
       </div>
 
       <!-- Community Guidelines -->
       <div class="card" style="padding: 1.5rem;">
-        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;">Community Guidelines</h2>
-        <p style="color: #5a6d7e; line-height: 1.7; margin-bottom: 0.75rem;">TravelPlanner is a collaborative community. To keep it helpful and safe for everyone, we ask all members to follow these rules:</p>
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;"><%= t('faq_community_title') %></h2>
+        <p style="color: #5a6d7e; line-height: 1.7; margin-bottom: 0.75rem;"><%= t('faq_community_desc') %></p>
         <ul style="color: #5a6d7e; line-height: 2; padding-left: 1.25rem;">
-          <li><strong>No spam or self-promotion.</strong> Do not post repetitive content, unsolicited advertisements, or affiliate links in itineraries or reviews.</li>
-          <li><strong>Provide accurate information.</strong> Ensure travel recommendations, prices, and logistics are up-to-date and truthful. Misleading information can ruin someone's trip.</li>
-          <li><strong>No advertising or commercial content.</strong> Itineraries and reviews should be genuine recommendations, not advertisements for specific businesses.</li>
-          <li><strong>Be respectful.</strong> Treat fellow travelers with courtesy. Offensive language, harassment, and hate speech are not tolerated.</li>
-          <li><strong>No personal contact information.</strong> Do not share phone numbers, email addresses, or external links in user-generated content.</li>
+          <li><strong><%= t('faq_community_rule1') %></strong></li>
+          <li><strong><%= t('faq_community_rule2') %></strong></li>
+          <li><strong><%= t('faq_community_rule3') %></strong></li>
+          <li><strong><%= t('faq_community_rule4') %></strong></li>
+          <li><strong><%= t('faq_community_rule5') %></strong></li>
         </ul>
-        <p style="color: #5a6d7e; line-height: 1.7; margin-top: 0.75rem;">Violations may result in content removal and account suspension. Repeated or severe violations may lead to permanent bans.</p>
+        <p style="color: #5a6d7e; line-height: 1.7; margin-top: 0.75rem;"><%= t('faq_community_violations') %></p>
       </div>
 
       <!-- Account Rules -->
       <div class="card" style="padding: 1.5rem;">
-        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;">Account Rules</h2>
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;"><%= t('faq_account_title') %></h2>
         <ul style="color: #5a6d7e; line-height: 2; padding-left: 1.25rem;">
-          <li>One account per person. Creating multiple accounts to circumvent bans or free tier limits is prohibited.</li>
-          <li>You are responsible for keeping your login credentials secure.</li>
-          <li>Accounts that remain inactive for over 12 months may be archived.</li>
-          <li>If your account is suspended, you may appeal by contacting support. Appeals are reviewed within 48 hours.</li>
+          <li><%= t('faq_account_rule1') %></li>
+          <li><%= t('faq_account_rule2') %></li>
+          <li><%= t('faq_account_rule3') %></li>
+          <li><%= t('faq_account_rule4') %></li>
         </ul>
       </div>
 
       <!-- Swiss Regulations -->
       <div class="card" style="padding: 1.5rem;">
-        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;">Swiss Regulations & Data Protection</h2>
-        <p style="color: #5a6d7e; line-height: 1.7; margin-bottom: 0.75rem;">TravelPlanner is operated from Switzerland and complies with the Swiss Federal Act on Data Protection (nDSG / revFADP), which came into force on September 1, 2023.</p>
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;"><%= t('faq_swiss_title') %></h2>
+        <p style="color: #5a6d7e; line-height: 1.7; margin-bottom: 0.75rem;"><%= t('faq_swiss_desc') %></p>
         <ul style="color: #5a6d7e; line-height: 2; padding-left: 1.25rem;">
-          <li>We collect only the minimum personal data necessary to provide our services (email, name, saved preferences).</li>
-          <li>Your data is stored securely on servers within Switzerland and the EU.</li>
-          <li>We do not sell or share your personal data with third parties for marketing purposes.</li>
-          <li>You have the right to access, correct, or delete your personal data at any time by contacting support.</li>
-          <li>Affiliate click data is collected anonymously to improve partner recommendations.</li>
+          <li><%= t('faq_swiss_rule1') %></li>
+          <li><%= t('faq_swiss_rule2') %></li>
+          <li><%= t('faq_swiss_rule3') %></li>
+          <li><%= t('faq_swiss_rule4') %></li>
+          <li><%= t('faq_swiss_rule5') %></li>
         </ul>
       </div>
 
       <!-- Contact -->
       <div class="card" style="padding: 1.5rem; text-align: center; background: linear-gradient(135deg, #e8f4fd 0%, #fde8c8 100%);">
-        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;">Need Help?</h2>
-        <p style="color: #5a6d7e; line-height: 1.7; margin-bottom: 1rem;">Our support team is here to help with any questions, issues, or feedback.</p>
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #2c3e50;"><%= t('faq_help_title') %></h2>
+        <p style="color: #5a6d7e; line-height: 1.7; margin-bottom: 1rem;"><%= t('faq_help_desc') %></p>
         <a href="mailto:support@travelplanner.ch" class="btn btn-primary btn-lg">support@travelplanner.ch</a>
       </div>
 
