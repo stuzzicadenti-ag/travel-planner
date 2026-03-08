@@ -96,10 +96,24 @@ await app.register(fastifyStatic, {
   maxAge: process.env.NODE_ENV === "production" ? 86400000 : 0,
 });
 
-// Decode JWT on every request (non-blocking) + banned check
+// i18n: inject translate helper + wrap reply.view on every request
 import jwt from "jsonwebtoken";
 app.decorateRequest("user", null);
 app.addHook("onRequest", async (req, reply) => {
+  // i18n setup (must run before any reply.view call)
+  const cookieLang = req.cookies?.lang;
+  const lang = SUPPORTED_LANGS.includes(cookieLang) ? cookieLang : "en";
+  const strings = locales[lang];
+  const fallback = locales["en"];
+  const t = (key) => strings[key] || fallback[key] || key;
+  req.lang = lang;
+  req.t = t;
+  const originalView = reply.view.bind(reply);
+  reply.view = (template, data = {}) => {
+    return originalView(template, { t, lang, ...data });
+  };
+
+  // Decode JWT (non-blocking) + banned check
   const token = req.cookies?.token;
   if (!token) return;
   try {
@@ -117,23 +131,6 @@ app.addHook("onRequest", async (req, reply) => {
   } catch {
     // invalid token, ignore
   }
-});
-
-// i18n: inject translate helper into every request and auto-inject into views
-app.addHook("preHandler", async (req, reply) => {
-  const cookieLang = req.cookies?.lang;
-  const lang = SUPPORTED_LANGS.includes(cookieLang) ? cookieLang : "en";
-  const strings = locales[lang];
-  const fallback = locales["en"];
-  const t = (key) => strings[key] || fallback[key] || key;
-  req.lang = lang;
-  req.t = t;
-
-  // Wrap reply.view to auto-inject t and lang into every template
-  const originalView = reply.view.bind(reply);
-  reply.view = (template, data = {}) => {
-    return originalView(template, { t, lang, ...data });
-  };
 });
 
 // i18n: language switch route
