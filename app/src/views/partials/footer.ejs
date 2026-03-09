@@ -8,10 +8,22 @@
           <h3><%= typeof t !== 'undefined' ? t('newsletter_title') : 'Get exclusive deals & travel inspiration' %></h3>
           <p><%= typeof t !== 'undefined' ? t('newsletter_subtitle') : 'Join 10,000+ travelers. Weekly curated trips, last-minute deals, and community stories.' %></p>
         </div>
-        <form class="newsletter-form" action="/newsletter/subscribe" method="POST">
+        <form class="newsletter-form" action="/newsletter/subscribe" method="POST" id="newsletter-form">
           <input type="email" name="email" class="newsletter-input" placeholder="<%= typeof t !== 'undefined' ? t('newsletter_placeholder') : 'Enter your email' %>" required maxlength="255" autocomplete="email">
-          <button type="submit" class="btn btn-primary newsletter-btn"><%= typeof t !== 'undefined' ? t('newsletter_subscribe') : 'Subscribe' %></button>
+          <button type="submit" class="btn btn-primary newsletter-btn" id="newsletter-btn"><%= typeof t !== 'undefined' ? t('newsletter_subscribe') : 'Subscribe' %></button>
         </form>
+        <script>
+        (function() {
+          var form = document.getElementById('newsletter-form');
+          var btn = document.getElementById('newsletter-btn');
+          if (form && btn) {
+            form.addEventListener('submit', function() {
+              btn.classList.add('btn--loading');
+              btn.textContent = '...';
+            });
+          }
+        })();
+        </script>
       </div>
     </div>
   </section>
@@ -59,6 +71,9 @@
     </div>
   </footer>
 
+  <!-- Scroll to top button -->
+  <button type="button" id="scroll-top-btn" aria-label="Scroll to top" style="position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: var(--blue); color: var(--white); border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(58,155,213,0.3); z-index: 999; font-size: 1.2rem; display: none; align-items: center; justify-content: center; transition: opacity 0.25s ease, transform 0.25s ease;">&#8593;</button>
+
   <script>
     // Navbar scroll effect
     var navEl = document.getElementById('navbar');
@@ -66,6 +81,35 @@
       window.addEventListener('scroll', function() {
         navEl.classList.toggle('scrolled', window.scrollY > 50);
       }, { passive: true });
+    }
+
+    // Scroll to top button
+    var scrollBtn = document.getElementById('scroll-top-btn');
+    if (scrollBtn) {
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 400) {
+          scrollBtn.style.display = 'flex';
+          scrollBtn.style.opacity = '1';
+          scrollBtn.style.transform = 'scale(1)';
+        } else {
+          scrollBtn.style.opacity = '0';
+          scrollBtn.style.transform = 'scale(0.8)';
+          setTimeout(function() { if (window.scrollY <= 400) scrollBtn.style.display = 'none'; }, 250);
+        }
+      }, { passive: true });
+      scrollBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // Close mobile nav on link click
+    var navToggle = document.getElementById('nav-toggle');
+    if (navToggle) {
+      document.querySelectorAll('.nav-links .nav-link').forEach(function(link) {
+        link.addEventListener('click', function() {
+          navToggle.checked = false;
+        });
+      });
     }
   </script>
 </body>

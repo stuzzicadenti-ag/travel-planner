@@ -319,5 +319,23 @@
   "cost_food_label": "Nourriture",
   "cost_transport_label": "Transport",
   "cost_total": "Total Estime",
-  "cost_disclaimer": "Les estimations sont approximatives et basees sur des couts moyens. Les prix reels peuvent varier."
+  "cost_disclaimer": "Les estimations sont approximatives et basees sur des couts moyens. Les prix reels peuvent varier.",
+
+  "auth_logging_in": "Connexion en cours...",
+  "auth_creating_account": "Creation du compte...",
+  "auth_password_hint": "Minimum 8 caracteres",
+
+  "review_write": "Ecrire un Avis",
+  "review_rating": "Note",
+  "review_comment": "Commentaire",
+  "review_placeholder": "Partagez votre experience...",
+  "review_submit": "Soumettre l'Avis",
+
+  "related_title": "Vous Pourriez Aussi Aimer",
+
+  "trips_subtitle": "Votre collection personnelle d'itineraires. Planifiez votre prochaine aventure !",
+  "trips_empty_title": "Aucun voyage sauvegarde",
+  "trips_empty_desc": "Parcourez nos itineraires et sauvegardez ceux qui vous inspirent.",
+  "trips_confirm_remove": "Retirer ce voyage des sauvegardes ?",
+  "trips_remove": "Retirer"
 }

@@ -319,5 +319,23 @@
   "cost_food_label": "Food",
   "cost_transport_label": "Transport",
   "cost_total": "Estimated Total",
-  "cost_disclaimer": "Estimates are approximate and based on average costs. Actual prices may vary."
+  "cost_disclaimer": "Estimates are approximate and based on average costs. Actual prices may vary.",
+
+  "auth_logging_in": "Logging in...",
+  "auth_creating_account": "Creating account...",
+  "auth_password_hint": "Minimum 8 characters",
+
+  "review_write": "Write a Review",
+  "review_rating": "Rating",
+  "review_comment": "Comment",
+  "review_placeholder": "Share your experience...",
+  "review_submit": "Submit Review",
+
+  "related_title": "You Might Also Like",
+
+  "trips_subtitle": "Your personal collection of travel itineraries. Plan your next adventure!",
+  "trips_empty_title": "No saved trips yet",
+  "trips_empty_desc": "Browse our itineraries and save the ones that inspire you.",
+  "trips_confirm_remove": "Remove this trip from saved?",
+  "trips_remove": "Remove"
 }

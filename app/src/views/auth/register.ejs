@@ -10,25 +10,42 @@
         <div class="alert alert-error"><%= error %></div>
       <% } %>
 
-      <form method="POST" action="/auth/register" class="auth-form">
+      <form method="POST" action="/auth/register" class="auth-form" id="register-form">
         <div class="form-group">
           <label for="name" class="form-label"><%= t('auth_full_name') %></label>
-          <input type="text" id="name" name="name" class="form-input" placeholder="<%= t('auth_name_placeholder') %>" required>
+          <input type="text" id="name" name="name" class="form-input" placeholder="<%= t('auth_name_placeholder') %>" required autocomplete="name">
         </div>
         <div class="form-group">
           <label for="email" class="form-label"><%= t('auth_email') %></label>
-          <input type="email" id="email" name="email" class="form-input" placeholder="<%= t('auth_email_placeholder') %>" required>
+          <input type="email" id="email" name="email" class="form-input" placeholder="<%= t('auth_email_placeholder') %>" required autocomplete="email">
         </div>
         <div class="form-group">
           <label for="password" class="form-label"><%= t('auth_password') %></label>
-          <input type="password" id="password" name="password" class="form-input" placeholder="<%= t('auth_password_register_placeholder') %>" required minlength="8">
+          <div class="password-wrapper">
+            <input type="password" id="password" name="password" class="form-input" style="padding-right: 40px;" placeholder="<%= t('auth_password_register_placeholder') %>" required minlength="8" autocomplete="new-password">
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility" onclick="var p=document.getElementById('password');if(p.type==='password'){p.type='text';this.textContent='&#128584;'}else{p.type='password';this.textContent='&#128065;'}">&#128065;</button>
+          </div>
+          <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;"><%= typeof t !== 'undefined' ? t('auth_password_hint') : 'Minimum 8 characters' %></span>
         </div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg"><%= t('auth_create_account_btn') %></button>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="register-btn"><%= t('auth_create_account_btn') %></button>
       </form>
 
       <p class="auth-switch"><%= t('auth_has_account') %> <a href="/auth/login"><%= t('auth_login_here') %></a></p>
     </div>
   </div>
 </section>
+
+<script>
+(function() {
+  var form = document.getElementById('register-form');
+  var btn = document.getElementById('register-btn');
+  if (form && btn) {
+    form.addEventListener('submit', function() {
+      btn.classList.add('btn--loading');
+      btn.textContent = '<%= typeof t !== "undefined" ? t("auth_creating_account") : "Creating account..." %>';
+    });
+  }
+})();
+</script>
 
 <%- include('../partials/footer') %>

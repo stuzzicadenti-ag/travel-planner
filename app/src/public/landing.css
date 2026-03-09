@@ -869,6 +869,96 @@ ul { list-style: none; }
   .section { padding: 48px 0; }
 }
 
+/* === Scroll reveal for landing sections === */
+.section-header {
+  animation: fadeInUp 0.5s ease both;
+}
+.destination-card,
+.feature-card,
+.partner-card,
+.pricing-card,
+.deal-card,
+.review-card,
+.trip-card {
+  animation: fadeInUp 0.4s ease both;
+}
+.destination-card:nth-child(1), .feature-card:nth-child(1), .deal-card:nth-child(1), .trip-card:nth-child(1) { animation-delay: 0s; }
+.destination-card:nth-child(2), .feature-card:nth-child(2), .deal-card:nth-child(2), .trip-card:nth-child(2) { animation-delay: 0.06s; }
+.destination-card:nth-child(3), .feature-card:nth-child(3), .deal-card:nth-child(3), .trip-card:nth-child(3) { animation-delay: 0.12s; }
+.destination-card:nth-child(4), .feature-card:nth-child(4), .deal-card:nth-child(4) { animation-delay: 0.18s; }
+.destination-card:nth-child(5), .feature-card:nth-child(5) { animation-delay: 0.24s; }
+.destination-card:nth-child(6), .feature-card:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Hero entrance animations === */
+.hero-title {
+  animation: heroFadeIn 0.6s ease both;
+}
+.hero-subtitle {
+  animation: heroFadeIn 0.6s ease 0.15s both;
+}
+.hero-actions {
+  animation: heroFadeIn 0.6s ease 0.3s both;
+}
+.hero-stats {
+  animation: heroFadeIn 0.6s ease 0.45s both;
+}
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Smooth hover for partner cards === */
+.partner-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.partner-card:hover {
+  border-color: var(--sky-deep, #b8ddf3);
+}
+
+/* === Better destination card image zoom === */
+.destination-img {
+  transition: transform 0.4s ease;
+  overflow: hidden;
+}
+.destination-card:hover .destination-img {
+  transform: scale(1.02);
+}
+.destination-emoji {
+  transition: transform 0.3s ease;
+}
+.destination-card:hover .destination-emoji {
+  transform: scale(1.15);
+}
+
+/* === Deal card image zoom === */
+.deal-card__img {
+  transition: transform 0.4s ease;
+  overflow: hidden;
+}
+.deal-card:hover .deal-card__img .deal-card__emoji {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+/* === Pricing card improvements === */
+.pricing-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* === Review card hover === */
+.review-card {
+  transition: all 0.25s ease;
+}
+.review-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
 /* Ultra-wide */
 @media (min-width: 1440px) {
   .container { max-width: 1320px; }

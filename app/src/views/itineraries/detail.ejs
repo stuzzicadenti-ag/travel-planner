@@ -32,10 +32,10 @@
     <% } else { %>
       <!-- Colored placeholder cards if no photos -->
       <div class="photo-gallery">
-        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);"><span class="photo-gallery__caption"><%= itinerary.destination %></span></div></div>
-        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);"><span class="photo-gallery__caption">Day & Night</span></div></div>
-        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #d4fc79, #96e6a1);"><span class="photo-gallery__caption">Nature</span></div></div>
-        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #e0c3fc, #8ec5fc);"><span class="photo-gallery__caption">Culture</span></div></div>
+        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);"><span class="photo-gallery__caption">&#127758; <%= itinerary.destination %></span></div></div>
+        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);"><span class="photo-gallery__caption">&#127751; Day & Night</span></div></div>
+        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #d4fc79, #96e6a1);"><span class="photo-gallery__caption">&#127795; Nature</span></div></div>
+        <div class="photo-gallery__item"><div class="photo-gallery__placeholder" style="background: linear-gradient(135deg, #e0c3fc, #8ec5fc);"><span class="photo-gallery__caption">&#127963; Culture</span></div></div>
       </div>
     <% } %>
 
@@ -92,7 +92,27 @@
               <a href="/auth/login" class="btn btn-outline">Login to Save</a>
             <% } %>
             <!-- Share button -->
-            <button type="button" class="btn btn-outline btn-sm" style="margin-top: 8px;" onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert('Link copied!')})">&#128279; Share</button>
+            <button type="button" class="btn btn-outline btn-sm" style="margin-top: 8px;" id="share-btn">&#128279; Share</button>
+            <script>
+            (function() {
+              var btn = document.getElementById('share-btn');
+              if (btn) {
+                btn.addEventListener('click', function() {
+                  if (navigator.share) {
+                    navigator.share({ title: document.title, url: window.location.href }).catch(function(){});
+                  } else {
+                    navigator.clipboard.writeText(window.location.href).then(function() {
+                      var orig = btn.innerHTML;
+                      btn.innerHTML = '&#10003; Link copied!';
+                      btn.style.color = 'var(--success)';
+                      btn.style.borderColor = 'var(--success)';
+                      setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+                    });
+                  }
+                });
+              }
+            })();
+            </script>
           </div>
         </div>
 
@@ -162,11 +182,14 @@
           </div>
         <% } else { %>
           <div class="timeline">
-            <% days.forEach(function(day) { %>
+            <% days.forEach(function(day, dayIdx) { %>
               <div class="timeline-day">
                 <div class="timeline-day-header">
                   <span class="day-number">Day <%= day.dayNumber %></span>
                   <h2 class="day-title"><%= day.title %></h2>
+                  <% if (day.items && day.items.length > 0) { %>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: auto;"><%= day.items.length %> activit<%= day.items.length === 1 ? 'y' : 'ies' %></span>
+                  <% } %>
                 </div>
                 <div class="timeline-items">
                   <% day.items.forEach(function(item) { %>
@@ -178,7 +201,7 @@
                         <% if (item.affiliateUrl && item.partnerName) { %>
                           <form method="POST" action="/itineraries/click/<%= item.id %>" class="affiliate-form">
                             <button type="submit" class="btn btn-affiliate">
-                              &#128279; Book via <%= item.partnerName %>
+                              &#128279; Book via <%= item.partnerName %> &rarr;
                             </button>
                           </form>
                         <% } %>
@@ -358,7 +381,9 @@
               document.getElementById('cost-food-val').textContent = fmt(foodTotal);
               document.getElementById('cost-transport-val').textContent = fmt(transportTotal);
               document.getElementById('cost-total-val').textContent = fmt(total);
-              document.getElementById('cost-result').style.display = 'block';
+              var resultEl = document.getElementById('cost-result');
+              resultEl.style.display = 'block';
+              resultEl.style.animation = 'fadeInUp 0.3s ease both';
             });
           })();
           </script>
@@ -383,10 +408,10 @@
           <!-- Write a Review Form -->
           <% if (user && typeof userReviewed !== 'undefined' && !userReviewed) { %>
             <div class="review-form-card">
-              <h3>Write a Review</h3>
-              <form method="POST" action="/itineraries/<%= itinerary.id %>/review" class="review-form">
+              <h3><%= typeof t !== 'undefined' ? t('review_write') : 'Write a Review' %></h3>
+              <form method="POST" action="/itineraries/<%= itinerary.id %>/review" class="review-form" id="review-form">
                 <div class="form-group">
-                  <label class="form-label">Rating</label>
+                  <label class="form-label"><%= typeof t !== 'undefined' ? t('review_rating') : 'Rating' %></label>
                   <div class="rating-input">
                     <% for (let i = 5; i >= 1; i--) { %>
                       <input type="radio" name="rating" id="star<%= i %>" value="<%= i %>" required>
@@ -395,11 +420,31 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Comment (optional, max 1000 chars)</label>
-                  <textarea name="comment" class="form-input" maxlength="1000" rows="3" placeholder="Share your experience..."></textarea>
+                  <label class="form-label"><%= typeof t !== 'undefined' ? t('review_comment') : 'Comment' %> <span style="font-weight: 400; color: var(--text-muted);">(optional)</span></label>
+                  <textarea name="comment" class="form-input" maxlength="1000" rows="3" placeholder="<%= typeof t !== 'undefined' ? t('review_placeholder') : 'Share your experience...' %>" id="review-comment"></textarea>
+                  <span id="review-char-count" style="font-size: 0.78rem; color: var(--text-muted); text-align: right; display: block;">0 / 1000</span>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit Review</button>
+                <button type="submit" class="btn btn-primary" id="review-submit-btn"><%= typeof t !== 'undefined' ? t('review_submit') : 'Submit Review' %></button>
               </form>
+              <script>
+              (function() {
+                var textarea = document.getElementById('review-comment');
+                var counter = document.getElementById('review-char-count');
+                var form = document.getElementById('review-form');
+                var btn = document.getElementById('review-submit-btn');
+                if (textarea && counter) {
+                  textarea.addEventListener('input', function() {
+                    counter.textContent = textarea.value.length + ' / 1000';
+                  });
+                }
+                if (form && btn) {
+                  form.addEventListener('submit', function() {
+                    btn.classList.add('btn--loading');
+                    btn.textContent = 'Submitting...';
+                  });
+                }
+              })();
+              </script>
             </div>
           <% } else if (!user) { %>
             <p style="margin-bottom: 16px; color: var(--text-light);"><a href="/auth/login">Login</a> to write a review.</p>
@@ -438,12 +483,12 @@
     <!-- Related Itineraries -->
     <% if (typeof related !== 'undefined' && related.length > 0) { %>
       <div class="related-section">
-        <h2 class="section-title" style="text-align: left; margin-bottom: 24px;">You Might Also Like</h2>
+        <h2 class="section-title" style="text-align: left; margin-bottom: 24px;"><%= typeof t !== 'undefined' ? t('related_title') : 'You Might Also Like' %></h2>
         <div class="related-grid">
-          <% related.forEach(function(rel) { %>
-            <div class="card">
-              <div class="card-header" style="background: <%= rel.cover_gradient || 'var(--sky)' %>; min-height: 80px; align-items: center; justify-content: center; position: relative;">
-                <span class="card-flag" style="font-size: 1.5rem;"><%= rel.country_code %></span>
+          <% related.forEach(function(rel, relIdx) { %>
+            <div class="card" style="animation: fadeInUp 0.4s ease both; animation-delay: <%= relIdx * 0.08 %>s;">
+              <div class="card-img-header" style="background: <%= rel.cover_gradient || 'linear-gradient(135deg, var(--sky), #d0e8f7)' %>; min-height: 90px;">
+                <span class="card-flag"><%= rel.country_code %></span>
                 <% if (rel.discount && rel.discount > 0) { %>
                   <span class="deal-badge deal-badge--card" style="position: absolute; top: 8px; left: 8px;">-<%= rel.discount %>%</span>
                 <% } %>
@@ -451,13 +496,13 @@
               <div class="card-body">
                 <h3 class="card-title"><%= rel.title %></h3>
                 <div class="card-meta">
-                  <span class="meta-item">&#128197; <%= rel.duration_days %> days</span>
+                  <span class="meta-item">&#128197; <%= rel.duration_days %> <%= typeof t !== 'undefined' ? t('days') : 'days' %></span>
                   <span class="meta-item">&#128176; &euro;<%= Number(rel.budget_amount).toLocaleString() %></span>
                   <span class="meta-item">&#11088; <%= rel.rating %></span>
                 </div>
               </div>
               <div class="card-footer">
-                <a href="/itineraries/<%= rel.id %>" class="btn btn-primary btn-block">View Trip</a>
+                <a href="/itineraries/<%= rel.id %>" class="btn btn-primary btn-block"><%= typeof t !== 'undefined' ? t('trending_view_trip') : 'View Trip' %></a>
               </div>
             </div>
           <% }); %>

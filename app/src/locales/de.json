@@ -319,5 +319,23 @@
   "cost_food_label": "Essen",
   "cost_transport_label": "Transport",
   "cost_total": "Geschaetzter Gesamtbetrag",
-  "cost_disclaimer": "Schaetzungen sind ungefaehr und basieren auf Durchschnittskosten. Tatsaechliche Preise koennen abweichen."
+  "cost_disclaimer": "Schaetzungen sind ungefaehr und basieren auf Durchschnittskosten. Tatsaechliche Preise koennen abweichen.",
+
+  "auth_logging_in": "Anmeldung...",
+  "auth_creating_account": "Konto wird erstellt...",
+  "auth_password_hint": "Mindestens 8 Zeichen",
+
+  "review_write": "Bewertung schreiben",
+  "review_rating": "Bewertung",
+  "review_comment": "Kommentar",
+  "review_placeholder": "Teile deine Erfahrung...",
+  "review_submit": "Bewertung absenden",
+
+  "related_title": "Das koennte dir auch gefallen",
+
+  "trips_subtitle": "Deine persoenliche Sammlung von Reiserouten. Plane dein naechstes Abenteuer!",
+  "trips_empty_title": "Noch keine gespeicherten Reisen",
+  "trips_empty_desc": "Durchstoebere unsere Reiserouten und speichere deine Favoriten.",
+  "trips_confirm_remove": "Diese Reise aus den Gespeicherten entfernen?",
+  "trips_remove": "Entfernen"
 }

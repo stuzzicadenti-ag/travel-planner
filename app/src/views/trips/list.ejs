@@ -2,37 +2,38 @@
 
 <section class="section">
   <div class="container">
-    <h1 class="page-title">My Saved Trips</h1>
-    <p class="page-subtitle">Your personal collection of travel itineraries. Plan your next adventure!</p>
+    <h1 class="page-title"><%= typeof t !== 'undefined' ? t('nav_my_trips') : 'My Saved Trips' %></h1>
+    <p class="page-subtitle"><%= typeof t !== 'undefined' ? t('trips_subtitle') : 'Your personal collection of travel itineraries. Plan your next adventure!' %></p>
 
     <% if (trips.length === 0) { %>
       <div class="empty-state">
         <div class="empty-icon">&#128506;</div>
-        <h2>No saved trips yet</h2>
-        <p>Browse our itineraries and save the ones that inspire you.</p>
-        <a href="/itineraries" class="btn btn-primary btn-lg">Browse Itineraries</a>
+        <h2><%= typeof t !== 'undefined' ? t('trips_empty_title') : 'No saved trips yet' %></h2>
+        <p><%= typeof t !== 'undefined' ? t('trips_empty_desc') : 'Browse our itineraries and save the ones that inspire you.' %></p>
+        <a href="/itineraries" class="btn btn-primary btn-lg"><%= typeof t !== 'undefined' ? t('nav_browse_trips') : 'Browse Itineraries' %></a>
       </div>
     <% } else { %>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;"><%= trips.length %> trip<%= trips.length !== 1 ? 's' : '' %> saved</p>
       <div class="card-grid">
-        <% trips.forEach(function(trip) { %>
-          <div class="card">
-            <div class="card-header">
-              <span class="card-flag"><%= trip.countryCode %></span>
-              <span class="tier-badge tier-<%= trip.tier %>"><%= trip.tier.toUpperCase() %></span>
+        <% trips.forEach(function(trip, index) { %>
+          <div class="card" style="animation-delay: <%= index * 0.06 %>s;">
+            <div class="card-img-header" style="background: linear-gradient(135deg, var(--sky), #d0e8f7); min-height: 100px;">
+              <span class="card-flag" style="font-size: 2.5rem;"><%= trip.countryCode %></span>
+              <span class="tier-badge tier-<%= trip.tier %>" style="position: absolute; top: 8px; right: 8px;"><%= trip.tier.toUpperCase() %></span>
             </div>
             <div class="card-body">
               <h3 class="card-title"><%= trip.title %></h3>
               <div class="card-meta">
-                <span class="meta-item">&#128197; <%= trip.durationDays %> days</span>
+                <span class="meta-item">&#128197; <%= trip.durationDays %> <%= typeof t !== 'undefined' ? t('days') : 'days' %></span>
                 <span class="meta-item">&#128176; <%= trip.budgetCurrency %> <%= Number(trip.budgetAmount).toLocaleString() %></span>
                 <span class="meta-item">&#11088; <%= trip.rating %></span>
               </div>
-              <p class="card-saved-at">Saved on <%= new Date(trip.savedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></p>
+              <p class="card-saved-at">&#128278; Saved on <%= new Date(trip.savedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></p>
             </div>
             <div class="card-footer card-footer--split">
-              <a href="/itineraries/<%= trip.itineraryId %>" class="btn btn-primary">View</a>
-              <form method="POST" action="/trips/unsave/<%= trip.savedId %>">
-                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+              <a href="/itineraries/<%= trip.itineraryId %>" class="btn btn-primary"><%= typeof t !== 'undefined' ? t('trending_view_trip') : 'View' %></a>
+              <form method="POST" action="/trips/unsave/<%= trip.savedId %>" class="unsave-form">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('<%= typeof t !== 'undefined' ? t('trips_confirm_remove') : 'Remove this trip from saved?' %>')"><%= typeof t !== 'undefined' ? t('trips_remove') : 'Remove' %></button>
               </form>
             </div>
           </div>
