@@ -72,7 +72,7 @@
   </footer>
 
   <!-- Scroll to top button -->
-  <button type="button" id="scroll-top-btn" aria-label="Scroll to top" style="position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: var(--blue); color: var(--white); border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(58,155,213,0.3); z-index: 999; font-size: 1.2rem; display: none; align-items: center; justify-content: center; transition: opacity 0.25s ease, transform 0.25s ease;">&#8593;</button>
+  <button type="button" id="scroll-top-btn" aria-label="Scroll to top" style="position: fixed; bottom: 24px; right: 24px; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), #5bb8e8); color: var(--white); border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(58,155,213,0.35); z-index: 999; font-size: 1.2rem; display: none; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(8px);">&#8593;</button>
 
   <script>
     // Navbar scroll effect
@@ -109,6 +109,43 @@
         link.addEventListener('click', function() {
           navToggle.checked = false;
         });
+      });
+    }
+
+    // Section fade-in on scroll (Intersection Observer)
+    if ('IntersectionObserver' in window) {
+      var sectionObs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            sectionObs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.section').forEach(function(sec) {
+        sec.classList.add('section-animate');
+        sectionObs.observe(sec);
+      });
+    }
+
+    // Button ripple/glow effect on hover
+    document.querySelectorAll('.btn').forEach(function(btn) {
+      btn.addEventListener('mousemove', function(e) {
+        var rect = btn.getBoundingClientRect();
+        btn.style.setProperty('--x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+        btn.style.setProperty('--y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+      });
+    });
+
+    // Scroll-to-top hover effect
+    if (scrollBtn) {
+      scrollBtn.addEventListener('mouseenter', function() {
+        scrollBtn.style.transform = 'scale(1.1)';
+        scrollBtn.style.boxShadow = '0 6px 28px rgba(58,155,213,0.45)';
+      });
+      scrollBtn.addEventListener('mouseleave', function() {
+        scrollBtn.style.transform = 'scale(1)';
+        scrollBtn.style.boxShadow = '0 4px 20px rgba(58,155,213,0.35)';
       });
     }
   </script>

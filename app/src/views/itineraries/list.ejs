@@ -27,7 +27,7 @@
     </div>
 
     <!-- Sort + Advanced Filters -->
-    <div class="card" style="margin-bottom: 24px; padding: 20px;">
+    <div class="filter-card">
       <form action="/itineraries" method="GET" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
         <% if (f.mood) { %><input type="hidden" name="mood" value="<%= f.mood %>"><% } %>
         <% if (f.season) { %><input type="hidden" name="season" value="<%= f.season %>"><% } %>
