@@ -16,6 +16,9 @@ import { adminRoutes } from "./routes/admin.js";
 import { communityRoutes } from "./routes/community.js";
 import { newsletterRoutes } from "./routes/newsletter.js";
 import { profileRoutes } from "./routes/profile.js";
+import { mapRoutes } from "./routes/map.js";
+import { compareRoutes } from "./routes/compare.js";
+import { journalRoutes } from "./routes/journals.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,7 +44,7 @@ app.addHook('onSend', async (request, reply) => {
   reply.header('X-XSS-Protection', '0');
   reply.header('Referrer-Policy', 'strict-origin-when-cross-origin');
   reply.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  reply.header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'");
+  reply.header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https:; font-src 'self'");
   reply.removeHeader('X-Powered-By');
 });
 
@@ -213,6 +216,9 @@ await app.register(adminRoutes, { prefix: "/admin" });
 await app.register(communityRoutes, { prefix: "/community" });
 await app.register(newsletterRoutes, { prefix: "/newsletter" });
 await app.register(profileRoutes, { prefix: "/profile" });
+await app.register(mapRoutes, { prefix: "/map" });
+await app.register(compareRoutes, { prefix: "/compare" });
+await app.register(journalRoutes, { prefix: "/journals" });
 
 // Graceful shutdown
 const shutdown = async () => {

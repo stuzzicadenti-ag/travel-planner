@@ -65,6 +65,17 @@
       </form>
     </div>
 
+    <!-- Compare Bar -->
+    <div id="compare-bar" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--text); color: var(--white); padding: 12px 24px; z-index: 999; box-shadow: 0 -4px 20px rgba(0,0,0,0.2);">
+      <div class="container" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+        <span id="compare-count" style="font-weight: 600;">0 <%= t('compare_selected') %></span>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" id="compare-go-btn" class="btn btn-primary btn-sm" disabled><%= t('compare_btn') %></button>
+          <button type="button" id="compare-clear-btn" class="btn btn-outline btn-sm" style="border-color: rgba(255,255,255,0.3); color: var(--white);"><%= t('compare_clear') %></button>
+        </div>
+      </div>
+    </div>
+
     <div class="card-grid">
       <% const tm = typeof tagsMap !== 'undefined' ? tagsMap : {}; %>
       <% const rm = typeof ratingsMap !== 'undefined' ? ratingsMap : {}; %>
@@ -119,12 +130,55 @@
             <% } %>
             <p class="card-desc"><%= itin.description ? itin.description.substring(0, 120) + '...' : '' %></p>
           </div>
-          <div class="card-footer">
-            <a href="/itineraries/<%= itin.id %>" class="btn btn-primary btn-block">View Trip</a>
+          <div class="card-footer" style="display: flex; gap: 8px; align-items: center;">
+            <a href="/itineraries/<%= itin.id %>" class="btn btn-primary" style="flex: 1;"><%= t('trending_view_trip') %></a>
+            <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.8rem; color: var(--text-light); white-space: nowrap;" title="<%= t('compare_add') %>">
+              <input type="checkbox" class="compare-checkbox" value="<%= itin.id %>" style="width: 16px; height: 16px; cursor: pointer;">
+              <%= t('compare_short') %>
+            </label>
           </div>
         </div>
       <% }); %>
     </div>
+
+    <script>
+    (function() {
+      var selected = new Set();
+      var bar = document.getElementById('compare-bar');
+      var countEl = document.getElementById('compare-count');
+      var goBtn = document.getElementById('compare-go-btn');
+      var clearBtn = document.getElementById('compare-clear-btn');
+      var checks = document.querySelectorAll('.compare-checkbox');
+
+      function update() {
+        bar.style.display = selected.size > 0 ? 'block' : 'none';
+        countEl.textContent = selected.size + ' selected';
+        goBtn.disabled = selected.size < 2;
+      }
+
+      checks.forEach(function(cb) {
+        cb.addEventListener('change', function() {
+          if (cb.checked) {
+            if (selected.size >= 3) { cb.checked = false; return; }
+            selected.add(cb.value);
+          } else {
+            selected.delete(cb.value);
+          }
+          update();
+        });
+      });
+
+      goBtn.addEventListener('click', function() {
+        window.location.href = '/compare?ids=' + Array.from(selected).join(',');
+      });
+
+      clearBtn.addEventListener('click', function() {
+        selected.clear();
+        checks.forEach(function(cb) { cb.checked = false; });
+        update();
+      });
+    })();
+    </script>
 
     <% if (itineraries.length === 0) { %>
       <div class="empty-state">

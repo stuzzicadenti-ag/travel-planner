@@ -1,0 +1,103 @@
+<%- include('../partials/header') %>
+
+<style>
+  .journal-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; transition: all 0.2s; }
+  .journal-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .journal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .journal-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--sky)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+  .journal-meta { display: flex; flex-direction: column; gap: 2px; }
+  .journal-author { font-weight: 700; font-size: 0.95rem; }
+  .journal-date { font-size: 0.8rem; color: var(--text-muted); }
+  .journal-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+  .journal-trip-link { display: inline-block; font-size: 0.85rem; color: var(--blue); margin-bottom: 12px; }
+  .journal-trip-link:hover { text-decoration: underline; }
+  .journal-body { color: var(--text-light); line-height: 1.7; margin-bottom: 12px; font-size: 0.95rem; }
+  .journal-tips { background: var(--sky); border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 12px; }
+  .journal-tips-label { font-size: 0.8rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .journal-tips-text { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; }
+  .journal-photo { width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 12px; }
+  .journal-footer { display: flex; align-items: center; gap: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .journal-rating { display: flex; gap: 2px; }
+  .journal-likes form { display: inline; }
+  .journal-like-btn { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; color: var(--text-light); transition: all 0.2s; font-family: inherit; }
+  .journal-like-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .journal-like-btn--liked { background: var(--sky); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+</style>
+
+<section class="section">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h1 class="page-title"><%= t('journals_title') %></h1>
+        <p class="page-subtitle"><%= t('journals_subtitle') %></p>
+      </div>
+      <% if (user) { %>
+        <a href="/journals/new" class="btn btn-primary"><%= t('journals_write') %></a>
+      <% } %>
+    </div>
+
+    <% if (journals.length === 0) { %>
+      <div class="empty-state">
+        <span class="empty-icon">&#128221;</span>
+        <h2><%= t('journals_empty_title') %></h2>
+        <p><%= t('journals_empty_desc') %></p>
+        <% if (user) { %>
+          <a href="/journals/new" class="btn btn-primary"><%= t('journals_write_first') %></a>
+        <% } else { %>
+          <a href="/auth/login" class="btn btn-outline"><%= t('nav_login') %></a>
+        <% } %>
+      </div>
+    <% } %>
+
+    <% journals.forEach(function(j) { %>
+      <div class="journal-card">
+        <div class="journal-header">
+          <div class="journal-avatar"><%= j.user_name ? j.user_name.charAt(0).toUpperCase() : '?' %></div>
+          <div class="journal-meta">
+            <span class="journal-author"><%= j.user_name %></span>
+            <span class="journal-date"><%= new Date(j.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></span>
+          </div>
+        </div>
+
+        <h2 class="journal-title"><%= j.title %></h2>
+        <a href="/itineraries/<%= j.itin_id %>" class="journal-trip-link">&#127758; <%= j.itinerary_title %> &mdash; <%= j.destination %> (<%= j.country_code %>)</a>
+
+        <% if (j.photo_url) { %>
+          <img src="<%= j.photo_url %>" alt="Trip photo" class="journal-photo" onerror="this.style.display='none'" loading="lazy">
+        <% } %>
+
+        <div class="journal-body">
+          <%= j.body.length > 500 ? j.body.substring(0, 500) + '...' : j.body %>
+        </div>
+
+        <% if (j.tips) { %>
+          <div class="journal-tips">
+            <div class="journal-tips-label"><%= t('journals_tips') %></div>
+            <div class="journal-tips-text"><%= j.tips %></div>
+          </div>
+        <% } %>
+
+        <div class="journal-footer">
+          <div class="journal-rating">
+            <% for (var i = 1; i <= 5; i++) { %>
+              <span class="star <%= i <= j.rating ? 'star--filled' : '' %>">&#9733;</span>
+            <% } %>
+          </div>
+          <div class="journal-likes">
+            <% if (user) { %>
+              <form method="POST" action="/journals/<%= j.id %>/like">
+                <button type="submit" class="journal-like-btn <%= userLikes.has(j.id) ? 'journal-like-btn--liked' : '' %>">
+                  &#9825; <%= j.likes || 0 %>
+                </button>
+              </form>
+            <% } else { %>
+              <span class="journal-like-btn">&#9825; <%= j.likes || 0 %></span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

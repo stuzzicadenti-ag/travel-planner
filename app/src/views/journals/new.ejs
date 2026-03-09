@@ -1,0 +1,70 @@
+<%- include('../partials/header') %>
+
+<section class="section">
+  <div class="container container--narrow" style="max-width: 640px;">
+    <a href="/journals" class="back-link">&larr; <%= t('journals_back') %></a>
+
+    <h1 class="page-title"><%= t('journals_new_title') %></h1>
+    <p class="page-subtitle"><%= t('journals_new_subtitle') %></p>
+
+    <% if (error) { %>
+      <div class="alert alert-error" style="margin-bottom: 16px;">
+        <% if (error === 'invalid_itinerary') { %><%= t('journals_err_itinerary') %>
+        <% } else if (error === 'invalid_rating') { %><%= t('journals_err_rating') %>
+        <% } else if (error === 'missing_title') { %><%= t('journals_err_title') %>
+        <% } else if (error === 'missing_body') { %><%= t('journals_err_body') %>
+        <% } else if (error === 'invalid_photo_url') { %><%= t('journals_err_photo') %>
+        <% } else { %><%= error %><% } %>
+      </div>
+    <% } %>
+
+    <div class="auth-card" style="margin-top: 20px;">
+      <form method="POST" action="/journals/new" class="auth-form">
+        <div class="form-group">
+          <label class="form-label"><%= t('journals_field_itinerary') %></label>
+          <select name="itinerary_id" class="form-input" required>
+            <option value=""><%= t('journals_select_itinerary') %></option>
+            <% itineraries.forEach(function(it) { %>
+              <option value="<%= it.id %>"><%= it.title %> &mdash; <%= it.destination %></option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><%= t('journals_field_title') %></label>
+          <input type="text" name="title" class="form-input" maxlength="255" required placeholder="<%= t('journals_title_placeholder') %>">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><%= t('journals_field_body') %></label>
+          <textarea name="body" class="form-input" maxlength="5000" rows="8" required placeholder="<%= t('journals_body_placeholder') %>"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><%= t('journals_field_tips') %></label>
+          <textarea name="tips" class="form-input" maxlength="2000" rows="3" placeholder="<%= t('journals_tips_placeholder') %>"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><%= t('journals_field_rating') %></label>
+          <div class="rating-input">
+            <% for (var i = 5; i >= 1; i--) { %>
+              <input type="radio" name="rating" id="jstar<%= i %>" value="<%= i %>" required>
+              <label for="jstar<%= i %>" class="rating-input__star">&#9733;</label>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><%= t('journals_field_photo') %></label>
+          <input type="url" name="photo_url" class="form-input" maxlength="500" placeholder="https://example.com/photo.jpg">
+          <small style="color: var(--text-muted); font-size: 0.8rem;"><%= t('journals_photo_hint') %></small>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block"><%= t('journals_submit') %></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

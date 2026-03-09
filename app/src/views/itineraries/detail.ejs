@@ -191,6 +191,184 @@
           </div>
         <% } %>
 
+        <!-- Weather Widget -->
+        <div class="weather-widget" style="margin-top: 32px; background: linear-gradient(135deg, #e0f2fe, #f0f9ff); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;">&#127326; <%= t('weather_title') %></h3>
+          <div id="weather-data" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px;">
+            <div style="text-align: center; padding: 12px; background: var(--white); border-radius: var(--radius-sm);">
+              <div style="font-size: 2rem;" id="weather-icon">&#9729;</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;"><%= t('weather_typical') %></div>
+              <div style="font-size: 1.1rem; font-weight: 700;" id="weather-temp">--</div>
+            </div>
+            <div style="text-align: center; padding: 12px; background: var(--white); border-radius: var(--radius-sm);">
+              <div style="font-size: 2rem;">&#127782;</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;"><%= t('weather_rain') %></div>
+              <div style="font-size: 1.1rem; font-weight: 700;" id="weather-rain">--</div>
+            </div>
+            <div style="text-align: center; padding: 12px; background: var(--white); border-radius: var(--radius-sm);">
+              <div style="font-size: 2rem;">&#128197;</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;"><%= t('weather_best_time') %></div>
+              <div style="font-size: 1.1rem; font-weight: 700;" id="weather-best"><%= itinerary.season ? (t('filter_' + itinerary.season) || itinerary.season) : '--' %></div>
+            </div>
+          </div>
+          <script>
+          (function() {
+            // Hardcoded seasonal climate data by country code
+            var climateData = {
+              'IT': { temp: '15-28', rain: '25%', icon: '&#9728;', best: 'spring' },
+              'JP': { temp: '10-30', rain: '35%', icon: '&#127800;', best: 'spring' },
+              'TH': { temp: '25-35', rain: '40%', icon: '&#9728;', best: 'winter' },
+              'GR': { temp: '15-32', rain: '15%', icon: '&#9728;', best: 'summer' },
+              'IS': { temp: '-2-15', rain: '45%', icon: '&#10052;', best: 'summer' },
+              'PE': { temp: '10-25', rain: '30%', icon: '&#9925;', best: 'winter' },
+              'FR': { temp: '8-25', rain: '30%', icon: '&#9925;', best: 'summer' },
+              'ES': { temp: '12-30', rain: '20%', icon: '&#9728;', best: 'spring' },
+              'US': { temp: '5-30', rain: '30%', icon: '&#9925;', best: 'autumn' },
+              'GB': { temp: '5-22', rain: '45%', icon: '&#127782;', best: 'summer' },
+              'DE': { temp: '2-25', rain: '35%', icon: '&#9925;', best: 'summer' },
+              'CH': { temp: '0-25', rain: '35%', icon: '&#9925;', best: 'summer' },
+              'PT': { temp: '12-28', rain: '20%', icon: '&#9728;', best: 'spring' },
+              'AU': { temp: '15-30', rain: '25%', icon: '&#9728;', best: 'spring' },
+              'BR': { temp: '20-32', rain: '40%', icon: '&#9728;', best: 'winter' },
+              'MX': { temp: '18-30', rain: '35%', icon: '&#9728;', best: 'winter' },
+              'IN': { temp: '20-35', rain: '45%', icon: '&#9728;', best: 'winter' },
+              'ID': { temp: '25-33', rain: '50%', icon: '&#127782;', best: 'summer' },
+              'MA': { temp: '12-30', rain: '20%', icon: '&#9728;', best: 'spring' },
+              'ZA': { temp: '10-28', rain: '25%', icon: '&#9728;', best: 'spring' },
+              'HR': { temp: '8-28', rain: '25%', icon: '&#9728;', best: 'summer' },
+              'TR': { temp: '8-30', rain: '25%', icon: '&#9728;', best: 'spring' },
+              'EG': { temp: '15-38', rain: '5%', icon: '&#9728;', best: 'winter' },
+              'VN': { temp: '22-33', rain: '45%', icon: '&#9728;', best: 'winter' },
+              'NZ': { temp: '8-22', rain: '35%', icon: '&#9925;', best: 'summer' },
+              'CO': { temp: '18-28', rain: '40%', icon: '&#127782;', best: 'winter' },
+              'KE': { temp: '15-28', rain: '30%', icon: '&#9728;', best: 'winter' },
+              'NO': { temp: '-5-20', rain: '40%', icon: '&#10052;', best: 'summer' },
+              'SE': { temp: '-5-22', rain: '35%', icon: '&#10052;', best: 'summer' },
+            };
+            var cc = '<%= itinerary.countryCode %>';
+            var data = climateData[cc] || { temp: '10-25', rain: '30%', icon: '&#9925;', best: '--' };
+            var seasonNames = {
+              'spring': '<%= t("filter_spring") %>',
+              'summer': '<%= t("filter_summer") %>',
+              'autumn': '<%= t("filter_autumn") %>',
+              'winter': '<%= t("filter_winter") %>'
+            };
+            document.getElementById('weather-icon').innerHTML = data.icon;
+            document.getElementById('weather-temp').textContent = data.temp + ' \u00B0C';
+            document.getElementById('weather-rain').textContent = data.rain;
+            var bestEl = document.getElementById('weather-best');
+            if (data.best !== '--') bestEl.textContent = seasonNames[data.best] || data.best;
+          })();
+          </script>
+        </div>
+
+        <!-- Cost Estimator -->
+        <div class="cost-estimator" style="margin-top: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;">&#128178; <%= t('cost_title') %></h3>
+          <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 16px;"><%= t('cost_subtitle') %></p>
+          <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px;">
+            <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 0.8rem;"><%= t('cost_travelers') %></label>
+              <input type="number" id="cost-travelers" class="form-input" value="2" min="1" max="20" style="padding: 8px;">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 140px; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 0.8rem;"><%= t('cost_hotel_tier') %></label>
+              <select id="cost-hotel" class="form-input" style="padding: 8px;">
+                <option value="budget"><%= t('cost_budget') %></option>
+                <option value="mid" selected><%= t('cost_mid') %></option>
+                <option value="luxury"><%= t('cost_luxury') %></option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 140px; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 0.8rem;"><%= t('cost_include_flights') %></label>
+              <select id="cost-flights" class="form-input" style="padding: 8px;">
+                <option value="yes"><%= t('cost_yes') %></option>
+                <option value="no"><%= t('cost_no') %></option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              <button type="button" id="cost-calc-btn" class="btn btn-primary" style="padding: 8px 20px;"><%= t('cost_calculate') %></button>
+            </div>
+          </div>
+
+          <div id="cost-result" style="display: none;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 16px;">
+              <div style="background: var(--sky); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;"><%= t('cost_flights_label') %></div>
+                <div id="cost-flights-val" style="font-size: 1.1rem; font-weight: 700;">-</div>
+              </div>
+              <div style="background: var(--sky); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;"><%= t('cost_accommodation_label') %></div>
+                <div id="cost-hotel-val" style="font-size: 1.1rem; font-weight: 700;">-</div>
+              </div>
+              <div style="background: var(--sky); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;"><%= t('cost_activities_label') %></div>
+                <div id="cost-activities-val" style="font-size: 1.1rem; font-weight: 700;">-</div>
+              </div>
+              <div style="background: var(--sky); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;"><%= t('cost_food_label') %></div>
+                <div id="cost-food-val" style="font-size: 1.1rem; font-weight: 700;">-</div>
+              </div>
+              <div style="background: var(--sky); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;"><%= t('cost_transport_label') %></div>
+                <div id="cost-transport-val" style="font-size: 1.1rem; font-weight: 700;">-</div>
+              </div>
+            </div>
+            <div style="background: linear-gradient(135deg, var(--blue), var(--blue-dark)); color: var(--white); padding: 16px 24px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <span style="font-size: 1rem; font-weight: 600;"><%= t('cost_total') %></span>
+              <span id="cost-total-val" style="font-size: 1.5rem; font-weight: 800;">-</span>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; text-align: center;"><%= t('cost_disclaimer') %></p>
+          </div>
+
+          <script>
+          (function() {
+            var duration = <%= itinerary.durationDays %>;
+            var currency = '<%= itinerary.budgetCurrency %>';
+            var baseBudget = <%= Number(itinerary.budgetAmount) %>;
+            // Use base budget as fallback for cost estimates
+            var flightBase = Math.round(baseBudget * 0.25);
+            var budgetHotel = Math.round(baseBudget * 0.08);
+            var midHotel = Math.round(baseBudget * 0.15);
+            var luxuryHotel = Math.round(baseBudget * 0.30);
+            var activitiesBase = Math.round(baseBudget * 0.20);
+            var foodPerDay = Math.round(baseBudget * 0.05);
+            var transportPerDay = Math.round(baseBudget * 0.03);
+
+            function fmt(n) { return currency + ' ' + n.toLocaleString(); }
+
+            document.getElementById('cost-calc-btn').addEventListener('click', function() {
+              var travelers = Math.max(1, Math.min(20, parseInt(document.getElementById('cost-travelers').value) || 2));
+              var hotelTier = document.getElementById('cost-hotel').value;
+              var includeFlights = document.getElementById('cost-flights').value === 'yes';
+
+              var nights = Math.max(1, duration - 1);
+              var hotelRate = hotelTier === 'budget' ? budgetHotel : (hotelTier === 'luxury' ? luxuryHotel : midHotel);
+
+              var flightTotal = includeFlights ? flightBase * travelers : 0;
+              var hotelTotal = hotelRate * nights * Math.ceil(travelers / 2); // sharing rooms
+              var activitiesTotal = activitiesBase * travelers;
+              var foodTotal = foodPerDay * duration * travelers;
+              var transportTotal = transportPerDay * duration * travelers;
+              var total = flightTotal + hotelTotal + activitiesTotal + foodTotal + transportTotal;
+
+              document.getElementById('cost-flights-val').textContent = includeFlights ? fmt(flightTotal) : '-';
+              document.getElementById('cost-hotel-val').textContent = fmt(hotelTotal);
+              document.getElementById('cost-activities-val').textContent = fmt(activitiesTotal);
+              document.getElementById('cost-food-val').textContent = fmt(foodTotal);
+              document.getElementById('cost-transport-val').textContent = fmt(transportTotal);
+              document.getElementById('cost-total-val').textContent = fmt(total);
+              document.getElementById('cost-result').style.display = 'block';
+            });
+          })();
+          </script>
+        </div>
+
+        <!-- Trip Reports Link -->
+        <div style="margin-top: 24px;">
+          <a href="/journals/itinerary/<%= itinerary.id %>" class="btn btn-outline" style="padding: 8px 20px;">&#128221; <%= t('journals_read_reports') %></a>
+        </div>
+
         <!-- Reviews Section -->
         <div class="reviews-section">
           <h2 class="reviews-title">&#11088; Reviews</h2>

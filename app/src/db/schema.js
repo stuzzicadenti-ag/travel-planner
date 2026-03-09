@@ -49,6 +49,9 @@ export const itineraries = pgTable("itineraries", {
   departureDate: timestamp("departure_date"),
   spotsLeft: integer("spots_left"),
   coverGradient: varchar("cover_gradient", { length: 100 }),
+  latitude: numeric("latitude", { precision: 9, scale: 6 }),
+  longitude: numeric("longitude", { precision: 9, scale: 6 }),
+  difficulty: varchar("difficulty", { length: 20 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -130,4 +133,49 @@ export const itineraryTags = pgTable("itinerary_tags", {
     .references(() => itineraries.id, { onDelete: "cascade" })
     .notNull(),
   tag: varchar("tag", { length: 50 }).notNull(),
+});
+
+// Trip Journals / Trip Reports
+export const tripJournals = pgTable("trip_journals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  itineraryId: integer("itinerary_id")
+    .references(() => itineraries.id, { onDelete: "cascade" })
+    .notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  body: text("body").notNull(),
+  tips: text("tips"),
+  rating: integer("rating").notNull(),
+  photoUrl: varchar("photo_url", { length: 500 }),
+  likes: integer("likes").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Journal likes (track who liked what)
+export const journalLikes = pgTable("journal_likes", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  journalId: integer("journal_id")
+    .references(() => tripJournals.id, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Itinerary cost estimates (admin-set base costs)
+export const itineraryCosts = pgTable("itinerary_costs", {
+  id: serial("id").primaryKey(),
+  itineraryId: integer("itinerary_id")
+    .references(() => itineraries.id, { onDelete: "cascade" })
+    .notNull(),
+  flightCost: numeric("flight_cost", { precision: 10, scale: 2 }).default("0"),
+  budgetHotelPerNight: numeric("budget_hotel_per_night", { precision: 10, scale: 2 }).default("0"),
+  midHotelPerNight: numeric("mid_hotel_per_night", { precision: 10, scale: 2 }).default("0"),
+  luxuryHotelPerNight: numeric("luxury_hotel_per_night", { precision: 10, scale: 2 }).default("0"),
+  activitiesCost: numeric("activities_cost", { precision: 10, scale: 2 }).default("0"),
+  foodPerDay: numeric("food_per_day", { precision: 10, scale: 2 }).default("0"),
+  transportPerDay: numeric("transport_per_day", { precision: 10, scale: 2 }).default("0"),
 });

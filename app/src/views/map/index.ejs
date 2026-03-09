@@ -1,0 +1,126 @@
+<%- include('../partials/header') %>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+<style>
+  #travel-map { width: 100%; height: 600px; border-radius: var(--radius); border: 1px solid var(--border); }
+  .map-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: flex-end; }
+  .map-controls .form-group { margin-bottom: 0; min-width: 140px; }
+  .leaflet-popup-content { min-width: 220px; }
+  .map-popup { text-align: center; }
+  .map-popup__title { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+  .map-popup__meta { font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px; }
+  .map-popup__rating { color: #f59e0b; font-weight: 700; }
+  .map-popup__photo { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
+  .map-popup__link { display: inline-block; margin-top: 6px; padding: 4px 14px; background: var(--blue); color: #fff; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+  .map-popup__link:hover { background: var(--blue-dark); color: #fff; }
+  .map-stats { display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap; }
+  .map-stat { font-size: 0.9rem; color: var(--text-light); }
+  .map-stat strong { color: var(--text); }
+  @media (max-width: 768px) {
+    #travel-map { height: 400px; }
+  }
+</style>
+
+<section class="section">
+  <div class="container">
+    <h1 class="page-title"><%= t('map_title') %></h1>
+    <p class="page-subtitle"><%= t('map_subtitle') %></p>
+
+    <!-- Filters -->
+    <form action="/map" method="GET" class="map-controls">
+      <div class="form-group">
+        <label class="form-label" style="font-size: 0.8rem;"><%= t('filter_mood') %></label>
+        <select name="mood" class="form-input" style="padding: 8px;">
+          <option value=""><%= t('map_all_moods') %></option>
+          <option value="adventure" <%= filters.mood === 'adventure' ? 'selected' : '' %>><%= t('filter_adventure') %></option>
+          <option value="relaxation" <%= filters.mood === 'relaxation' ? 'selected' : '' %>><%= t('filter_relaxation') %></option>
+          <option value="culture" <%= filters.mood === 'culture' ? 'selected' : '' %>><%= t('filter_culture') %></option>
+          <option value="party" <%= filters.mood === 'party' ? 'selected' : '' %>><%= t('filter_party') %></option>
+          <option value="wellness" <%= filters.mood === 'wellness' ? 'selected' : '' %>><%= t('filter_wellness') %></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="font-size: 0.8rem;"><%= t('filter_season') %></label>
+        <select name="season" class="form-input" style="padding: 8px;">
+          <option value=""><%= t('map_all_seasons') %></option>
+          <option value="summer" <%= filters.season === 'summer' ? 'selected' : '' %>><%= t('filter_summer') %></option>
+          <option value="winter" <%= filters.season === 'winter' ? 'selected' : '' %>><%= t('filter_winter') %></option>
+          <option value="spring" <%= filters.season === 'spring' ? 'selected' : '' %>><%= t('filter_spring') %></option>
+          <option value="autumn" <%= filters.season === 'autumn' ? 'selected' : '' %>><%= t('filter_autumn') %></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="font-size: 0.8rem;"><%= t('map_country') %></label>
+        <input type="text" name="country" class="form-input" placeholder="IT" maxlength="2" value="<%= filters.country %>" style="padding: 8px; width: 80px; text-transform: uppercase;">
+      </div>
+      <button type="submit" class="btn btn-primary" style="padding: 8px 16px;"><%= t('map_filter_btn') %></button>
+      <a href="/map" class="btn btn-outline" style="padding: 8px 16px;"><%= t('map_clear') %></a>
+    </form>
+
+    <div id="travel-map"></div>
+
+    <div class="map-stats">
+      <div class="map-stat"><strong><%= itineraries.length %></strong> <%= t('map_destinations_shown') %></div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var itineraries = [];
+  <% itineraries.forEach(function(it) { %>
+    <% if (it.latitude && it.longitude) { %>
+    itineraries.push({
+      id: <%= it.id %>,
+      title: "<%= it.title.replace(/"/g, '\\"').replace(/</g, '\\x3c') %>",
+      destination: "<%= it.destination.replace(/"/g, '\\"').replace(/</g, '\\x3c') %>",
+      countryCode: "<%= it.country_code %>",
+      rating: "<%= it.rating || '4.5' %>",
+      durationDays: <%= it.duration_days %>,
+      budgetAmount: <%= Number(it.budget_amount) %>,
+      budgetCurrency: "<%= it.budget_currency %>",
+      lat: <%= Number(it.latitude) %>,
+      lng: <%= Number(it.longitude) %>,
+      discount: <%= it.discount || 0 %>,
+      photoUrl: <%= photosMap[it.id] ? '"' + String(photosMap[it.id].url).replace(/"/g, '\\"') + '"' : 'null' %>
+    });
+    <% } %>
+  <% }); %>
+
+  var map = L.map('travel-map').setView([30, 10], 2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 18,
+  }).addTo(map);
+
+  var markers = L.featureGroup();
+
+  itineraries.forEach(function(it) {
+    if (!it.lat || !it.lng) return;
+    var photoHtml = it.photoUrl
+      ? '<img src="' + it.photoUrl + '" alt="" class="map-popup__photo" onerror="this.style.display=\'none\'">'
+      : '';
+    var discountHtml = it.discount ? '<span style="color: #dc2626; font-weight: 700;">-' + it.discount + '%</span> ' : '';
+    var popup = '<div class="map-popup">' +
+      photoHtml +
+      '<div class="map-popup__title">' + it.title + '</div>' +
+      '<div class="map-popup__meta">' + it.destination + ' (' + it.countryCode + ') &middot; ' + it.durationDays + 'd</div>' +
+      '<div class="map-popup__meta">' + discountHtml + it.budgetCurrency + ' ' + it.budgetAmount.toLocaleString() + '</div>' +
+      '<div class="map-popup__rating">' + (it.rating || '4.5') + ' &#9733;</div>' +
+      '<a href="/itineraries/' + it.id + '" class="map-popup__link">View Trip</a>' +
+      '</div>';
+
+    var marker = L.marker([it.lat, it.lng]).bindPopup(popup);
+    markers.addLayer(marker);
+  });
+
+  markers.addTo(map);
+  if (markers.getLayers().length > 0) {
+    map.fitBounds(markers.getBounds().pad(0.1));
+  }
+})();
+</script>
+
+<%- include('../partials/footer') %>

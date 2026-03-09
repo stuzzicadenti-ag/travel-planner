@@ -1,0 +1,149 @@
+<%- include('../partials/header') %>
+
+<style>
+  .compare-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .compare-table th, .compare-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border); }
+  .compare-table th { background: var(--sky); font-size: 0.8rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; width: 160px; white-space: nowrap; }
+  .compare-table td { font-size: 0.95rem; }
+  .compare-table tr:last-child td, .compare-table tr:last-child th { border-bottom: none; }
+  .compare-header-cell { text-align: center; }
+  .compare-header-cell h3 { font-size: 1.1rem; margin-bottom: 4px; }
+  .compare-header-cell a { color: var(--blue); font-size: 0.85rem; }
+  .compare-val--best { color: var(--success); font-weight: 700; }
+  .compare-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .compare-empty { text-align: center; padding: 60px 20px; }
+  .compare-empty h2 { margin-bottom: 12px; }
+  .compare-empty p { color: var(--text-light); margin-bottom: 20px; }
+  .compare-difficulty { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+  .diff-easy { background: #e8f8ef; color: #27ae60; }
+  .diff-moderate { background: #fef3e0; color: #e67e22; }
+  .diff-challenging { background: #fef2f2; color: #dc2626; }
+  @media (max-width: 768px) {
+    .compare-table { display: block; overflow-x: auto; }
+    .compare-table th { width: 120px; min-width: 120px; }
+  }
+</style>
+
+<section class="section">
+  <div class="container">
+    <h1 class="page-title"><%= t('compare_title') %></h1>
+    <p class="page-subtitle"><%= t('compare_subtitle') %></p>
+
+    <% if (itineraries.length < 2) { %>
+      <div class="compare-empty">
+        <span class="empty-icon">&#9878;</span>
+        <h2><%= t('compare_empty_title') %></h2>
+        <p><%= t('compare_empty_desc') %></p>
+        <a href="/itineraries" class="btn btn-primary"><%= t('nav_browse_trips') %></a>
+      </div>
+    <% } else { %>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <% itineraries.forEach(function(it) { %>
+              <td class="compare-header-cell">
+                <h3><%= it.title %></h3>
+                <a href="/itineraries/<%= it.id %>"><%= t('compare_view_trip') %> &rarr;</a>
+              </td>
+            <% }); %>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th><%= t('compare_destination') %></th>
+            <% itineraries.forEach(function(it) { %>
+              <td>&#127758; <%= it.destination %> (<%= it.country_code %>)</td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_duration') %></th>
+            <% itineraries.forEach(function(it) { %>
+              <td>&#128197; <%= it.duration_days %> <%= t('days') %></td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_price') %></th>
+            <% var minPrice = Math.min(...itineraries.map(function(it) { return Number(it.budget_amount); })); %>
+            <% itineraries.forEach(function(it) { %>
+              <td class="<%= Number(it.budget_amount) === minPrice ? 'compare-val--best' : '' %>">
+                &#128176; <%= it.budget_currency %> <%= Number(it.budget_amount).toLocaleString() %>
+                <% if (it.discount && it.discount > 0) { %>
+                  <span style="color: #dc2626; font-size: 0.8rem;">(-<%= it.discount %>%)</span>
+                <% } %>
+              </td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_rating') %></th>
+            <% var maxRating = Math.max(...itineraries.map(function(it) {
+              var rm = ratingsMap[it.id];
+              return rm ? rm.avgRating : Number(it.rating || 0);
+            })); %>
+            <% itineraries.forEach(function(it) { %>
+              <% var rm = ratingsMap[it.id]; %>
+              <% var r = rm ? rm.avgRating : Number(it.rating || 0); %>
+              <td class="<%= r === maxRating ? 'compare-val--best' : '' %>">
+                &#11088; <%= r ? r.toFixed(1) : 'N/A' %>
+                <% if (rm) { %>
+                  <span style="color: var(--text-muted); font-size: 0.8rem;">(<%= rm.reviewCount %> reviews)</span>
+                <% } %>
+              </td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_activities') %></th>
+            <% itineraries.forEach(function(it) { %>
+              <td><%= activitiesMap[it.id] || 0 %> <%= t('compare_activities_included') %></td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_best_season') %></th>
+            <% itineraries.forEach(function(it) { %>
+              <td><%= it.season ? (t('filter_' + it.season) || it.season) : '-' %></td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_mood') %></th>
+            <% itineraries.forEach(function(it) { %>
+              <td><%= it.mood ? (t('filter_' + it.mood) || it.mood) : '-' %></td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_difficulty') %></th>
+            <% itineraries.forEach(function(it) { %>
+              <td>
+                <% if (it.difficulty) { %>
+                  <span class="compare-difficulty diff-<%= it.difficulty %>"><%= t('difficulty_' + it.difficulty) || it.difficulty %></span>
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_group_size') %></th>
+            <% itineraries.forEach(function(it) { %>
+              <td><%= it.group_size ? (t('max') + ' ' + it.group_size) : '-' %></td>
+            <% }); %>
+          </tr>
+          <tr>
+            <th><%= t('compare_tags') %></th>
+            <% itineraries.forEach(function(it) { %>
+              <td>
+                <div class="compare-tags">
+                  <% (tagsMap[it.id] || []).forEach(function(tag) { %>
+                    <span class="tag tag--sm"><%= tag %></span>
+                  <% }); %>
+                  <% if (!tagsMap[it.id] || tagsMap[it.id].length === 0) { %>-<% } %>
+                </div>
+              </td>
+            <% }); %>
+          </tr>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
