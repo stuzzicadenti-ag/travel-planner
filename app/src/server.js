@@ -48,7 +48,7 @@ app.addHook('onSend', async (request, reply) => {
   reply.removeHeader('X-Powered-By');
 });
 
-// Rate limiting (in-memory, per IP) — shared infrastructure for auth, reviews, and writes
+// Rate limiting (in-memory, per IP) - shared infrastructure for auth, reviews, and writes
 function createRateLimiter(windowMs, maxRequests) {
   const attempts = new Map();
   setInterval(() => {

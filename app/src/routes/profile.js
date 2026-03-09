@@ -8,7 +8,7 @@ export async function profileRoutes(app) {
     if (!req.user) return reply.redirect("/auth/login");
   });
 
-  // GET /profile — Dashboard
+  // GET /profile - Dashboard
   app.get("/", async (req, reply) => {
     // Fetch full user record from DB (JWT only has subset)
     const [dbUser] = await db
@@ -85,7 +85,7 @@ export async function profileRoutes(app) {
     });
   });
 
-  // POST /profile/update — Update display name
+  // POST /profile/update - Update display name
   app.post("/update", async (req, reply) => {
     if (app.checkWriteRateLimit && !app.checkWriteRateLimit(req, reply)) return;
 

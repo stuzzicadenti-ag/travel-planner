@@ -9,7 +9,7 @@ const IS_PROD = process.env.NODE_ENV === "production";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const COOKIE_OPTS = {
   httpOnly: true,
-  // secure: false is OK here — app runs behind Caddy reverse proxy which terminates
+  // secure: false is OK here - app runs behind Caddy reverse proxy which terminates
   // TLS. Caddy forwards requests over HTTP on the internal network (Tailscale).
   // The Strict-Transport-Security header ensures browsers always use HTTPS externally.
   // Set secure: true if the app ever handles TLS directly.
