@@ -134,7 +134,7 @@
               <%= user.name || 'Account' %>
             </div>
             <a href="/trips" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_my_trips') : 'My Trips' %></a>
-            <a href="/profile/settings" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_settings') : 'Settings' %></a>
+            <a href="/profile" class="nav-link"><%= typeof t !== 'undefined' ? t('nav_profile') : 'My Profile' %></a>
             <% if (user.role === 'admin' || user.role === 'owner') { %>
               <a href="/admin" class="nav-link" style="color: #f5a623; font-weight: 700;"><%= typeof t !== 'undefined' ? t('nav_admin') : 'Admin' %></a>
             <% } %>
@@ -160,7 +160,7 @@
               <div class="dropdown-header"><%= user.name || user.email %></div>
               <div class="dropdown-divider"></div>
               <a href="/trips"><%= typeof t !== 'undefined' ? t('nav_my_trips') : 'My Trips' %></a>
-              <a href="/profile/settings"><%= typeof t !== 'undefined' ? t('nav_settings') : 'Settings' %></a>
+              <a href="/profile"><%= typeof t !== 'undefined' ? t('nav_profile') : 'My Profile' %></a>
               <% if (user.role === 'admin' || user.role === 'owner') { %>
                 <a href="/admin" class="text-admin"><%= typeof t !== 'undefined' ? t('nav_admin') : 'Admin' %></a>
               <% } %>

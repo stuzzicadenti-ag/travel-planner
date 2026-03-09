@@ -205,6 +205,28 @@
   "faq_help_title": "Besoin d'Aide ?",
   "faq_help_desc": "Notre equipe de support est la pour vous aider avec toutes vos questions, problemes ou commentaires.",
 
+  "nav_profile": "Mon Profil",
+  "nav_settings": "Parametres",
+
+  "profile_title": "Mon Profil",
+  "profile_member_since": "Membre depuis",
+  "profile_saved_trips": "Voyages Sauvegardes",
+  "profile_reviews_written": "Avis Rediges",
+  "profile_account_age_days": "Jours en tant que Membre",
+  "profile_subscription": "Abonnement",
+  "profile_recent_reviews": "Avis Recents",
+  "profile_account_settings": "Parametres du Compte",
+  "profile_update_name": "Nom d'Affichage",
+  "profile_save": "Enregistrer",
+  "profile_quick_actions": "Actions Rapides",
+  "profile_browse_trips": "Explorer les Voyages",
+  "profile_write_review": "Rediger un Avis",
+  "profile_manage_subscription": "Gerer l'Abonnement",
+  "profile_no_saved_trips": "Aucun voyage sauvegarde. Parcourez les itineraires et sauvegardez vos favoris !",
+  "profile_no_reviews": "Aucun avis pour le moment. Partagez votre experience de voyage !",
+  "profile_updated": "Votre profil a ete mis a jour avec succes.",
+  "profile_stats": "Apercu des Statistiques",
+
   "days": "jours",
   "max": "Max"
 }

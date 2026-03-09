@@ -15,6 +15,7 @@ import { tripRoutes } from "./routes/trips.js";
 import { adminRoutes } from "./routes/admin.js";
 import { communityRoutes } from "./routes/community.js";
 import { newsletterRoutes } from "./routes/newsletter.js";
+import { profileRoutes } from "./routes/profile.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -148,8 +149,16 @@ app.get("/lang/:code", async (req, reply) => {
   if (SUPPORTED_LANGS.includes(code)) {
     reply.setCookie("lang", code, { path: "/", maxAge: 365 * 24 * 60 * 60, sameSite: "lax" });
   }
-  const referer = req.headers.referer || "/";
-  return reply.redirect(referer);
+  // Prevent open redirect: only allow relative paths from referer
+  let redirect = "/";
+  try {
+    const raw = req.headers.referer;
+    if (raw) {
+      const url = new URL(raw);
+      redirect = url.pathname + url.search;
+    }
+  } catch { /* ignore malformed referer, default to "/" */ }
+  return reply.redirect(redirect);
 });
 
 // Health check
@@ -203,6 +212,7 @@ await app.register(tripRoutes, { prefix: "/trips" });
 await app.register(adminRoutes, { prefix: "/admin" });
 await app.register(communityRoutes, { prefix: "/community" });
 await app.register(newsletterRoutes, { prefix: "/newsletter" });
+await app.register(profileRoutes, { prefix: "/profile" });
 
 // Graceful shutdown
 const shutdown = async () => {

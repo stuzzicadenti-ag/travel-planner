@@ -205,6 +205,28 @@
   "faq_help_title": "Need Help?",
   "faq_help_desc": "Our support team is here to help with any questions, issues, or feedback.",
 
+  "nav_profile": "My Profile",
+  "nav_settings": "Settings",
+
+  "profile_title": "My Profile",
+  "profile_member_since": "Member since",
+  "profile_saved_trips": "Saved Trips",
+  "profile_reviews_written": "Reviews Written",
+  "profile_account_age_days": "Days as Member",
+  "profile_subscription": "Subscription",
+  "profile_recent_reviews": "Recent Reviews",
+  "profile_account_settings": "Account Settings",
+  "profile_update_name": "Display Name",
+  "profile_save": "Save",
+  "profile_quick_actions": "Quick Actions",
+  "profile_browse_trips": "Browse Trips",
+  "profile_write_review": "Write a Review",
+  "profile_manage_subscription": "Manage Plan",
+  "profile_no_saved_trips": "No saved trips yet. Browse itineraries and save your favorites!",
+  "profile_no_reviews": "No reviews yet. Share your travel experience!",
+  "profile_updated": "Your profile has been updated successfully.",
+  "profile_stats": "Stats Overview",
+
   "days": "days",
   "max": "Max"
 }

@@ -205,6 +205,28 @@
   "faq_help_title": "Brauchst du Hilfe?",
   "faq_help_desc": "Unser Support-Team hilft dir gerne bei allen Fragen, Problemen oder Feedback.",
 
+  "nav_profile": "Mein Profil",
+  "nav_settings": "Einstellungen",
+
+  "profile_title": "Mein Profil",
+  "profile_member_since": "Mitglied seit",
+  "profile_saved_trips": "Gespeicherte Reisen",
+  "profile_reviews_written": "Geschriebene Bewertungen",
+  "profile_account_age_days": "Tage als Mitglied",
+  "profile_subscription": "Abonnement",
+  "profile_recent_reviews": "Letzte Bewertungen",
+  "profile_account_settings": "Kontoeinstellungen",
+  "profile_update_name": "Anzeigename",
+  "profile_save": "Speichern",
+  "profile_quick_actions": "Schnellaktionen",
+  "profile_browse_trips": "Reisen durchsuchen",
+  "profile_write_review": "Bewertung schreiben",
+  "profile_manage_subscription": "Plan verwalten",
+  "profile_no_saved_trips": "Noch keine gespeicherten Reisen. Durchsuche Reiserouten und speichere deine Favoriten!",
+  "profile_no_reviews": "Noch keine Bewertungen. Teile deine Reiseerfahrung!",
+  "profile_updated": "Dein Profil wurde erfolgreich aktualisiert.",
+  "profile_stats": "Statistik-Uebersicht",
+
   "days": "Tage",
   "max": "Max"
 }

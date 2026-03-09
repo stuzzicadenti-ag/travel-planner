@@ -1,0 +1,385 @@
+<%- include('../partials/header') %>
+
+<style>
+  /* === Profile Dashboard === */
+  .profile-hero {
+    background: linear-gradient(135deg, var(--sky) 0%, #d0e8f7 50%, #fde8c8 100%);
+    padding: 2.5rem 1.5rem 2rem;
+  }
+  .profile-hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .profile-hero-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--white);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(58,155,213,0.3);
+  }
+  .profile-hero-info h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .profile-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+  .profile-hero-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  /* Stats row */
+  .profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--blue);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  /* Dashboard grid */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .dashboard-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .dashboard-card h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .dashboard-card--full {
+    grid-column: 1 / -1;
+  }
+
+  /* Saved trips list (compact) */
+  .saved-trip-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .saved-trip-item:last-child { border-bottom: none; }
+  .saved-trip-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+  .saved-trip-flag {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .saved-trip-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .saved-trip-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* Review item (compact) */
+  .review-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .review-item:last-child { border-bottom: none; }
+  .review-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+  }
+  .review-item-trip {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+  .review-item-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .review-item-stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 0.25rem;
+  }
+  .review-item-stars .star { color: var(--border); font-size: 0.9rem; }
+  .review-item-stars .star--filled { color: var(--orange); }
+  .review-item-comment {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Settings form */
+  .settings-form {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+  }
+  .settings-form .form-group { flex: 1; }
+  .settings-form .btn { height: 42px; }
+
+  /* Quick actions */
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+  .quick-action {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .quick-action:hover {
+    background: var(--sky);
+    border-color: var(--blue);
+    color: var(--blue);
+    transform: translateY(-1px);
+  }
+  .quick-action-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+  /* Success alert */
+  .alert-success {
+    background: #e8f8ef;
+    color: var(--success);
+    border: 1px solid #b8e6c8;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .profile-hero-inner { flex-direction: column; text-align: center; }
+    .profile-hero-meta { justify-content: center; }
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .settings-form { flex-direction: column; }
+    .settings-form .btn { width: 100%; }
+    .profile-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .profile-stats { grid-template-columns: 1fr; }
+    .quick-actions { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- Profile Hero -->
+<div class="profile-hero">
+  <div class="profile-hero-inner">
+    <div class="profile-hero-avatar"><%= (dbUser.name || 'U').charAt(0).toUpperCase() %></div>
+    <div class="profile-hero-info">
+      <h1><%= dbUser.name %></h1>
+      <div class="profile-hero-meta">
+        <span>&#9993; <%= dbUser.email %></span>
+        <span>&#128197; <%= t('profile_member_since') %> <%= new Date(dbUser.createdAt).toLocaleDateString(lang === 'de' ? 'de-DE' : lang === 'it' ? 'it-IT' : lang === 'fr' ? 'fr-FR' : 'en-US', { month: 'long', year: 'numeric' }) %></span>
+        <span class="tier-badge tier-<%= dbUser.plan %>"><%= dbUser.plan.toUpperCase() %></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <% if (success === 'updated') { %>
+      <div class="alert-success"><%= t('profile_updated') %></div>
+    <% } %>
+
+    <!-- Stats Overview -->
+    <div class="profile-stats">
+      <div class="stat-card">
+        <div class="stat-number"><%= savedTripsCount %></div>
+        <div class="stat-label"><%= t('profile_saved_trips') %></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><%= reviewsCount %></div>
+        <div class="stat-label"><%= t('profile_reviews_written') %></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><%= accountAgeDays %></div>
+        <div class="stat-label"><%= t('profile_account_age_days') %></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><%= dbUser.plan.charAt(0).toUpperCase() + dbUser.plan.slice(1) %></div>
+        <div class="stat-label"><%= t('profile_subscription') %></div>
+      </div>
+    </div>
+
+    <!-- Main dashboard grid -->
+    <div class="dashboard-grid">
+
+      <!-- Saved Trips -->
+      <div class="dashboard-card">
+        <h2>&#128506; <%= t('profile_saved_trips') %></h2>
+        <% if (savedTripsRows.length === 0) { %>
+          <div style="text-align: center; padding: 1.5rem 0; color: var(--text-muted);">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128506;</div>
+            <p><%= t('profile_no_saved_trips') %></p>
+            <a href="/itineraries" class="btn btn-primary btn-sm" style="margin-top: 0.75rem;"><%= t('profile_browse_trips') %></a>
+          </div>
+        <% } else { %>
+          <% savedTripsRows.slice(0, 5).forEach(function(trip) { %>
+            <a href="/itineraries/<%= trip.itineraryId %>" class="saved-trip-item" style="text-decoration: none; color: inherit;">
+              <div class="saved-trip-info">
+                <span class="saved-trip-flag"><%= trip.countryCode %></span>
+                <span class="saved-trip-title"><%= trip.title %></span>
+              </div>
+              <span class="saved-trip-meta"><%= trip.durationDays %> <%= t('days') %></span>
+            </a>
+          <% }); %>
+          <% if (savedTripsRows.length > 5) { %>
+            <div style="text-align: center; margin-top: 0.75rem;">
+              <a href="/trips" class="btn btn-outline btn-sm"><%= t('nav_my_trips') %> &rarr;</a>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+
+      <!-- Recent Reviews -->
+      <div class="dashboard-card">
+        <h2>&#11088; <%= t('profile_recent_reviews') %></h2>
+        <% if (recentReviews.length === 0) { %>
+          <div style="text-align: center; padding: 1.5rem 0; color: var(--text-muted);">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128172;</div>
+            <p><%= t('profile_no_reviews') %></p>
+            <a href="/itineraries" class="btn btn-primary btn-sm" style="margin-top: 0.75rem;"><%= t('profile_browse_trips') %></a>
+          </div>
+        <% } else { %>
+          <% recentReviews.forEach(function(rev) { %>
+            <div class="review-item">
+              <div class="review-item-header">
+                <a href="/itineraries/<%= rev.itinerary_id %>" class="review-item-trip"><%= rev.itinerary_title %></a>
+                <span class="review-item-date"><%= new Date(rev.created_at).toLocaleDateString(lang === 'de' ? 'de-DE' : lang === 'it' ? 'it-IT' : lang === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' }) %></span>
+              </div>
+              <div class="review-item-stars">
+                <% for (let i = 1; i <= 5; i++) { %>
+                  <span class="star <%= i <= rev.rating ? 'star--filled' : '' %>">&#9733;</span>
+                <% } %>
+              </div>
+              <% if (rev.comment) { %>
+                <p class="review-item-comment"><%= rev.comment %></p>
+              <% } %>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+
+      <!-- Account Settings -->
+      <div class="dashboard-card">
+        <h2>&#9881; <%= t('profile_account_settings') %></h2>
+        <form class="settings-form" method="POST" action="/profile/update">
+          <div class="form-group">
+            <label class="form-label"><%= t('profile_update_name') %></label>
+            <input type="text" name="name" class="form-input" value="<%= dbUser.name %>" required maxlength="255" autocomplete="name">
+          </div>
+          <button type="submit" class="btn btn-primary"><%= t('profile_save') %></button>
+        </form>
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+          &#128274; <%= t('auth_email') %>: <%= dbUser.email %>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="dashboard-card">
+        <h2>&#9889; <%= t('profile_quick_actions') %></h2>
+        <div class="quick-actions">
+          <a href="/itineraries" class="quick-action">
+            <span class="quick-action-icon">&#127758;</span>
+            <%= t('profile_browse_trips') %>
+          </a>
+          <a href="/community" class="quick-action">
+            <span class="quick-action-icon">&#128172;</span>
+            <%= t('profile_write_review') %>
+          </a>
+          <a href="/trips" class="quick-action">
+            <span class="quick-action-icon">&#128506;</span>
+            <%= t('nav_my_trips') %>
+          </a>
+          <a href="#pricing" class="quick-action">
+            <span class="quick-action-icon">&#128142;</span>
+            <%= t('profile_manage_subscription') %>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
