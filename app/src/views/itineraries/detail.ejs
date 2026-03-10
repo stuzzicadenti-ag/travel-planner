@@ -162,7 +162,7 @@
               <% } %>
               <% if (itinerary.spotsLeft != null) { %>
                 <div class="group-info-item">
-                  <div class="group-info-icon"><%= itinerary.spotsLeft <= 3 ? '&#128293;' : '&#127919;' %></div>
+                  <div class="group-info-icon"><%- itinerary.spotsLeft <= 3 ? '&#128293;' : '&#127919;' %></div>
                   <div>
                     <div class="group-info-label">Spots Left</div>
                     <div class="group-info-value <%= itinerary.spotsLeft <= 5 ? 'spots-urgent' : '' %>"><%= itinerary.spotsLeft %> spots remaining</div>

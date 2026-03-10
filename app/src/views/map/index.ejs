@@ -96,7 +96,7 @@
   itineraries.forEach(function(it) {
     if (!it.lat || !it.lng) return;
     var photoHtml = it.photoUrl
-      ? '<img src="' + it.photoUrl + '" alt="" class="map-popup__photo" onerror="this.style.display=\'none\'">'
+      ? '<img src="' + it.photoUrl + '" alt="Photo of ' + it.destination + '" class="map-popup__photo" loading="lazy" onerror="this.style.display=\'none\'">'
       : '';
     var discountHtml = it.discount ? '<span style="color: #dc2626; font-weight: 700;">-' + it.discount + '%</span> ' : '';
     var popup = '<div class="map-popup">' +

@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof t !== 'undefined' ? t('site_title') : 'TravelPlanner - Plan. Explore. Remember.' %></title>
   <meta name="description" content="<%= typeof t !== 'undefined' ? t('site_description') : 'TravelPlanner is a WeRoad-style group travel platform.' %>">
+  <meta property="og:title" content="<%= typeof t !== 'undefined' ? t('site_title') : 'TravelPlanner' %>">
+  <meta property="og:description" content="<%= typeof t !== 'undefined' ? t('site_description') : 'TravelPlanner is a WeRoad-style group travel platform.' %>">
+  <meta property="og:image" content="/public/og-image.png">
+  <meta property="og:site_name" content="TravelPlanner">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= typeof t !== 'undefined' ? t('site_title') : 'TravelPlanner' %>">
+  <meta name="twitter:description" content="<%= typeof t !== 'undefined' ? t('site_description') : 'TravelPlanner is a WeRoad-style group travel platform.' %>">
+  <meta name="twitter:image" content="/public/og-image.png">
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
   <link rel="stylesheet" href="/public/style.css">
   <link rel="stylesheet" href="/public/landing.css">

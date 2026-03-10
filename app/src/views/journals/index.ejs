@@ -63,7 +63,7 @@
         <a href="/itineraries/<%= j.itin_id %>" class="journal-trip-link">&#127758; <%= j.itinerary_title %> &mdash; <%= j.destination %> (<%= j.country_code %>)</a>
 
         <% if (j.photo_url) { %>
-          <img src="<%= j.photo_url %>" alt="Trip photo" class="journal-photo" onerror="this.style.display='none'" loading="lazy">
+          <img src="<%= j.photo_url %>" alt="Photo from <%= j.itinerary_title %> trip to <%= j.destination %>" class="journal-photo" onerror="this.style.display='none'" loading="lazy">
         <% } %>
 
         <div class="journal-body">

@@ -218,7 +218,7 @@ export async function adminRoutes(app) {
     if (flag.user_id) {
       await pool.query(
         "UPDATE users SET banned = true, banned_reason = $1, banned_at = NOW() WHERE id = $2",
-        ["Content policy violation (flag #" + id + ")", flag.user_id]
+        [`Content policy violation (flag #${id})`, flag.user_id]
       );
       await logAction(req.user.id, "ban_user", "user", flag.user_id, `Via flag #${id}`);
     }

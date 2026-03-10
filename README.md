@@ -52,6 +52,18 @@ See [DOCS.md](DOCS.md) for full technical documentation, architecture, database 
 - **i18n**: Flat JSON locale files (en, it, de, fr)
 - **Theme**: Light blue (#3a9bd5 primary, #f5a623 accent)
 
+## Security & Performance
+
+- **CSRF protection**: Double Submit Cookie pattern on all state-changing forms
+- **Compression**: @fastify/compress with gzip and Brotli support
+- **OG meta tags**: Open Graph tags for rich social media previews
+- **XSS fix**: Escaped unescaped user content in footer partial
+- **Env validation**: Startup validation of required environment variables
+- **Open redirect fix**: Redirect URLs validated against allow-list
+- **Static file caching**: ETag and Last-Modified headers on static assets
+- **Map pin coordinates**: Seed data includes lat/lng for interactive map markers
+- **Validation tests**: 72 tests covering input validation, auth flows, and edge cases
+
 ## License
 
 Proprietary -- Stuzzicadenti AG

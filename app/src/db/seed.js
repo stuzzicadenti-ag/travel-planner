@@ -13,6 +13,8 @@ const ITINERARIES = [
     title: "3 Days in Rome",
     destination: "Rome",
     country_code: "IT",
+    latitude: 41.9028,
+    longitude: 12.4964,
     duration_days: 3,
     budget_amount: 450,
     budget_currency: "EUR",
@@ -117,6 +119,8 @@ const ITINERARIES = [
     title: "5 Days in Tokyo",
     destination: "Tokyo",
     country_code: "JP",
+    latitude: 35.6762,
+    longitude: 139.6503,
     duration_days: 5,
     budget_amount: 1200,
     budget_currency: "EUR",
@@ -273,6 +277,8 @@ const ITINERARIES = [
     title: "Swiss Alps Road Trip 7 Days",
     destination: "Switzerland",
     country_code: "CH",
+    latitude: 46.8182,
+    longitude: 8.2275,
     duration_days: 7,
     budget_amount: 2500,
     budget_currency: "CHF",
@@ -457,6 +463,8 @@ const ITINERARIES = [
     title: "10 Days in Bali",
     destination: "Bali",
     country_code: "ID",
+    latitude: -8.3405,
+    longitude: 115.0920,
     duration_days: 10,
     budget_amount: 1800,
     budget_currency: "EUR",
@@ -715,6 +723,8 @@ const ITINERARIES = [
     title: "4 Days in New York",
     destination: "New York",
     country_code: "US",
+    latitude: 40.7128,
+    longitude: -74.0060,
     duration_days: 4,
     budget_amount: 1500,
     budget_currency: "USD",
@@ -849,6 +859,8 @@ const ITINERARIES = [
     title: "Iceland Ring Road 12 Days",
     destination: "Iceland",
     country_code: "IS",
+    latitude: 64.1466,
+    longitude: -21.9426,
     duration_days: 12,
     budget_amount: 4500,
     budget_currency: "EUR",
@@ -1155,8 +1167,8 @@ async function seed() {
 
     for (const itin of ITINERARIES) {
       const itinRes = await client.query(
-        `INSERT INTO itineraries (title, destination, country_code, duration_days, budget_amount, budget_currency, description, tier, rating)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+        `INSERT INTO itineraries (title, destination, country_code, duration_days, budget_amount, budget_currency, description, tier, rating, latitude, longitude)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
         [
           itin.title,
           itin.destination,
@@ -1167,6 +1179,8 @@ async function seed() {
           itin.description,
           itin.tier,
           itin.rating,
+          itin.latitude || null,
+          itin.longitude || null,
         ]
       );
       const itineraryId = itinRes.rows[0].id;

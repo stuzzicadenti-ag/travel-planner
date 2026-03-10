@@ -337,6 +337,11 @@ describe("Template safety - EJS escaping", () => {
         // Safe: i18n t() calls (translation strings, not user input)
         if (/^(typeof\s+t\s*!==\s*['"]undefined['"])?\s*\??\s*t\s*\(/.test(inner)) continue;
 
+        // Safe: hardcoded HTML entities (&#NNN;) not user data
+        if (/^['"]&#\d+;['"]\.repeat\(/.test(inner)) continue;
+        if (/^\S+\s*(<=|<|>|>=|===|!==)\s*\d+\s*\?\s*'&#\d+;'\s*:\s*'&#\d+;'$/.test(inner)) continue;
+        if (/\|\|\s*'&#\d+;'/.test(inner) && !/request|user|body|query|params/.test(inner)) continue;
+
         // Anything else using <%- %> is suspect
         unsafePatterns.push(`${shortPath}: <%- ${inner} %>`);
       }

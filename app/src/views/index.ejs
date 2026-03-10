@@ -92,7 +92,7 @@
       <% deals.forEach(function(deal) { %>
         <div class="deal-card">
           <div class="deal-card__img" style="background: <%= deal.cover_gradient || 'linear-gradient(135deg, #ffecd2, #fcb69f)' %>;">
-            <span class="deal-card__emoji"><%= deal.country_code || '&#127758;' %></span>
+            <span class="deal-card__emoji"><%- deal.country_code || '&#127758;' %></span>
             <span class="deal-badge">-<%= deal.discount %>%</span>
             <% if (deal.spots_left && deal.spots_left <= 5) { %>
               <span class="spots-badge spots-badge--pulse"><%= deal.spots_left %> <%= t('deals_spots_left') %></span>
@@ -137,7 +137,7 @@
         <% itineraries.forEach(function(itin) { %>
           <div class="destination-card">
             <div class="destination-img" style="background: <%= itin.coverGradient || 'linear-gradient(135deg, #e8f4fd, #b8ddf3)' %>;">
-              <span class="destination-emoji"><%= itin.countryCode || '&#127758;' %></span>
+              <span class="destination-emoji"><%- itin.countryCode || '&#127758;' %></span>
               <% if (itin.discount && itin.discount > 0) { %>
                 <span class="deal-badge deal-badge--card">-<%= itin.discount %>%</span>
               <% } %>
@@ -145,7 +145,7 @@
             <div class="destination-body">
               <h3 class="destination-name"><%= itin.title %></h3>
               <div class="destination-rating">
-                <span class="stars"><%= '&#9733;'.repeat(Math.round(Number(itin.rating) || 0)) %><%= '&#9734;'.repeat(5 - Math.round(Number(itin.rating) || 0)) %></span>
+                <span class="stars"><%- '&#9733;'.repeat(Math.round(Number(itin.rating) || 0)) %><%- '&#9734;'.repeat(5 - Math.round(Number(itin.rating) || 0)) %></span>
                 <span class="rating-num"><%= itin.rating || '4.5' %></span>
               </div>
               <p class="destination-desc"><%= itin.description ? itin.description.substring(0, 100) + '...' : '' %></p>

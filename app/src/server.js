@@ -3,9 +3,11 @@ import fastifyStatic from "@fastify/static";
 import fastifyFormbody from "@fastify/formbody";
 import fastifyCookie from "@fastify/cookie";
 import fastifyView from "@fastify/view";
+import fastifyCompress from "@fastify/compress";
 import ejs from "ejs";
 import path from "node:path";
 import fs from "node:fs";
+import { randomBytes } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { db, pool } from "./db/index.js";
 import { runWeRoadMigration } from "./db/migrate-weroad.js";
@@ -31,6 +33,17 @@ for (const lang of SUPPORTED_LANGS) {
   locales[lang] = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 }
 
+// Environment variable validation in production
+const IS_PROD = process.env.NODE_ENV === "production";
+if (IS_PROD) {
+  const required = ["DATABASE_URL", "JWT_SECRET", "COOKIE_SECRET"];
+  const missing = required.filter((k) => !process.env[k] || process.env[k] === "change-me");
+  if (missing.length > 0) {
+    console.error(`FATAL: Missing or insecure environment variables: ${missing.join(", ")}`);
+    process.exit(1);
+  }
+}
+
 const app = Fastify({ logger: true, trustProxy: true, bodyLimit: 1048576 });
 
 // Run WeRoad migration at startup
@@ -44,7 +57,7 @@ app.addHook('onSend', async (request, reply) => {
   reply.header('X-XSS-Protection', '0');
   reply.header('Referrer-Policy', 'strict-origin-when-cross-origin');
   reply.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  reply.header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https:; font-src 'self'");
+  reply.header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https:; font-src 'self'; connect-src 'self'");
   reply.removeHeader('X-Powered-By');
 });
 
@@ -86,13 +99,14 @@ app.decorate('checkWriteRateLimit', createRateLimiter(15 * 60 * 1000, 20));
 app.setErrorHandler((error, request, reply) => {
   app.log.error(error);
   const statusCode = error.statusCode || 500;
-  const message = process.env.NODE_ENV === 'production'
+  const message = IS_PROD
     ? 'An unexpected error occurred.'
     : error.message;
   reply.code(statusCode).send({ error: message });
 });
 
 // Plugins
+await app.register(fastifyCompress, { global: true });
 await app.register(fastifyFormbody);
 await app.register(fastifyCookie, {
   secret: process.env.COOKIE_SECRET || "change-me",
@@ -101,12 +115,46 @@ await app.register(fastifyView, {
   engine: { ejs },
   root: path.join(__dirname, "views"),
   defaultContext: { user: null },
-  production: process.env.NODE_ENV === "production",
+  production: IS_PROD,
 });
 await app.register(fastifyStatic, {
   root: path.join(__dirname, "public"),
   prefix: "/public/",
-  maxAge: process.env.NODE_ENV === "production" ? 86400000 : 0,
+  maxAge: IS_PROD ? 86400000 : 0,
+  etag: true,
+  lastModified: true,
+});
+
+// CSRF Protection (Double Submit Cookie pattern)
+// Must be after @fastify/cookie registration so req.cookies is available
+app.decorateRequest('csrfToken', '');
+app.addHook('onRequest', async (req, reply) => {
+  // Set CSRF cookie if not present
+  if (!req.cookies?._csrf) {
+    const token = randomBytes(32).toString('hex');
+    reply.setCookie('_csrf', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      secure: false,
+    });
+    req.csrfToken = token;
+  } else {
+    req.csrfToken = req.cookies._csrf;
+  }
+});
+
+app.addHook('preHandler', async (req, reply) => {
+  // Only validate on state-changing methods
+  const method = req.method.toUpperCase();
+  if (['GET', 'HEAD', 'OPTIONS'].includes(method)) return;
+  // Skip API routes and health check
+  if (req.url.startsWith('/api/') || req.url === '/health') return;
+  const cookieToken = req.cookies?._csrf;
+  const bodyToken = req.body?._csrf;
+  if (!cookieToken || !bodyToken || cookieToken !== bodyToken) {
+    return reply.code(403).send('Forbidden: invalid CSRF token');
+  }
 });
 
 // i18n: inject translate helper + wrap reply.view on every request
@@ -121,9 +169,10 @@ app.addHook("onRequest", async (req, reply) => {
   const t = (key) => strings[key] || fallback[key] || key;
   req.lang = lang;
   req.t = t;
+  const csrfToken = req.csrfToken || '';
   const originalView = reply.view.bind(reply);
   reply.view = (template, data = {}) => {
-    return originalView(template, { t, lang, ...data });
+    return originalView(template, { t, lang, csrfToken, ...data });
   };
 
   // Decode JWT (non-blocking) + banned check

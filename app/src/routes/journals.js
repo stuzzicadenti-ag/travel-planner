@@ -131,8 +131,16 @@ export async function journalRoutes(app) {
     }
 
     // Redirect back to journals page
-    const referer = req.headers.referer || "/journals";
-    return reply.redirect(referer);
+    // Prevent open redirect: only use path from referer
+    let redirect = "/journals";
+    try {
+      const raw = req.headers.referer;
+      if (raw) {
+        const url = new URL(raw);
+        redirect = url.pathname + url.search;
+      }
+    } catch { /* ignore malformed referer */ }
+    return reply.redirect(redirect);
   });
 
   // GET /journals/itinerary/:id - Journals for a specific itinerary
